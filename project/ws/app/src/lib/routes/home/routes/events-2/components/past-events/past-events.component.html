@@ -1,0 +1,5 @@
+<div>
+  <ws-app-events-table [tableData]="tableData" [data]="eventsList" [paginationDetails]="paginationDetails"
+    [menuItems]="menuItems" [showLoader]="showEventsLoader" (searchKey)="searchEvents($event)"
+    (pageChange)="onPageChange($event)" (actionsClick)="contentEvents($event)"></ws-app-events-table>
+</div>

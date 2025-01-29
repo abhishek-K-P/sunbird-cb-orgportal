@@ -1,1 +1,29 @@
-<p>events works!</p>
+<div class="p-2">
+  <div class="flex justify-between">
+    <span class="mat-subheading-1">Event</span>
+    <button mat-button class="createEventBtn">Create New Event</button>
+  </div>
+  <div class="flex flex-row mt-4">
+    <div class="flex w-full filter max-height-60 gap-3">
+      <a class="filter-option" [ngClass]="{'ws-mat-accent-border-active' : currentRoute === 'upcoming'}" mat-button
+        routerLink="upcoming" role="button">Upcoming
+      </a>
+      <a class="filter-option" [ngClass]="{'ws-mat-accent-border-active' : currentRoute === 'draft'}" mat-button
+        routerLink="draft" role="button">Draft
+      </a>
+      <a class="filter-option" [ngClass]="{'ws-mat-accent-border-active' : currentRoute === 'pending-approval'}"
+        mat-button routerLink="pending-approval" role="button">Pending Approval
+      </a>
+      <a class="filter-option" [ngClass]="{'ws-mat-accent-border-active' : currentRoute === 'past'}" mat-button
+        routerLink="past" role="button">Past
+      </a>
+      <a class="filter-option" [ngClass]="{'ws-mat-accent-border-active' : currentRoute === 'rejected'}" mat-button
+        routerLink="rejected" role="button">Rejected
+      </a>
+    </div>
+  </div>
+
+  <div class="mt-6">
+    <router-outlet></router-outlet>
+  </div>
+</div>

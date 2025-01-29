@@ -13,8 +13,19 @@ import { MatLegacyButtonModule } from '@angular/material/legacy-button'
 import { MatLegacyDialogModule } from '@angular/material/legacy-dialog'
 import { MatLegacyProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import { MatLegacyFormFieldModule } from '@angular/material/legacy-form-field'
-import { MatLegacyTooltipModule } from '@angular/material/legacy-tooltip';
+import { MatLegacyTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { EventsTableComponent } from './components/events-table/events-table.component'
+import { UpcomingEventsComponent } from './components/upcoming-events/upcoming-events.component'
+import { DraftEventsComponent } from './components/draft-events/draft-events.component'
+import { PendingApprovalEventsComponent } from './components/pending-approval-events/pending-approval-events.component'
+import { PastEventsComponent } from './components/past-events/past-events.component'
+import { RejectedEventsComponent } from './components/rejected-events/rejected-events.component'
+import { MatCardModule } from '@angular/material/card'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTableModule } from '@angular/material/table'
+import { MatIconModule } from '@angular/material/icon'
+import { MatPaginatorModule } from '@angular/material/paginator'
 
 
 @NgModule({
@@ -25,7 +36,12 @@ import { EventsTableComponent } from './components/events-table/events-table.com
     SpeakersComponent,
     EventMaterialsComponent,
     EventCompetenciesComponent,
-    EventsTableComponent
+    EventsTableComponent,
+    UpcomingEventsComponent,
+    DraftEventsComponent,
+    PendingApprovalEventsComponent,
+    PastEventsComponent,
+    RejectedEventsComponent
   ],
   imports: [
     CommonModule,
@@ -36,7 +52,13 @@ import { EventsTableComponent } from './components/events-table/events-table.com
     MatLegacyProgressSpinnerModule,
     MatLegacyFormFieldModule,
     MatLegacyTooltipModule,
+    MatMenuModule,
     Events2RoutingModule,
+    MatCardModule,
+    MatSnackBarModule,
+    MatTableModule,
+    MatIconModule,
+    MatPaginatorModule,
   ]
 })
 export class Events2Module { }

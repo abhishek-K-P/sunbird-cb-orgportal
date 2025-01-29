@@ -1,0 +1,38 @@
+.createEventBtn {
+  background-color: #1B4CA1 !important;
+  height: 32px;
+  border-radius: 17px;
+  color: #FFFFFF !important;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+}
+
+.filter {
+  border-bottom: 2px solid #ebebeb;
+
+  .filter-option {
+    // margin: $size-s 0;
+    border-radius: 0;
+    border-bottom-width: 2px;
+    border-top-width: 0;
+    border-left-width: 0;
+    border-right-width: 0;
+
+    color: #00000099;
+    /* stylelint-disable */
+    font: 400 14px Lato;
+    /* stylelint-enable */
+  }
+
+  .ws-mat-accent-border-active {
+    color: #1B4CA1 !important;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+
+  .filter-option:first-child {
+    margin-left: 0;
+  }
+}

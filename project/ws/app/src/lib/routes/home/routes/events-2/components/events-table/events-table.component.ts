@@ -4,6 +4,7 @@ import { PageEvent } from '@angular/material/paginator'
 import { MatTableDataSource } from '@angular/material/table'
 import _ from 'lodash'
 import { debounceTime } from 'rxjs/operators'
+import { events } from '../../models/events.model'
 
 @Component({
   selector: 'ws-app-events-table',
@@ -11,16 +12,16 @@ import { debounceTime } from 'rxjs/operators'
   styleUrls: ['./events-table.component.scss']
 })
 export class EventsTableComponent implements OnInit, OnChanges {
-  @Input() tableData!: any
+  @Input() tableData!: events.tableData
   @Input() data?: []
-  @Input() paginationDetails: any = {
+  @Input() paginationDetails: events.pagination = {
     startIndex: 0,
-    lastIndes: 20,
+    lastIndex: 20,
     pageSize: 20,
     pageIndex: 0,
     totalCount: 20,
   }
-  @Input() menuItems = []
+  @Input() menuItems: events.menuItems[] = []
   @Input() showLoader = false
   @Output() actionsClick = new EventEmitter<any>()
   @Output() searchKey = new EventEmitter<string>()
@@ -49,7 +50,7 @@ export class EventsTableComponent implements OnInit, OnChanges {
     }
 
     this.searchControl.valueChanges
-      .pipe(debounceTime(300)) // Adjust the debounce time as needed
+      .pipe(debounceTime(500)) // Adjust the debounce time as needed
       .subscribe(value => this.searchKey.emit(value))
   }
 
@@ -65,12 +66,8 @@ export class EventsTableComponent implements OnInit, OnChanges {
   getFinalColumns() {
     this.columnsList = []
     const columns = JSON.parse(JSON.stringify(this.tableData.columns))
-    if (this.tableData.needCheckBox) {
-      const selectColumn = { displayName: '', key: 'select', cellType: 'select' }
-      columns.splice(0, 0, selectColumn)
-    }
     if (this.menuItems.length > 0) {
-      const selectColumn = { displayName: '', key: 'menu', cellType: 'menu' }
+      const selectColumn = { displayName: 'Actions', key: 'menu', cellType: 'menu' }
       columns.push(selectColumn)
     }
     this.tableColumns = columns

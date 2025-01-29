@@ -4,7 +4,8 @@
       <div class="search">
         <div class=rsearch>
           <mat-icon class="search-icon">search</mat-icon>
-          <input class="sinput" type="Standard" label="" [formControl]="searchControl" placeholder="Search">
+          <input class="sinput" type="Standard" label="" [formControl]="searchControl"
+            placeholder="Type hear to search... ">
         </div>
       </div>
     </ng-container>
@@ -30,9 +31,20 @@
               </mat-cell>
             </ng-container>
 
+            <ng-container *ngSwitchCase="'date'">
+              <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text table-menu-header">
+                {{col.displayName}}
+              </mat-header-cell>
+              <mat-cell *matCellDef="let element" class="table-menu-column">
+                <span [ngClass]="col.cellClass" class="cources-table-cell">
+                  {{element[col.key]}}
+                </span>
+              </mat-cell>
+            </ng-container>
+
             <ng-container *ngSwitchCase="'menu'">
-              <mat-header-cell *matHeaderCellDef mat-sort-header class="justify-center table-menu-column">
-                <img src="/assets/icons/folder_icon.svg" alt="">
+              <mat-header-cell *matHeaderCellDef class="table-header-text flex justify-center table-menu-header">
+                {{col.displayName}}
               </mat-header-cell>
               <mat-cell *matCellDef="let element" class="justify-center table-menu-column">
 
@@ -75,7 +87,7 @@
     </ng-container>
     <ng-template #tableLoader>
       <div class="w-full flex items-center justify-center coursesTableLoader">
-        <mat-spinner [diameter]="50" class="coursesTableSpinner"></mat-spinner>
+        <mat-spinner [diameter]="50"></mat-spinner>
       </div>
     </ng-template>
   </div>
