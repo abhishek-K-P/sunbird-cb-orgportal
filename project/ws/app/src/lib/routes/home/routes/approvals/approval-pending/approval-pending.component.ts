@@ -264,7 +264,6 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
       localStorage.setItem('transferOffset', req.offset)
       this.apprService.getApprovalsList(req).subscribe(res => {
         if (res && res.result) {
-          debugger
           this.loaderService.changeLoaderState(false)
           this.totalTransfersRecords = res.result.count
           this.transfersData = []
