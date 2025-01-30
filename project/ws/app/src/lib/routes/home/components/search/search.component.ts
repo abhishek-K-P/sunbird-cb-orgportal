@@ -112,7 +112,7 @@ export class SearchComponent implements OnInit {
   }
   applyFilter(event: any) {
     const enteredValue = event?.target?.value
-    if (enteredValue.length === 0) {
+    if (enteredValue?.length === 0) {
       this.searchData(event)
     }
   }
