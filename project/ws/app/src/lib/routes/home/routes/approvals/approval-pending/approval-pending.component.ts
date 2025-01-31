@@ -39,6 +39,7 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
   totalProfileVerificationRecords: any = 0
   tabChange = 0
   cacheOffset: any = 0
+  searchfilterValue = ''
 
   constructor(
     private router: Router,
@@ -175,17 +176,23 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
       // sortedVal = { firstName: 'asc' }
     }
     if (this.departName) {
-      const req = {
+      let req: any = {
         serviceName: 'profile',
         applicationStatus: 'SEND_FOR_APPROVAL',
-        requestType: ['GROUP_CHANGE', 'DESIGNATION_CHANGE'],
+        // requestType: ['GROUP_CHANGE', 'DESIGNATION_CHANGE'],
         deptName: this.departName,
         offset: this.pageIndex,
         limit: this.limit,
+        query: this.searchfilterValue,
         sortBy: {
           createdOn: 'desc',
         },
         // sort_by: sortValue ? sortValue : sortedVal,
+      }
+      if (this.currentFilter === 'transfers') {
+        req['requestType'] = ['ORG_TRANSFER']
+      } else {
+        req['requestType'] = ['GROUP_CHANGE', 'DESIGNATION_CHANGE']
       }
 
       localStorage.setItem('profileverificationOffset', req.offset)
@@ -249,6 +256,7 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
         applicationStatus: 'SEND_FOR_APPROVAL',
         requestType: ['ORG_TRANSFER'],
         deptName: this.departName,
+        query: this.searchfilterValue,
         offset: this.pageIndex,
         limit: limit1 ? limit1 : this.limit,
       }
@@ -325,17 +333,19 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
   }
 
   onSearch(enterValue: any) {
+    this.searchfilterValue = enterValue.searchText.toLowerCase() ? enterValue.searchText : ''
     this.getSortOrderValue = this.getSortOrder(enterValue.sortOrder)
-    if (this.getSortOrderValue) {
+    if (this.getSortOrderValue && this.currentFilter === 'profileverification') {
       this.fetchApprovals(this.getSortOrderValue)
+    } else if (this.currentFilter === 'transfers') {
+      this.fetchTransfers(1)
     }
     // this.data.filter((user: any) => enterValue.includes(user.userInfo.first_name))
-    const filterValue = enterValue.searchText.toLowerCase() ? enterValue.searchText : ''
     if (this.currentFilter === 'profileverification') {
       this.profileVerificationData = this.profileVerificationData.filter((user: any) =>
-        user.fullname.toLowerCase().includes(filterValue))
+        user.fullname.toLowerCase().includes(this.searchfilterValue))
     } else {
-      this.transfersData = this.transfersData.filter((user: any) => user.fullname.toLowerCase().includes(filterValue))
+      this.transfersData = this.transfersData.filter((user: any) => user.fullname.toLowerCase().includes(this.searchfilterValue))
     }
   }
 

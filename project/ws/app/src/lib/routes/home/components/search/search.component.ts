@@ -110,6 +110,12 @@ export class SearchComponent implements OnInit {
     this.searchText = event.target.value
     this.emitSearchRequest()
   }
+  applyFilter(event: any) {
+    const enteredValue = event?.target?.value
+    if (enteredValue?.length === 0) {
+      this.searchData(event)
+    }
+  }
 
   sortData(sortOrder: string) {
     this.sortOrder = sortOrder
