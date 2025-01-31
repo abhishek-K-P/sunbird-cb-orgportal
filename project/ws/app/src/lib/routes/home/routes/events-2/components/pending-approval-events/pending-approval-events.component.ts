@@ -42,8 +42,8 @@ export class PendingApprovalEventsComponent implements OnInit, OnDestroy {
       columns: [
         { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
         { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
+        { displayName: 'Created By', key: 'createrEmail', cellType: 'text' },
         { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
-        { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
         { displayName: 'Submitted On', key: 'submitedOn', cellType: 'date' },
       ],
       showSearchBox: true,
@@ -61,8 +61,16 @@ export class PendingApprovalEventsComponent implements OnInit, OnDestroy {
 
     this.menuItems = [
       {
+        btnText: 'View',
+        action: 'view',
+      },
+      {
         btnText: 'Edit',
         action: 'edit',
+      },
+      {
+        btnText: 'Cancel',
+        action: 'cancel',
       },
     ]
   }

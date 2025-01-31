@@ -42,9 +42,9 @@ export class RejectedEventsComponent implements OnInit, OnDestroy {
       columns: [
         { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
         { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
-        { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
         { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
-        { displayName: 'Submitted On', key: 'submitedOn', cellType: 'date' },
+        { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
+        { displayName: 'Rejected On', key: 'rejectedOn', cellType: 'date' },
       ],
       showSearchBox: true,
       showPagination: true,
@@ -63,6 +63,10 @@ export class RejectedEventsComponent implements OnInit, OnDestroy {
       {
         btnText: 'Edit',
         action: 'edit',
+      },
+      {
+        btnText: 'View Remarks',
+        action: 'remarks',
       },
     ]
   }

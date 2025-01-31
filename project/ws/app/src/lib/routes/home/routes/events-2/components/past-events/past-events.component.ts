@@ -42,9 +42,10 @@ export class PastEventsComponent implements OnInit, OnDestroy {
       columns: [
         { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
         { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
-        { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
         { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
-        { displayName: 'Submitted On', key: 'submitedOn', cellType: 'date' },
+        { displayName: 'Published On', key: 'publishedOn', cellType: 'date' },
+        { displayName: 'Enrollments', key: 'enrollments', cellType: 'text' },
+        { displayName: 'Certificates', key: 'certificates', cellType: 'text' },
       ],
       showSearchBox: true,
       showPagination: true,
@@ -61,9 +62,9 @@ export class PastEventsComponent implements OnInit, OnDestroy {
 
     this.menuItems = [
       {
-        btnText: 'Edit',
-        action: 'edit',
-      },
+        btnText: 'View',
+        action: 'view',
+      }
     ]
   }
 
