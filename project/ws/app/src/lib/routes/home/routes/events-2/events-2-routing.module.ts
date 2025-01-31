@@ -7,6 +7,7 @@ import { DraftEventsComponent } from './components/draft-events/draft-events.com
 import { PendingApprovalEventsComponent } from './components/pending-approval-events/pending-approval-events.component'
 import { PastEventsComponent } from './components/past-events/past-events.component'
 import { RejectedEventsComponent } from './components/rejected-events/rejected-events.component'
+import { ConfigResolveService } from '../../resolvers/config-resolve.service'
 
 const routes: Routes = [
   {
@@ -18,6 +19,9 @@ const routes: Routes = [
       pageType: 'feature',
       pageKey: 'events',
       path: '',
+    },
+    resolve: {
+      configService: ConfigResolveService,
     },
     children: [
       {
@@ -67,7 +71,7 @@ const routes: Routes = [
       },
     ],
   }, {
-    path: 'create-event/:id',
+    path: 'edit-event/:eventId',
     pathMatch: 'full',
     component: CreateEventComponent
   }

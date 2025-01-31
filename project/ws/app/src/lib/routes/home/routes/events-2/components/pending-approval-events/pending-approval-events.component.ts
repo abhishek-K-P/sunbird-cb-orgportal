@@ -5,7 +5,7 @@ import { EventsService } from '../../services/events.service'
 import { Subscription } from 'rxjs'
 import * as _ from 'lodash'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 //#endregion
 
 @Component({
@@ -41,10 +41,10 @@ export class PendingApprovalEventsComponent implements OnInit, OnDestroy {
     this.tableData = {
       columns: [
         { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
-        { displayName: 'Start Date', key: 'startDate', cellType: 'text' },
-        { displayName: 'Created On', key: 'createdOn', cellType: 'text' },
+        { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
+        { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
         { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
-        { displayName: 'Submitted On', key: 'submitedOn', cellType: 'text' },
+        { displayName: 'Submitted On', key: 'submitedOn', cellType: 'date' },
       ],
       showSearchBox: true,
       showPagination: true,
@@ -94,8 +94,8 @@ export class PendingApprovalEventsComponent implements OnInit, OnDestroy {
       {
         next: (res: any) => {
           this.showEventsLoader = false
-          this.eventsList = _.get(res, 'result.Event', [])
-          this.paginationDetails['totalCount'] = _.get(res, 'result.count', 0)
+          this.eventsList = _.get(res, 'Event', [])
+          this.paginationDetails['totalCount'] = _.get(res, 'count', 0)
         },
         error: (error: HttpErrorResponse) => {
           this.showEventsLoader = false

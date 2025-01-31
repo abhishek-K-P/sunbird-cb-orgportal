@@ -1,1 +1,103 @@
-<p>basic-info works!</p>
+<div class="flex flex-between create-cont height-480">
+  <div class="event-input-wrapper flex-grow pl-6 pr-4 py-5 relative">
+    <form [formGroup]="eventForm" (ngSubmit)="onSave()" class="h-full">
+      <div class="">
+        <p class="font-montserrat text-center text-xl font-semibold">
+          Basic
+          Information</p>
+        <div class="form-controls mat-full-radius">
+          <div class="label">
+            <span class="mr-1 font-semibold">Event Name
+              <strong class="text-red-700">*</strong>
+            </span>
+          </div>
+          <mat-form-field appearance="outline" class="w-full">
+            <input matInput placeholder="Add your event name" formControlName="eventName" maxlength="70">
+            <mat-hint>Only ( a-z/A-Z , 0-9 . - _ $ / : [ ]' ' !) characters are supported</mat-hint>
+            <mat-error *ngIf="eventForm?.get('eventName') && eventForm.get('eventName').hasError('required')">
+              event name is mandatory
+            </mat-error>
+            <mat-error *ngIf="eventForm?.get('eventName') && eventForm.get('eventName').hasError('pattern')">
+              Only ( a-z/A-Z , 0-9 . _ - $ / : [ ]' ' !) characters are supported
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+
+        <div class="label flex items-center mt-2">
+          <span class="mr-1 label font-semibold">Event Type </span>
+          <strong class="text-red-700">*</strong>
+        </div>
+        <mat-radio-group aria-label="Select an option" class="flex" formControlName="eventType">
+          <mat-radio-button class="mr-5 p-4" value="live">
+            Live Event
+          </mat-radio-button>
+          <mat-radio-button class="mr-5 p-4" value="recorded">
+            Recorded Event
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+      <div class="action-btns save-event  flex justify-center gap-4">
+        <button mat-stroked-button class="flex justify-center items-center mat-btn-outline cancel-button"
+          (click)="dialogRef.close();" type="button">
+          <span class="font-bold text-sm">Cancel</span>
+        </button>
+        <button mat-flat-button class="flex justify-center items-center save-button" type="submit"
+          [disabled]="(eventForm.invalid && !imgURL)">
+          <span class="font-bold text-sm">Save</span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="upload-wrapper">
+    <div class="upload-event-details flex justify-center items-center">
+
+      <mat-card class="upload-card" appearance="outlined">
+        <div class="upload flex justify-center items-center cursor-pointer"
+          [ngClass]="imgURL ? 'dashed-border-none' : 'dashed-border'"
+          onclick="document.getElementById('upload-file').click();">
+          <input #file type="file" name="upload-file" id="upload-file" class="hidden" accept=".png, .jpg, .jpeg"
+            (change)="onFileSelected(file.files);">
+          <ng-container *ngIf="!imgURL">
+            <div class="flex flex-column items-center gap-2">
+              <img src="/assets/icons/upload-upward-arrow.svg" alt="icon">
+              <span class="text-sm font-bold text-blue">Upload Images <strong class="text-red-700">*</strong></span>
+              <span class="text-xs font-normal">Supported file types: PNG, JPG</span>
+              <span class="text-xs font-normal">Max Size - 400MB</span>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="imgURL">
+            <div>
+              <img class="preview-img" [src]="imgURL" alt="image" />
+            </div>
+          </ng-container>
+        </div>
+        <mat-card-content>
+          <div class="details-event px-4 py-4">
+            <div class="inline-flex items-center mb-4 content-type">
+              <img class="event-img mr-2" src="/assets/icons/events.svg" alt="event icon">
+              <span class="text-sm">
+                Event
+              </span>
+            </div>
+            <div class="input-event mb-4">
+              <ng-container *ngIf="eventForm?.get('eventName') && eventForm.get('eventName').value">
+                <label class="custome-title" #tooltip="matTooltip" [matTooltip]="courseName"
+                  matTooltipClass="new-toolTip">{{eventForm.get('eventName').value}}</label>
+              </ng-container>
+              <ng-container *ngIf="!(eventForm?.get('eventName') && eventForm.get('eventName').value)">
+                <label class="custome-title">Event Name</label>
+              </ng-container>
+            </div>
+            <div class="flex flex-row gap-4 items-center">
+              <img class="favicon" src="/assets/icons/favicon.ico">
+              <span class="karmayogi-text">Karmayogi Bharat</span>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,4 @@
-<div class="courses-table flex flex-column gap-4">
+<div class="events-table flex flex-column gap-4">
   <div class="flex justify-between">
     <ng-container *ngIf="showSearchBox">
       <div class="search">
@@ -21,9 +21,9 @@
             <ng-container *ngSwitchCase="'text'">
               <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text"> {{col.displayName}}
               </mat-header-cell>
-              <mat-cell *matCellDef="let element" class="py-2">
+              <mat-cell *matCellDef="let element" class="py-2 flex flex-row gap-4">
                 <ng-container *ngIf="col.imageKey">
-                  <img class="imageCell" [src]="element[col.imageKey]" alt="logo">
+                  <img class="imageCell py-2" [src]="element[col.imageKey]" alt="logo">
                 </ng-container>
                 <span [ngClass]="col.cellClass" class="cources-table-cell">
                   {{element[col.key]}}
@@ -32,10 +32,10 @@
             </ng-container>
 
             <ng-container *ngSwitchCase="'date'">
-              <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text table-menu-header">
+              <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text table-date-header">
                 {{col.displayName}}
               </mat-header-cell>
-              <mat-cell *matCellDef="let element" class="table-menu-column">
+              <mat-cell *matCellDef="let element" class="table-date-column">
                 <span [ngClass]="col.cellClass" class="cources-table-cell">
                   {{element[col.key]}}
                 </span>
@@ -86,7 +86,7 @@
       </mat-card>
     </ng-container>
     <ng-template #tableLoader>
-      <div class="w-full flex items-center justify-center coursesTableLoader">
+      <div class="w-full flex items-center justify-center eventsTableLoader">
         <mat-spinner [diameter]="50"></mat-spinner>
       </div>
     </ng-template>

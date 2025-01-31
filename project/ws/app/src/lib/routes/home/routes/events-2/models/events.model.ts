@@ -27,4 +27,17 @@ export namespace events {
     btnText: string,
     action: string,
   }
+
+  export const IMAGE_MAX_SIZE = (400 * 1024 * 1024)
+}
+
+export interface speaker {
+  name: string,
+  email: string,
+  description: string
+}
+
+export interface material {
+  fileName: string,
+  fileUrl: string
 }
