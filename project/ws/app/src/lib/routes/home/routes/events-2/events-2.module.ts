@@ -17,6 +17,8 @@ import { MatLegacyTooltipModule } from '@angular/material/legacy-tooltip'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
 import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
+import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 // import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { EventsTableComponent } from './components/events-table/events-table.component'
@@ -31,6 +33,10 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatPaginatorModule } from '@angular/material/paginator'
 import { EventsService } from './services/events.service'
 import { BasicInfoComponent } from './dialogs/basic-info/basic-info.component'
+import { MatStepperModule } from '@angular/material/stepper'
+// import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { AddSpeakersComponent } from './dialogs/add-speakers/add-speakers.component'
 
 
 @NgModule({
@@ -47,7 +53,8 @@ import { BasicInfoComponent } from './dialogs/basic-info/basic-info.component'
     PendingApprovalEventsComponent,
     PastEventsComponent,
     RejectedEventsComponent,
-    BasicInfoComponent
+    BasicInfoComponent,
+    AddSpeakersComponent
   ],
   imports: [
     CommonModule,
@@ -61,12 +68,17 @@ import { BasicInfoComponent } from './dialogs/basic-info/basic-info.component'
     MatMenuModule,
     MatInputModule,
     MatRadioModule,
+    MatSelectModule,
     Events2RoutingModule,
     MatCardModule,
     MatSnackBarModule,
     MatTableModule,
     MatIconModule,
     MatPaginatorModule,
+    MatStepperModule,
+    // NgxMaterialTimepickerModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
   ],
   providers: [
     DatePipe,

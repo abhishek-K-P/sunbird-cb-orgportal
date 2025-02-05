@@ -1,1 +1,35 @@
-<p>speakers works!</p>
+<div class="event-details p-6 flex flex-column gap-5">
+  <div class="event-header">
+    Add Speakers
+  </div>
+  <button mat-button class="add-event flex items-center" (click)="openAddSpeakerPopu()">
+    <mat-icon class="mr-2">add</mat-icon>
+    <span>Add Speaker</span>
+  </button>
+
+  <ng-container *ngIf="speakersList?.length">
+    <table class="speakers-table">
+      <thead>
+        <tr>
+          <th class="table-header table-header-border">Name</th>
+          <th class="table-header table-header-border">Email</th>
+          <th class="table-header table-header-border">Bio</th>
+          <th class="table-header ">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let speaker of speakersList; let i = index">
+          <tr>
+            <td class="speaker-table-cell"> {{ speaker.name ? speaker.name : '-' }}</td>
+            <td class="speaker-table-cell"> {{ speaker.email ? speaker.email : '-' }}</td>
+            <td class="speaker-table-cell"> {{ speaker.description ? speaker.description : '-' }}</td>
+            <td class="speaker-table-cell flex">
+              <mat-icon class="edit-icon flex items-center" (click)="editSpeaker(i)">edit</mat-icon>
+              <mat-icon class="edit-icon flex items-center" (click)="delete(i)">delete</mat-icon>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </ng-container>
+</div>

@@ -1,0 +1,42 @@
+<div>
+  <div class="add-speaker-header flex justify-between items-center px-6">
+    <span class="add-speaker-text">Add Speaker</span>
+    <mat-icon class="close-icon" (click)="dialogRef.close()">close</mat-icon>
+  </div>
+  <form [formGroup]="speakerForm" class="flex flex-column gap-4 add-speaker-content p-6">
+    <div class="flex flex-column gap-2 event-form w-full">
+      <div class="form-lable required">
+        Email
+      </div>
+      <mat-form-field appearance="outline" class="">
+        <input matInput placeholder="Enter email" formControlName="email">
+        <mat-error *ngIf="speakerForm?.controls?.email?.touched && speakerForm?.controls?.email?.hasError('required')">
+          email is mandatory
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="flex flex-column gap-2 event-form w-full">
+      <div class="form-lable required">
+        Name
+      </div>
+      <mat-form-field appearance="outline" class="">
+        <input matInput placeholder="Enter name" formControlName="name">
+      </mat-form-field>
+    </div>
+    <div class="flex flex-column gap-2">
+      <div class="form-lable required">
+        Description
+      </div>
+      <mat-form-field appearance="outline" class="">
+        <textarea matInput placeholder="Add your description" formControlName="description" maxlength="250"> </textarea>
+      </mat-form-field>
+      <span class="description-count flex justify-end">{{speakerForm?.controls?.description.value?.length}}/250</span>
+    </div>
+  </form>
+
+  <div class="add-speaker-footer flex items-center justify-end gap-2 px-6">
+    <button mat-button class="cancelBtn" (click)="dialogRef.close()">Cancel</button>
+    <button mat-button class="add-user-btn" (click)="addSpeaker()">{{speakerDetails ? 'Update User' : 'Add User'}}
+    </button>
+  </div>
+</div>

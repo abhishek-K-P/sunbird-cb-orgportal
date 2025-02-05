@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core'
+import { material } from '../../models/events.model'
 
 @Component({
   selector: 'ws-app-event-materials',
@@ -6,5 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./event-materials.component.scss']
 })
 export class EventMaterialsComponent {
+
+  @Input() materialsList: material[] = []
+
+  constructor() { }
 
 }
