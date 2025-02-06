@@ -3,13 +3,24 @@
     Add Material
   </div>
 
-  <div class="add-file-card px-3 gap-4 flex items-center">
-    <img class="upload-icon-card flex items-center justify-center" src="/assets/icons/file_upload.svg"
-      alt="upload icon">
+  <div class="add-file-card px-3 gap-4 flex items-center" onclick="document.getElementById('upload-file').click();"
+    [ngClass]="{'disableAddFile': !currentMaterialSaved}">
+    <input #file type="file" name="upload-file" id="upload-file" class="hidden" accept=".pdf, .doc, .ppt"
+      (change)="onFileSelected(file.files);">
+    <div class="upload-icon-card flex items-center justify-center">
+      <img class="uploadIcon" src="/assets/icons/file_upload.svg" alt="upload icon">
+    </div>
     <div class="flex items-center flex-column gap-1">
       <span class="add-file-text">Add File</span>
       <span class="add-file-type">Add pdfs, doc, ppt</span>
     </div>
     <mat-icon class="right-arrow">chevron_right</mat-icon>
   </div>
+
+  <ng-container *ngFor="let material of materialsList; let i = index ">
+    <ws-app-material-details [materialDetails]="material" [openMaterial]="currentIndex === i"
+      (updatedMaterialDetails)="updateMaterial($event, i)" (canCloseOrOpenMaterial)="closeOrOpenMaterial($event, i)"
+      (currentMaterialSaved)="currentMaterialSaveUpdate($event)"
+      (deleteMaterial)="deleteMaterialFromList($event, i)"></ws-app-material-details>
+  </ng-container>
 </div>

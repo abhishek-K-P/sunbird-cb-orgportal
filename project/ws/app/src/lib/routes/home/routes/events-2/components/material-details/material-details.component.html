@@ -1,0 +1,42 @@
+<div [ngClass]="{'hideElement': openMaterial}" class="closedCard">
+  <div class="flex justify-between">
+    <div class="pdfName">{{materialDetails?.fullName}}</div>
+    <div class="flex gap-1">
+      <mat-icon class="edit-icon flex items-center" (click)="openStatus(true)">edit</mat-icon>
+      <mat-icon class="edit-icon flex items-center" (click)="deleteMaterialFromList()">delete</mat-icon>
+    </div>
+  </div>
+</div>
+
+<div [ngClass]="{'hideElement': !openMaterial}" class="openCard flex flex-column gap-4 px-4 py-4">
+  <form [formGroup]="eventForm" class="flex flex-column gap-2 w-full event-form">
+    <div class="form-lable required">
+      Full Name
+    </div>
+    <mat-form-field appearance="outline" class="">
+      <input matInput placeholder="Enter name" formControlName="fullName">
+      <mat-error *ngIf="eventForm?.controls?.fullName?.touched && eventForm?.controls?.fullName?.hasError('required')">
+        Name is mandatory
+      </mat-error>
+    </mat-form-field>
+  </form>
+
+  <div class="flex flex-column gap-2 w-full">
+    <div class="form-lable required">
+      Uploaded File
+    </div>
+    <div class="file-card p-4">
+      <div class="flex gap-2">
+        <img src="/assets/icons/events_pdf.svg" alt="pdf">
+        <div class="pdfName">pdf.pdf</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex justify-center gap-4 mb-2">
+    <button mat-button class="cancel-btn" (click)="openStatus(false)">Cancel</button>
+    <button mat-button class="save-btn" (click)="saveDetails()">{{materialDetails?.fullName ? 'Update' :
+      'Save'}}</button>
+  </div>
+
+</div>

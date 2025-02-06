@@ -73,7 +73,10 @@ const routes: Routes = [
   }, {
     path: 'edit-event/:eventId',
     pathMatch: 'full',
-    component: CreateEventComponent
+    component: CreateEventComponent,
+    resolve: {
+      configService: ConfigResolveService,
+    },
   }
 ]
 

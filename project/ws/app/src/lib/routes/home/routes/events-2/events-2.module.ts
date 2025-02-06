@@ -19,8 +19,7 @@ import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy
 import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
-// import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 import { EventsTableComponent } from './components/events-table/events-table.component'
 import { UpcomingEventsComponent } from './components/upcoming-events/upcoming-events.component'
 import { DraftEventsComponent } from './components/draft-events/draft-events.component'
@@ -35,8 +34,9 @@ import { EventsService } from './services/events.service'
 import { BasicInfoComponent } from './dialogs/basic-info/basic-info.component'
 import { MatStepperModule } from '@angular/material/stepper'
 // import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { AddSpeakersComponent } from './dialogs/add-speakers/add-speakers.component'
+import { MatDatepickerModule } from '@angular/material/datepicker'
+import { AddSpeakersComponent } from './dialogs/add-speakers/add-speakers.component';
+import { MaterialDetailsComponent } from './components/material-details/material-details.component'
 
 
 @NgModule({
@@ -54,7 +54,8 @@ import { AddSpeakersComponent } from './dialogs/add-speakers/add-speakers.compon
     PastEventsComponent,
     RejectedEventsComponent,
     BasicInfoComponent,
-    AddSpeakersComponent
+    AddSpeakersComponent,
+    MaterialDetailsComponent
   ],
   imports: [
     CommonModule,

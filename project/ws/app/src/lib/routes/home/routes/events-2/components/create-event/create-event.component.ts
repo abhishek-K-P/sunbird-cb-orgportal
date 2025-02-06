@@ -35,7 +35,16 @@ export class CreateEventComponent implements OnInit, AfterViewInit, OnDestroy {
       description: 'Praesent in mauris eu tortor porttitor accumsan. Mauris suscipit, ligula sit amet pharetra semper,'
     },
   ]
-  materialsList: material[] = []
+  materialsList: material[] = [
+    {
+      fullName: 'event name 1',
+      fileUrl: 'its url'
+    },
+    {
+      fullName: 'event name 2',
+      fileUrl: 'its url'
+    }
+  ]
   competencies: any
   currentStepperIndex = 0
   //#endregion

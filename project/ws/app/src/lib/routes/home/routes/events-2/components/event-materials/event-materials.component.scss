@@ -10,17 +10,28 @@
   }
 }
 
+.disableAddFile {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 .add-file-card {
   height: 65px;
   width: 260px;
   border-radius: 8px;
   border: 1px solid #00000014;
+  cursor: pointer;
 
   .upload-icon-card {
     height: 48px;
     width: 48px;
     background-color: #1B4CA114;
     border-radius: 8px;
+
+    .uploadIcon {
+      width: 24px;
+      height: 24px;
+    }
   }
 
   .add-file-text {
