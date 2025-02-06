@@ -24,7 +24,6 @@ import { EventsTableComponent } from './components/events-table/events-table.com
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatTableModule } from '@angular/material/table'
 import { MatIconModule } from '@angular/material/icon'
-import { MatPaginatorModule } from '@angular/material/paginator'
 import { EventsService } from './services/events.service'
 import { BasicInfoComponent } from './dialogs/basic-info/basic-info.component'
 import { MatStepperModule } from '@angular/material/stepper'
@@ -33,6 +32,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker'
 import { AddSpeakersComponent } from './dialogs/add-speakers/add-speakers.component'
 import { MaterialDetailsComponent } from './components/material-details/material-details.component'
 import { EventsListComponent } from './components/events-list/events-list.component'
+import { MatLegacyPaginatorModule } from '@angular/material/legacy-paginator'
 
 
 @NgModule({
@@ -67,7 +67,7 @@ import { EventsListComponent } from './components/events-list/events-list.compon
     MatSnackBarModule,
     MatTableModule,
     MatIconModule,
-    MatPaginatorModule,
+    MatLegacyPaginatorModule,
     MatStepperModule,
     // NgxMaterialTimepickerModule,
     MatFormFieldModule,
