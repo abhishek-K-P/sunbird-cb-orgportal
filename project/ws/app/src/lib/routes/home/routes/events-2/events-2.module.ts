@@ -21,11 +21,6 @@ import { MatLegacySelectModule as MatSelectModule } from '@angular/material/lega
 import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
 import { EventsTableComponent } from './components/events-table/events-table.component'
-import { UpcomingEventsComponent } from './components/upcoming-events/upcoming-events.component'
-import { DraftEventsComponent } from './components/draft-events/draft-events.component'
-import { PendingApprovalEventsComponent } from './components/pending-approval-events/pending-approval-events.component'
-import { PastEventsComponent } from './components/past-events/past-events.component'
-import { RejectedEventsComponent } from './components/rejected-events/rejected-events.component'
 import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
 import { MatTableModule } from '@angular/material/table'
 import { MatIconModule } from '@angular/material/icon'
@@ -35,8 +30,9 @@ import { BasicInfoComponent } from './dialogs/basic-info/basic-info.component'
 import { MatStepperModule } from '@angular/material/stepper'
 // import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
 import { MatDatepickerModule } from '@angular/material/datepicker'
-import { AddSpeakersComponent } from './dialogs/add-speakers/add-speakers.component';
+import { AddSpeakersComponent } from './dialogs/add-speakers/add-speakers.component'
 import { MaterialDetailsComponent } from './components/material-details/material-details.component'
+import { EventsListComponent } from './components/events-list/events-list.component'
 
 
 @NgModule({
@@ -48,14 +44,10 @@ import { MaterialDetailsComponent } from './components/material-details/material
     EventMaterialsComponent,
     EventCompetenciesComponent,
     EventsTableComponent,
-    UpcomingEventsComponent,
-    DraftEventsComponent,
-    PendingApprovalEventsComponent,
-    PastEventsComponent,
-    RejectedEventsComponent,
     BasicInfoComponent,
     AddSpeakersComponent,
-    MaterialDetailsComponent
+    MaterialDetailsComponent,
+    EventsListComponent
   ],
   imports: [
     CommonModule,

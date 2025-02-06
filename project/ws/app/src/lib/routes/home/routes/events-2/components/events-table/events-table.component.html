@@ -21,7 +21,7 @@
             <ng-container *ngSwitchCase="'text'">
               <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text"> {{col.displayName}}
               </mat-header-cell>
-              <mat-cell *matCellDef="let element" class="py-2 flex flex-row gap-4">
+              <mat-cell *matCellDef="let element" class="py-2 flex flex-row gap-2">
                 <ng-container *ngIf="col.imageKey">
                   <img class="imageCell py-2" [src]="element[col.imageKey]" alt="logo">
                 </ng-container>
@@ -36,6 +36,17 @@
                 {{col.displayName}}
               </mat-header-cell>
               <mat-cell *matCellDef="let element" class="table-date-column">
+                <span [ngClass]="col.cellClass" class="cources-table-cell">
+                  {{element[col.key]}}
+                </span>
+              </mat-cell>
+            </ng-container>
+
+            <ng-container *ngSwitchCase="'number'">
+              <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text table-number-cell">
+                {{col.displayName}}
+              </mat-header-cell>
+              <mat-cell *matCellDef="let element" class="table-number-cell">
                 <span [ngClass]="col.cellClass" class="cources-table-cell">
                   {{element[col.key]}}
                 </span>

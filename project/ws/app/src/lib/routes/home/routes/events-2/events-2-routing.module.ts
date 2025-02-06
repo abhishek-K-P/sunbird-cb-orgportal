@@ -2,12 +2,8 @@ import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 import { EventsComponent } from './components/events/events.component'
 import { CreateEventComponent } from './components/create-event/create-event.component'
-import { UpcomingEventsComponent } from './components/upcoming-events/upcoming-events.component'
-import { DraftEventsComponent } from './components/draft-events/draft-events.component'
-import { PendingApprovalEventsComponent } from './components/pending-approval-events/pending-approval-events.component'
-import { PastEventsComponent } from './components/past-events/past-events.component'
-import { RejectedEventsComponent } from './components/rejected-events/rejected-events.component'
 import { ConfigResolveService } from '../../resolvers/config-resolve.service'
+import { EventsListComponent } from './components/events-list/events-list.component'
 
 const routes: Routes = [
   {
@@ -31,7 +27,7 @@ const routes: Routes = [
       },
       {
         path: 'upcoming',
-        component: UpcomingEventsComponent,
+        component: EventsListComponent,
         data: {
           pageId: 'app/home/events/upcoming',
           module: 'events-2',
@@ -39,7 +35,7 @@ const routes: Routes = [
       },
       {
         path: 'draft',
-        component: DraftEventsComponent,
+        component: EventsListComponent,
         data: {
           pageId: 'app/home/events/draft',
           module: 'events-2',
@@ -47,7 +43,7 @@ const routes: Routes = [
       },
       {
         path: 'pending-approval',
-        component: PendingApprovalEventsComponent,
+        component: EventsListComponent,
         data: {
           pageId: 'app/home/events/pending-approval',
           module: 'events-2',
@@ -55,15 +51,23 @@ const routes: Routes = [
       },
       {
         path: 'past',
-        component: PastEventsComponent,
+        component: EventsListComponent,
         data: {
           pageId: 'app/home/events/past',
           module: 'events-2',
         },
       },
       {
+        path: 'canceled',
+        component: EventsListComponent,
+        data: {
+          pageId: 'app/home/events/canceled',
+          module: 'events-2',
+        },
+      },
+      {
         path: 'rejected',
-        component: RejectedEventsComponent,
+        component: EventsListComponent,
         data: {
           pageId: 'app/home/events/rejected',
           module: 'events-2',

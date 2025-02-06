@@ -41,7 +41,7 @@
 }
 
 .imageCell {
-  width: 130px;
+  width: 120px;
   border-radius: 3px;
 }
 
@@ -180,6 +180,10 @@
 
 .table-date-column {
   flex: 0 0 125px;
+}
+
+.table-number-cell {
+  flex: 0 0 110px;
 }
 
 .table-menu-header {
