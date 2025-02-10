@@ -9,28 +9,8 @@ import { AddSpeakersComponent } from '../../dialogs/add-speakers/add-speakers.co
   styleUrls: ['./speakers.component.scss']
 })
 export class SpeakersComponent implements OnInit, OnChanges {
-  @Input() speakersList: speaker[] = [
-    {
-      email: 'puran123[at]yopmail[dot]com',
-      name: 'Puran',
-      description: 'Praesent in mauris eu tortor porttitor accumsan. Mauris suscipit, ligula sit amet pharetra semper,'
-    },
-    {
-      email: 'puran123[at]yopmail[dot]com',
-      name: 'Puran',
-      description: ''
-    },
-    {
-      email: 'puran123[at]yopmail[dot]com',
-      name: '',
-      description: 'Praesent in mauris eu tortor porttitor accumsan. Mauris suscipit, ligula sit amet pharetra semper,'
-    },
-    {
-      email: 'puran123[at]yopmail[dot]com',
-      name: 'Puran',
-      description: 'Praesent in mauris eu tortor porttitor accumsan. Mauris suscipit, ligula sit amet pharetra semper,'
-    },
-  ]
+  @Input() speakersList: speaker[] = []
+  @Input() openMode = 'edit'
 
   constructor(
     private dialog: MatDialog,

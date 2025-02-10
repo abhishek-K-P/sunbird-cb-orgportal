@@ -1,11 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http'
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { ActivatedRoute } from '@angular/router'
-import _ from 'lodash'
+import { ActivatedRoute, Router } from '@angular/router'
 import { Subscription } from 'rxjs'
 import { events } from '../../models/events.model'
 import { EventsService } from '../../services/events.service'
+import * as _ from 'lodash'
 
 @Component({
   selector: 'ws-app-events-list',
@@ -28,7 +28,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
   constructor(
     private eventSvc: EventsService,
     private matSnackBar: MatSnackBar,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private route: Router
   ) { }
   //#endregion
 
@@ -60,10 +61,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
             btnText: 'View',
             action: 'view',
           },
-          {
-            btnText: 'Start Broadcast',
-            action: 'broadcast',
-          },
+          // {
+          //   btnText: 'Start Broadcast',
+          //   action: 'broadcast',
+          // },
           {
             btnText: 'Cancel',
             action: 'cancel',
@@ -153,8 +154,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
             { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
             { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
             { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
-            { displayName: 'Cancelled On', key: 'rejectedOn', cellType: 'date' },
-            { displayName: 'Cancelled By', key: 'createdByName', cellType: 'text' },
+            { displayName: 'Cancelled On', key: 'cancelledOn', cellType: 'date' },
+            { displayName: 'Cancelled By', key: 'cancelledBy', cellType: 'text' },
           ],
           showSearchBox: true,
           showPagination: true,
@@ -163,13 +164,9 @@ export class EventsListComponent implements OnInit, OnDestroy {
 
         this.menuItems = [
           {
-            btnText: 'Edit',
-            action: 'edit',
-          },
-          {
-            btnText: 'View Remarks',
-            action: 'remarks',
-          },
+            btnText: 'View',
+            action: 'view',
+          }
         ]
         break
       case 'rejected':
@@ -293,7 +290,56 @@ export class EventsListComponent implements OnInit, OnDestroy {
   }
 
   contentEvents(events: any) {
-    console.log(events)
+    if (events && events.action && events.rows) {
+      switch (events.action) {
+        case 'view':
+          this.navigateToEditEvent(_.get(events, 'rows.identifier'), 'view')
+          break
+        case 'edit':
+          this.navigateToEditEvent(_.get(events, 'rows.identifier'), 'edit')
+          break
+        case 'cancel':
+          this.cancelEvent(events.rows)
+          break
+        case 'remarks':
+          break
+        case 'broadcast':
+          break
+      }
+    }
+  }
+
+  navigateToEditEvent(eventId: string, openMode: string) {
+    this.route.navigate([`/app/home/events/edit-event`, eventId], {
+      queryParams: {
+        mode: openMode,
+        pathUrl: this.pathUrl
+      }
+    })
+  }
+
+  cancelEvent(rowData: any) {
+    const requestBody = {
+      request: {
+        event: {
+          versionKey: rowData.versionKey,
+          status: 'Cancelled',
+          identifier: rowData.identifier
+        }
+      }
+    }
+    this.eventSvc.publishEvent(rowData.identifier, requestBody).subscribe({
+      next: res => {
+        if (res) {
+          this.openSnackBar('event is cancelled successfully')
+          this.getEvents()
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        const errorMessage = _.get(error, 'error.message', 'Something went wrong please try again')
+        this.openSnackBar(errorMessage)
+      }
+    })
   }
 
   //#endregion

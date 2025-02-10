@@ -33,6 +33,10 @@ import { AddSpeakersComponent } from './dialogs/add-speakers/add-speakers.compon
 import { MaterialDetailsComponent } from './components/material-details/material-details.component'
 import { EventsListComponent } from './components/events-list/events-list.component'
 import { MatLegacyPaginatorModule } from '@angular/material/legacy-paginator'
+import { EventResolverService } from './services/event-resolver'
+import { AddCompetencyComponent } from './dialogs/add-competency/add-competency.component'
+import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
+// import { MatTimepickerModule } from '@angular/material/timepicker';
 
 
 @NgModule({
@@ -47,7 +51,8 @@ import { MatLegacyPaginatorModule } from '@angular/material/legacy-paginator'
     BasicInfoComponent,
     AddSpeakersComponent,
     MaterialDetailsComponent,
-    EventsListComponent
+    EventsListComponent,
+    AddCompetencyComponent
   ],
   imports: [
     CommonModule,
@@ -62,6 +67,7 @@ import { MatLegacyPaginatorModule } from '@angular/material/legacy-paginator'
     MatInputModule,
     MatRadioModule,
     MatSelectModule,
+    MatLegacyCheckboxModule,
     Events2RoutingModule,
     MatCardModule,
     MatSnackBarModule,
@@ -72,10 +78,13 @@ import { MatLegacyPaginatorModule } from '@angular/material/legacy-paginator'
     // NgxMaterialTimepickerModule,
     MatFormFieldModule,
     MatDatepickerModule,
+
+
   ],
   providers: [
     DatePipe,
-    EventsService
+    EventsService,
+    EventResolverService
   ]
 })
 export class Events2Module { }

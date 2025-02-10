@@ -17,6 +17,7 @@ import { HttpErrorResponse } from '@angular/common/http'
 export class EventMaterialsComponent implements OnInit {
 
   @Input() materialsList: material[] = []
+  @Input() openMode = 'edit'
 
   userProfile: any
   filePath: any

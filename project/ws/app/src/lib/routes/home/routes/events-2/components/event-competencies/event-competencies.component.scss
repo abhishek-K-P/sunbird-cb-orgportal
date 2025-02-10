@@ -1,0 +1,158 @@
+.competency-details {
+
+  .title {
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 17.07px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+  }
+
+  .pill {
+    padding: 5px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16.8px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  .pill-active {
+    border: 1px solid rgba(27, 76, 161, 1);
+    background: rgba(27, 76, 161, 0.16);
+    color: rgba(27, 76, 161, 1);
+  }
+
+  .theme-behavioural {
+    background: rgba(248, 184, 97, 0.24);
+  }
+
+  .sub-theme-behavioural {
+    background: rgba(248, 184, 97, 0.12);
+  }
+
+  .theme-functional {
+    background: rgba(226, 69, 119, 0.24);
+  }
+
+  .sub-theme-functional {
+    background: rgba(226, 69, 119, 0.12);
+  }
+
+  .theme-domain {
+    background: rgba(130, 25, 211, 0.21);
+  }
+
+  .sub-theme-domain {
+    background: rgba(130, 25, 211, 0.12);
+  }
+
+  .bottom-border {
+    border-bottom: 1px solid #c3c3c3;
+  }
+
+  .theme {
+    padding: 6px 12px;
+    font-family: Montserrat;
+    font-size: 16px;
+    line-height: 19.5px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+  }
+
+  .no-events {
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16.8px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+  }
+
+  .area {
+    padding: 6px 10px;
+    font-family: Montserrat;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 19.5px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    border-radius: 4px;
+  }
+
+  .behavioural {
+    background: rgba(248, 184, 97, 0.4);
+    border-left: 4px solid rgba(243, 150, 47, 1);
+  }
+
+  .functional {
+    background: rgba(226, 69, 119, 0.4);
+    border-left: 4px solid rgba(161, 45, 82, 0.4);
+  }
+
+  .domain {
+    background: rgba(130, 25, 211, 0.4);
+    border-left: 4px solid rgba(68, 31, 95, 0.4);
+  }
+
+  .add-theme {
+    padding: 5px 16px;
+    border: 1px solid rgba(27, 76, 161, 1);
+    border-radius: 50px;
+    cursor: pointer;
+    color: rgba(27, 76, 161, 1);
+    font-family: Lato;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16.8px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+  }
+
+  .theme-header {
+    font-family: Helvetica Neue;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+  }
+
+}
+
+.filter-overlay-12 {
+  background: rgba(0, 0, 0, 0.6);
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  .filter-12 {
+    height: 95%;
+    border: 1px solid #ccc;
+    position: absolute;
+    right: 0;
+    background: #fff;
+    z-index: 10000 !important;
+    top: 0px;
+    overflow-y: auto;
+    width: 800px;
+    padding: 75px 24px 24px 24px;
+  }
+}

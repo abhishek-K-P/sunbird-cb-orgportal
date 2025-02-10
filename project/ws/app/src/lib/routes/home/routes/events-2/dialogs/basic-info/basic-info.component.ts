@@ -162,14 +162,14 @@ export class BasicInfoComponent implements OnInit {
             eventType: 'Online',
             registrationEndDate: '',
             owner: _.get(this.userProfile, 'departmentName', ''),
-            createdFor: createdforarray,
+            createdFor: createdforarray
           }
         }
       }
       this.eventSvc.createEvent(requestBody).subscribe({
         next: res => {
           if (res) {
-            this.dialogRef.close(res)
+            this.dialogRef.close(_.get(res, 'result.identifier', ''))
           }
         },
         error: (error: HttpErrorResponse) => {

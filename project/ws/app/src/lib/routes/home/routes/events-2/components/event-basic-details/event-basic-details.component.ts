@@ -11,6 +11,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
 
   //#region (global variables)
   @Input() eventDetails!: FormGroup
+  @Input() openMode = 'edit'
 
   evntCategorysList = ['Webinar', 'Karmayogi Talks', 'Karmayogi Saptah']
   todayDate = new Date()

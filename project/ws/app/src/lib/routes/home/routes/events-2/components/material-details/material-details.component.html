@@ -3,13 +3,16 @@
     <div class="pdfName">{{materialDetails?.fullName}}</div>
     <div class="flex gap-1">
       <mat-icon class="edit-icon flex items-center" (click)="openStatus(true)">edit</mat-icon>
-      <mat-icon class="edit-icon flex items-center" (click)="deleteMaterialFromList()">delete</mat-icon>
+      <ng-container *ngIf="openMode === 'edit'">
+        <mat-icon class="edit-icon flex items-center" (click)="deleteMaterialFromList()">delete</mat-icon>
+      </ng-container>
     </div>
   </div>
 </div>
 
 <div [ngClass]="{'hideElement': !openMaterial}" class="openCard flex flex-column gap-4 px-4 py-4">
-  <form [formGroup]="eventForm" class="flex flex-column gap-2 w-full event-form">
+  <form [formGroup]="eventForm" class="flex flex-column gap-2 w-full event-form"
+    [ngClass]="{'disableForm': openMode === 'view'}">
     <div class="form-lable required">
       Full Name
     </div>
@@ -35,8 +38,10 @@
 
   <div class="flex justify-center gap-4 mb-2">
     <button mat-button class="cancel-btn" (click)="openStatus(false)">Cancel</button>
-    <button mat-button class="save-btn" (click)="saveDetails()">{{materialDetails?.fullName ? 'Update' :
-      'Save'}}</button>
+    <ng-container *ngIf="openMode === 'edit'">
+      <button mat-button class="save-btn" (click)="saveDetails()">{{materialDetails?.fullName ? 'Update' :
+        'Save'}}</button>
+    </ng-container>
   </div>
 
 </div>

@@ -1,0 +1,76 @@
+:host ::ng-deep .mat-form-field-wrapper {
+  margin: 0 !important;
+  width: 760px;
+
+}
+
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+.add-competency-header {
+  font-family: Montserrat;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 19.5px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.themes-header {
+  font-family: Montserrat;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 17.07px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.themes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-themes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  font-family: Lato;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 14.4px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.active {
+  border: 1px solid rgba(27, 76, 161, 1);
+  color: rgba(27, 76, 161, 1);
+}
+
+.theme-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.see-more {
+  color: rgba(27, 76, 161, 1);
+  cursor: pointer;
+  text-decoration: underline !important;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+.content-section {
+  height: calc(100vh - 190px);
+  overflow: auto;
+}

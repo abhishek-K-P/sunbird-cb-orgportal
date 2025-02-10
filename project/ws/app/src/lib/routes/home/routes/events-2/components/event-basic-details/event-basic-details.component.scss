@@ -12,13 +12,34 @@
 
 .form-lable {
   /* stylelint-enable */
-    font: 700 14px Lato;
-    /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-disable */
+}
+
+.form-url-lable {
+  color: #1B4CA1;
+  /* stylelint-enable */
+  font: 600 14px Montserrat;
+  /* stylelint-disable */
 }
 
 .description-count {
   margin-top: -30px;
 }
+
+
+:host ::ng-deep .disableForm {
+  .mat-form-field-outline {
+    background-color: #ededed;
+  }
+
+  .disable-round {
+    .mat-form-field-outline {
+      border-radius: 20px;
+    }
+  }
+}
+
 
 :host ::ng-deep .event-form {
   .mat-form-field-appearance-outline .mat-form-field-infix {

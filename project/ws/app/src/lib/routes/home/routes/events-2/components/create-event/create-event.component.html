@@ -1,39 +1,41 @@
 <div class="w-full flex flex-column events">
   <div class="breadcrum flex items-center justify-between">
     <div class="flex gap-2 items-center">
-      <mat-icon class="back-arrow">arrow_back</mat-icon>
+      <mat-icon class="back-arrow" (click)="navigateBack()">arrow_back</mat-icon>
       <span class="event-text">Event</span>
       <mat-icon class="chevron-arrow">chevron_right</mat-icon>
       <span class="event-builder-text">Event Builder</span>
     </div>
     <div class="flex gap-4">
-      <button mat-raised-button class="flex justify-center items-center save-and-exit" (click)="saveAndExit()">Save
-        Draft & Exit</button>
+      <ng-container *ngIf="openMode === 'edit'">
+        <button mat-raised-button class="flex justify-center items-center save-and-exit" (click)="saveAndExit()">Save
+          Draft & Exit</button>
+      </ng-container>
       <button mat-raised-button class="flex justify-center items-center next-btn"
-        (click)="currentStepperIndex = currentStepperIndex + 1">Next</button>
+        (click)="moveToNextForm()">Next</button>
     </div>
   </div>
 
-  <mat-stepper labelPosition="bottom" [selectedIndex]="currentStepperIndex" (selectionChange)="onChange($event)"
-    class="mx-10" #stepper>
+  <mat-stepper labelPosition="bottom" [selectedIndex]="currentStepperIndex"
+    (selectionChange)="onSelectionChange($event)" class="mx-10" #stepper>
     <mat-step completed="true">
       <ng-template matStepLabel>Basic Details</ng-template>
-      <ws-app-event-basic-details [eventDetails]="eventDetails"></ws-app-event-basic-details>
+      <ws-app-event-basic-details [eventDetails]="eventDetailsForm" [openMode]="openMode"></ws-app-event-basic-details>
     </mat-step>
 
     <mat-step>
       <ng-template matStepLabel>Add Speaker</ng-template>
-      <ws-app-speakers [speakersList]="speakersList"></ws-app-speakers>
+      <ws-app-speakers [speakersList]="speakersList" [openMode]="openMode"></ws-app-speakers>
     </mat-step>
 
     <mat-step>
       <ng-template matStepLabel>Add Material</ng-template>
-      <ws-app-event-materials [materialsList]="materialsList"></ws-app-event-materials>
+      <ws-app-event-materials [materialsList]="materialsList" [openMode]="openMode"></ws-app-event-materials>
     </mat-step>
 
     <mat-step>
       <ng-template matStepLabel>Add Competency</ng-template>
-      <ws-app-event-competencies></ws-app-event-competencies>
+      <ws-app-event-competencies [openMode]="openMode"></ws-app-event-competencies>
     </mat-step>
   </mat-stepper>
 </div>

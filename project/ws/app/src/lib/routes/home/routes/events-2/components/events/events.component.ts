@@ -19,13 +19,15 @@ export class EventsComponent implements OnInit, OnDestroy {
   currentRoute = 'pending-approval'
   routeSubscription: Subscription = new Subscription()
   userProfile: any
+  pathUrl = ''
   //#endregion
 
   //#region (constructor)
   constructor(
     private router: Router,
     private dialog: MatDialog,
-    private activeRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private route: Router
   ) { }
 
   //#endregion
@@ -47,9 +49,10 @@ export class EventsComponent implements OnInit, OnDestroy {
         this.updateCurrentRoute()
       }
     })
-    if (_.get(this.activeRoute, 'snapshot.data.configService.userProfile')) {
-      this.userProfile = _.get(this.activeRoute, 'snapshot.data.configService.userProfile')
+    if (_.get(this.activatedRoute, 'snapshot.data.configService.userProfile')) {
+      this.userProfile = _.get(this.activatedRoute, 'snapshot.data.configService.userProfile')
     }
+    this.pathUrl = _.get(this.activatedRoute, 'snapshot.url[0].path', 'pending-approval')
   }
 
   updateCurrentRoute(): void {
@@ -64,8 +67,15 @@ export class EventsComponent implements OnInit, OnDestroy {
       data: this.userProfile,
     })
 
-    dialgRrf.afterClosed().subscribe((event: any) => {
-      if (event) { }
+    dialgRrf.afterClosed().subscribe((identifier: any) => {
+      if (identifier) {
+        this.route.navigate([`/app/home/events/edit-event`, identifier], {
+          queryParams: {
+            mode: 'edit',
+            pathUrl: this.pathUrl
+          }
+        })
+      }
     })
   }
 

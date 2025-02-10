@@ -11,6 +11,7 @@ import * as _ from 'lodash'
 export class MaterialDetailsComponent implements OnChanges {
   @Input() materialDetails: material | undefined
   @Input() openMaterial: boolean = false
+  @Input() openMode = 'edit'
   @Output() updatedMaterialDetails = new EventEmitter<material>()
   @Output() canCloseOrOpenMaterial = new EventEmitter<boolean>()
   @Output() currentMaterialSaveUpdate = new EventEmitter<boolean>()
@@ -47,6 +48,10 @@ export class MaterialDetailsComponent implements OnChanges {
             this.currentMaterialSaveUpdate.emit(this.currentMaterialSaved)
           }
         })
+
+        if (this.openMode === 'view') {
+          this.eventForm.disable()
+        }
       }
     }
   }

@@ -4,6 +4,7 @@ import { EventsComponent } from './components/events/events.component'
 import { CreateEventComponent } from './components/create-event/create-event.component'
 import { ConfigResolveService } from '../../resolvers/config-resolve.service'
 import { EventsListComponent } from './components/events-list/events-list.component'
+import { EventResolverService } from './services/event-resolver'
 
 const routes: Routes = [
   {
@@ -80,6 +81,7 @@ const routes: Routes = [
     component: CreateEventComponent,
     resolve: {
       configService: ConfigResolveService,
+      eventDetails: EventResolverService
     },
   }
 ]
