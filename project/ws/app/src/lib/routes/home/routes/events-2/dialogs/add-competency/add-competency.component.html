@@ -12,7 +12,7 @@
     <div class="mt-4 flex justify-between px-5">
       <div class="form-controls mat-full-radius w-full">
         <mat-form-field appearance="outline">
-          <input matInput placeholder="Type here to search..." [formControl]="searchControl" maxlength="70">
+          <input matInput placeholder="Type here to search themes" [formControl]="searchControl" maxlength="70">
         </mat-form-field>
       </div>
     </div>
@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <div class="mt-8 px-5">
+    <!-- <div class="mt-8 px-5">
       <div class="themes-header">Add Sub Themes</div>
       <div class="themes-container mt-4">
         <ng-container *ngFor="let subTheme of filteredSubThemes; let i = index">
@@ -43,6 +43,23 @@
           </div>
         </ng-container>
         <a (click)="toggleSubThemes()" class="see-more">{{subThemesShowMore ?'See Less' : 'See More'}}</a>
+      </div>
+    </div> -->
+
+    <div class="mt-8 px-5">
+      <div class="themes-header">Add Sub Themes</div>
+      <ng-container *ngFor="let selectedTheme of selectedThemesList "></ng-container>
+      <div class="themes-container mt-4">
+        <div class="themes-header">{{selectedTheme.name}}</div>
+        <ng-container *ngFor="let subTheme of selectedTheme.associations; let i = index">
+          <div class="chip-themes {{subTheme.checked ? 'active' : ''}}" (click)="selectSubTheme(i, theme)">
+            <label class="theme-name">
+              {{ subTheme.name }}
+              <mat-checkbox [checked]="subTheme?.selected" (click)="$event.preventDefault()"></mat-checkbox>
+            </label>
+          </div>
+        </ng-container>
+        <!-- <a (click)="toggleSubThemes()" class="see-more">{{subThemesShowMore ?'See Less' : 'See More'}}</a> -->
       </div>
     </div>
   </div>

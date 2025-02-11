@@ -14,16 +14,16 @@ import * as _ from 'lodash'
 export class AddCompetencyComponent implements OnInit {
   searchControl!: FormControl
   themesShowMore = false
-  subThemesShowMore = false
+  // subThemesShowMore = false
   filteredThemes: any[] = []
-  filteredSubThemes: any[] = []
+  // filteredSubThemes: any[] = []
   limitToShow = 4
 
   comptencyAreasList: any[] = []
   validThemesList: any[] = []
-  validSubThemesList: any[] = []
+  // validSubThemesList: any[] = []
   selectedThemesList: any[] = []
-  selectedSubThemesList: any[] = []
+  // selectedSubThemesList: any[] = []
   constructor(
     private dialogRef: MatLegacyDialogRef<AddCompetencyComponent>,
     @Inject(MAT_LEGACY_DIALOG_DATA) private competencies: any[],
@@ -36,7 +36,7 @@ export class AddCompetencyComponent implements OnInit {
       debounceTime(500)
     ).subscribe(() => {
       this.setFilteredThemes()
-      this.setFilteredSubThemes()
+      // this.setFilteredSubThemes()
     })
 
     this.getFrameWorkDetails()
@@ -65,19 +65,18 @@ export class AddCompetencyComponent implements OnInit {
 
       let filteredThemes = themes.terms
         .filter((theme: any) => theme.associations && theme.associations.length > 0)
-        .map((theme: any, themeIndex: number) => {
+        .map((theme: any) => {
           const filteredAssociations = this.filterDuplicates(theme.associations, 'identifier')
-          filteredAssociations.forEach((subtheme: any) => {
-            subtheme['themeIndex'] = themeIndex
-            subtheme['themeIdentifier'] = theme.identifier
-            if (this.competencies && this.competencies.find((competency) => competency.competencySubThemeIdentifier === subtheme.identifier)) {
-              subtheme['selected'] = true
-              this.selectedSubThemesList.push(theme)
-            }
-          })
+          theme['selectedSubThemes'] = []
           if (this.competencies && this.competencies.find((competency) => competency.competencyThemeIdentifier === theme.identifier)) {
             theme['selected'] = true
             this.selectedThemesList.push(theme)
+            filteredAssociations.forEach((subtheme: any) => {
+              if (this.competencies && this.competencies.find((competency) => competency.competencySubThemeIdentifier === subtheme.identifier)) {
+                subtheme['selected'] = true
+                theme['selectedSubThemes'].push(subtheme)
+              }
+            })
           }
 
           return {
