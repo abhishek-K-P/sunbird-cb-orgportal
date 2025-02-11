@@ -19,15 +19,15 @@
     <div class="mt-4 px-5">
       <div class="themes-header">Themes</div>
       <div class="themes-container mt-4">
-        <ng-container *ngFor="let theme of filterThemes; let i = index">
-          <div class="chip-themes {{theme.checked ? 'active' : ''}}">
-            <label class="theme-name">
-              {{ theme.label }}
-              <mat-checkbox [(ngModel)]="theme.checked"></mat-checkbox>
+        <ng-container *ngFor="let theme of filteredThemes; let i = index">
+          <div class="chip-themes {{theme.checked ? 'active' : ''}}" (click)="selectTheme(i)">
+            <label class="theme-name mr-2">
+              {{ theme.name }}
             </label>
+            <mat-checkbox [checked]="theme?.selected" (click)="$event.preventDefault()"></mat-checkbox>
           </div>
         </ng-container>
-        <a (click)="toggleThemes()" class="see-more">{{themesShowMore ? 'See More' : 'See Less'}}</a>
+        <a (click)="toggleThemes()" class="see-more">{{themesShowMore ? 'See Less' : 'See More'}}</a>
       </div>
     </div>
 
@@ -35,14 +35,14 @@
       <div class="themes-header">Add Sub Themes</div>
       <div class="themes-container mt-4">
         <ng-container *ngFor="let subTheme of filteredSubThemes; let i = index">
-          <div class="chip-themes {{subTheme.checked ? 'active' : ''}}">
+          <div class="chip-themes {{subTheme.checked ? 'active' : ''}}" (click)="selectSubTheme(i)">
             <label class="theme-name">
-              {{ subTheme.label }}
-              <mat-checkbox [(ngModel)]="subTheme.checked"></mat-checkbox>
+              {{ subTheme.name }}
+              <mat-checkbox [checked]="subTheme?.selected" (click)="$event.preventDefault()"></mat-checkbox>
             </label>
           </div>
         </ng-container>
-        <a (click)="toggleSubThemes()" class="see-more">{{subThemesShowMore ? 'See More' : 'See Less'}}</a>
+        <a (click)="toggleSubThemes()" class="see-more">{{subThemesShowMore ?'See Less' : 'See More'}}</a>
       </div>
     </div>
   </div>

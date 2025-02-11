@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, Inject, OnInit } from '@angular/core'
 import { FormControl } from '@angular/forms'
 import { ProfileV2Service } from '../../../../services/home.servive'
-import { MatLegacyDialogRef } from '@angular/material/legacy-dialog'
+import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog'
 import { debounceTime } from 'rxjs/operators'
 import * as _ from 'lodash'
 
@@ -13,19 +13,20 @@ import * as _ from 'lodash'
 
 export class AddCompetencyComponent implements OnInit {
   searchControl!: FormControl
-  themes: any[] = []
   themesShowMore = false
   subThemesShowMore = false
-  subThemes: any[] = []
-  filterThemes: any[] = []
+  filteredThemes: any[] = []
   filteredSubThemes: any[] = []
   limitToShow = 4
 
   comptencyAreasList: any[] = []
   validThemesList: any[] = []
   validSubThemesList: any[] = []
+  selectedThemesList: any[] = []
+  selectedSubThemesList: any[] = []
   constructor(
     private dialogRef: MatLegacyDialogRef<AddCompetencyComponent>,
+    @Inject(MAT_LEGACY_DIALOG_DATA) private competencies: any[],
     private homeService: ProfileV2Service
   ) { }
 
@@ -33,8 +34,9 @@ export class AddCompetencyComponent implements OnInit {
     this.searchControl = new FormControl('')
     this.searchControl.valueChanges.pipe(
       debounceTime(500)
-    ).subscribe((serachKey: string) => {
-      console.log(serachKey)
+    ).subscribe(() => {
+      this.setFilteredThemes()
+      this.setFilteredSubThemes()
     })
 
     this.getFrameWorkDetails()
@@ -67,7 +69,16 @@ export class AddCompetencyComponent implements OnInit {
           const filteredAssociations = this.filterDuplicates(theme.associations, 'identifier')
           filteredAssociations.forEach((subtheme: any) => {
             subtheme['themeIndex'] = themeIndex
+            subtheme['themeIdentifier'] = theme.identifier
+            if (this.competencies && this.competencies.find((competency) => competency.competencySubThemeIdentifier === subtheme.identifier)) {
+              subtheme['selected'] = true
+              this.selectedSubThemesList.push(theme)
+            }
           })
+          if (this.competencies && this.competencies.find((competency) => competency.competencyThemeIdentifier === theme.identifier)) {
+            theme['selected'] = true
+            this.selectedThemesList.push(theme)
+          }
 
           return {
             ...theme,
@@ -99,6 +110,9 @@ export class AddCompetencyComponent implements OnInit {
           return self.findIndex(s => s.identifier === subtheme.identifier) === index
         })
     }
+
+    this.setFilteredThemes()
+    this.setFilteredSubThemes()
   }
 
   filterDuplicates(items: any[], key: string) {
@@ -112,55 +126,72 @@ export class AddCompetencyComponent implements OnInit {
     })
   }
 
-  setFilteredThemes(searchKey = '') {
+  setFilteredThemes() {
+    const searchKey = this.searchControl.value.toLowerCase() || ''
     if (this.validThemesList) {
-      let filteredList = this.validThemesList.filter((theme: any) => theme.name.includes(searchKey))
-      this.filterThemes = filteredList ? filteredList.slice(0, this.limitToShow) : []
+      let filteredList = this.validThemesList.filter((theme: any) => theme.name.toLowerCase().includes(searchKey))
+      if (!this.themesShowMore) {
+        this.filteredThemes = filteredList ? filteredList.slice(0, this.limitToShow) : []
+      } else {
+        this.filteredThemes = filteredList
+      }
     }
   }
 
-  setFilteredSubThemes(searchKey = '') {
+  setFilteredSubThemes() {
+    const searchKey = this.searchControl.value.toLowerCase() || ''
     if (this.validSubThemesList) {
-      let filteredList = this.validSubThemesList.filter((theme: any) => theme.name.includes(searchKey))
-      this.filteredSubThemes = filteredList ? filteredList.slice(0, this.limitToShow) : []
-    }
-  }
-
-  visibleThemes() {
-    if (this.validThemesList.length > 4) {
-      this.filterThemes = this.validThemesList.slice(0, this.limitToShow)
-      this.themesShowMore = true
-    } else {
-      this.filterThemes = this.validThemesList
-      this.themesShowMore = false
-    }
-  }
-
-  visibleSubThemes() {
-    if (this.subThemes.length > 4) {
-      this.filteredSubThemes = this.subThemes.slice(0, this.limitToShow)
-      this.subThemesShowMore = true
-    } else {
-      this.filteredSubThemes = this.subThemes
-      this.subThemesShowMore = false
+      let filteredList = this.validSubThemesList.filter((theme: any) => theme.name.toLowerCase().includes(searchKey))
+      if (!this.subThemesShowMore) {
+        this.filteredSubThemes = filteredList ? filteredList.slice(0, this.limitToShow) : []
+      } else {
+        this.filteredSubThemes = filteredList
+      }
     }
   }
 
   toggleThemes() {
     this.themesShowMore = !this.themesShowMore
-    if (!this.themesShowMore) {
-      this.filterThemes = this.validThemesList
-    } else {
-      this.filterThemes = this.validThemesList.slice(0, this.limitToShow)
-    }
+    this.setFilteredThemes()
   }
 
   toggleSubThemes() {
     this.subThemesShowMore = !this.subThemesShowMore
-    if (!this.subThemesShowMore) {
-      this.filteredSubThemes = this.subThemes
-    } else {
-      this.filteredSubThemes = this.subThemes.slice(0, this.limitToShow)
+    this.setFilteredSubThemes()
+  }
+
+  selectTheme(index: number) {
+    const currentTheme = this.filteredThemes[index]
+    if (currentTheme) {
+      const checked = currentTheme['selected'] !== true ? true : false
+      currentTheme['selected'] = checked
+      if (checked) {
+        this.selectedThemesList.push(currentTheme)
+      } else {
+        this.selectedThemesList = this.selectedThemesList.filter((selectedTheme) => selectedTheme.identifier !== currentTheme.identifier)
+        const selectedSubThemes: any = []
+        this.selectedSubThemesList.forEach((selectedSubTheme) => {
+          if (selectedSubTheme.themeIdentifier === currentTheme.identifier) {
+            selectedSubTheme['selected'] = false
+          } else {
+            selectedSubThemes.push(selectedSubTheme)
+          }
+        })
+        this.selectedSubThemesList = selectedSubThemes
+      }
+    }
+  }
+
+  selectSubTheme(index: number) {
+    const currentSubTheme = this.filteredSubThemes[index]
+    if (currentSubTheme) {
+      const checked = currentSubTheme['selected'] !== true ? true : false
+      currentSubTheme['selected'] = checked
+      if (checked) {
+        this.selectedSubThemesList.push(currentSubTheme)
+      } else {
+        this.selectedSubThemesList = this.selectedSubThemesList.filter((selectedSubTheme) => selectedSubTheme.identifier !== currentSubTheme.identifier)
+      }
     }
   }
 
