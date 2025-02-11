@@ -338,7 +338,7 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
     if (this.getSortOrderValue && this.currentFilter === 'profileverification') {
       this.fetchApprovals(this.getSortOrderValue)
     } else if (this.currentFilter === 'transfers') {
-      this.fetchTransfers(1)
+      this.fetchTransfers(this.limit)
     }
     // this.data.filter((user: any) => enterValue.includes(user.userInfo.first_name))
     if (this.currentFilter === 'profileverification') {
