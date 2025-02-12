@@ -1,12 +1,12 @@
-<div class="competency-details px-4 flex-grow">
+<div class="competency-details flex-grow">
   <div class="mt-4 flex justify-between">
     <div class="title">Add Competency</div>
-    <div class="add-theme" (click)="showSearch()">Add Competency</div>
+    <div class="add-theme" (click)="showAddCompetencyDialog()">Add Competency</div>
   </div>
   <div class="add-theme-sec mt-4" *ngIf="competencies?.length">
     <div class="" *ngFor="let competency of competencies, let index=c">
       <div class="mb-4">
-        <div class="flex area {{competency.competencyAreaName.toLocaleLowerCase()}} justify-between w-full">
+        <div class="flex area {{competency.competencyAreaName.toLocaleLowerCase()}} justify-between">
           <div class="flex">
             <div class="flex gap-2 items-center">
               <mat-icon class="cursor-pointer" *ngIf="competency?.collapsed"
@@ -21,9 +21,9 @@
           </div>
         </div>
         <ng-container *ngIf="competency?.themes?.length">
-          <div *ngFor="let theme of competency.themes, let i=index">
+          <div class="themes-card" *ngFor="let theme of competency.themes, let i=index">
             <div
-              class="w-full flex font-medium theme theme-{{competency.competencyAreaName.toLocaleLowerCase()}} justify-between bottom-border"
+              class="flex font-medium theme theme-{{competency.competencyAreaName.toLocaleLowerCase()}} justify-between bottom-border"
               *ngIf="competency?.collapsed">
               <div class="flex ">
                 <div class="flex pl-4">
@@ -44,7 +44,7 @@
             <ng-container *ngIf="theme?.subThems?.length">
               <div *ngFor="let subTheme of theme.subThems, let j=index">
                 <div
-                  class="w-full flex theme sub-theme-{{competency.competencyAreaName.toLocaleLowerCase()}} justify-between bottom-border"
+                  class="flex theme sub-theme-{{competency.competencyAreaName.toLocaleLowerCase()}} justify-between bottom-border"
                   *ngIf="theme?.collapsed && competency?.collapsed">
                   <div class="flex pl-10">
                     <div class="flex">

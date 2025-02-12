@@ -14,16 +14,13 @@ import * as _ from 'lodash'
 export class AddCompetencyComponent implements OnInit {
   searchControl!: FormControl
   themesShowMore = false
-  // subThemesShowMore = false
   filteredThemes: any[] = []
-  // filteredSubThemes: any[] = []
   limitToShow = 4
 
   comptencyAreasList: any[] = []
   validThemesList: any[] = []
-  // validSubThemesList: any[] = []
   selectedThemesList: any[] = []
-  // selectedSubThemesList: any[] = []
+  preSelectedThemesCount = 0
   constructor(
     private dialogRef: MatLegacyDialogRef<AddCompetencyComponent>,
     @Inject(MAT_LEGACY_DIALOG_DATA) private competencies: any[],
@@ -36,7 +33,6 @@ export class AddCompetencyComponent implements OnInit {
       debounceTime(500)
     ).subscribe(() => {
       this.setFilteredThemes()
-      // this.setFilteredSubThemes()
     })
 
     this.getFrameWorkDetails()
@@ -63,20 +59,40 @@ export class AddCompetencyComponent implements OnInit {
 
       if (!themes || !themes.terms) return
 
-      let filteredThemes = themes.terms
+      let notSelectedThemes: any[] = []
+      let sortedThemes: any = []
+
+      themes.terms
         .filter((theme: any) => theme.associations && theme.associations.length > 0)
         .map((theme: any) => {
           const filteredAssociations = this.filterDuplicates(theme.associations, 'identifier')
           theme['selectedSubThemes'] = []
-          if (this.competencies && this.competencies.find((competency) => competency.competencyThemeIdentifier === theme.identifier)) {
-            theme['selected'] = true
-            this.selectedThemesList.push(theme)
-            filteredAssociations.forEach((subtheme: any) => {
-              if (this.competencies && this.competencies.find((competency) => competency.competencySubThemeIdentifier === subtheme.identifier)) {
-                subtheme['selected'] = true
-                theme['selectedSubThemes'].push(subtheme)
+          if (this.competencies) {
+            this.competencies.forEach((competencyArea: any) => {
+              if (competencyArea.themes) {
+                const selctedTheme = competencyArea.themes.find((_selctedThem: any) => _selctedThem.competencyThemeIdentifier === theme.identifier)
+                if (selctedTheme) {
+                  theme['selected'] = true
+                  theme['preSelected'] = true
+                  const sortedAssociations: any[] = []
+                  filteredAssociations.forEach((subtheme: any) => {
+                    if (selctedTheme.subThems && selctedTheme.subThems.find((selectedSubTheme: any) => selectedSubTheme.competencySubThemeIdentifier === subtheme.identifier)) {
+                      subtheme['selected'] = true
+                      subtheme['preSelected'] = true
+                      theme['selectedSubThemes'].push(subtheme)
+                      sortedAssociations.unshift(subtheme)
+                    } else {
+                      sortedAssociations.push(subtheme)
+                    }
+                  })
+                  theme['associations'] = sortedAssociations
+                  this.selectedThemesList.push(theme)
+                }
               }
             })
+          }
+          if (theme['selected'] !== true) {
+            notSelectedThemes.push(theme)
           }
 
           return {
@@ -85,40 +101,36 @@ export class AddCompetencyComponent implements OnInit {
           }
         })
 
-      const competencyRefIdMap = new Map<string, any>()
-      this.comptencyAreasList.forEach((competency: any) => {
-        competency.associations.forEach((competencyThemes: any) => {
-          competencyRefIdMap.set(competencyThemes.refId, competencyThemes)
-        })
-      })
-      filteredThemes.forEach((theme: any) => {
-        theme.associations.forEach((subtheme: any) => {
-          const competencyThemes = competencyRefIdMap.get(subtheme.refId)
-          if (competencyThemes) {
-            subtheme.competencyRefId = competencyThemes.refId
-          }
-        })
+      const competencyIndexMap: Map<string, number> = new Map()
+      this.comptencyAreasList.forEach((competency, index) => {
+        if (competency['associations']) {
+          competency['associations'].forEach((association: any) => {
+            competencyIndexMap.set(association.identifier, index)
+          })
+        }
       })
 
-      this.validThemesList = filteredThemes
-      this.validSubThemesList = filteredThemes
-        .reduce((acc: any[], theme: any) => {
-          return [...acc, ...theme.associations]
-        }, [])
-        .filter((subtheme: any, index: number, self: any[]) => {
-          return self.findIndex(s => s.identifier === subtheme.identifier) === index
-        })
+      this.preSelectedThemesCount = this.selectedThemesList.length
+
+      sortedThemes = [...this.selectedThemesList, ...notSelectedThemes]
+
+      sortedThemes.forEach((theme: any) => {
+        const competencyIndex = competencyIndexMap.get(theme.identifier)
+        if (competencyIndex !== undefined) {
+          theme['competency_index'] = competencyIndex
+        }
+      })
+      this.validThemesList = sortedThemes
     }
 
     this.setFilteredThemes()
-    this.setFilteredSubThemes()
   }
 
   filterDuplicates(items: any[], key: string) {
     const seen = new Set()
     return items.filter((item) => {
       if (seen.has(item[key])) {
-        return false  // Duplicate found
+        return false
       }
       seen.add(item[key])
       return true
@@ -130,21 +142,10 @@ export class AddCompetencyComponent implements OnInit {
     if (this.validThemesList) {
       let filteredList = this.validThemesList.filter((theme: any) => theme.name.toLowerCase().includes(searchKey))
       if (!this.themesShowMore) {
-        this.filteredThemes = filteredList ? filteredList.slice(0, this.limitToShow) : []
+        const limitToSlice = this.preSelectedThemesCount + this.limitToShow
+        this.filteredThemes = filteredList ? filteredList.slice(0, limitToSlice) : []
       } else {
         this.filteredThemes = filteredList
-      }
-    }
-  }
-
-  setFilteredSubThemes() {
-    const searchKey = this.searchControl.value.toLowerCase() || ''
-    if (this.validSubThemesList) {
-      let filteredList = this.validSubThemesList.filter((theme: any) => theme.name.toLowerCase().includes(searchKey))
-      if (!this.subThemesShowMore) {
-        this.filteredSubThemes = filteredList ? filteredList.slice(0, this.limitToShow) : []
-      } else {
-        this.filteredSubThemes = filteredList
       }
     }
   }
@@ -154,44 +155,83 @@ export class AddCompetencyComponent implements OnInit {
     this.setFilteredThemes()
   }
 
-  toggleSubThemes() {
-    this.subThemesShowMore = !this.subThemesShowMore
-    this.setFilteredSubThemes()
-  }
-
   selectTheme(index: number) {
     const currentTheme = this.filteredThemes[index]
     if (currentTheme) {
       const checked = currentTheme['selected'] !== true ? true : false
       currentTheme['selected'] = checked
       if (checked) {
-        this.selectedThemesList.push(currentTheme)
+        this.selectedThemesList.unshift(currentTheme)
       } else {
         this.selectedThemesList = this.selectedThemesList.filter((selectedTheme) => selectedTheme.identifier !== currentTheme.identifier)
-        const selectedSubThemes: any = []
-        this.selectedSubThemesList.forEach((selectedSubTheme) => {
-          if (selectedSubTheme.themeIdentifier === currentTheme.identifier) {
-            selectedSubTheme['selected'] = false
-          } else {
-            selectedSubThemes.push(selectedSubTheme)
-          }
-        })
-        this.selectedSubThemesList = selectedSubThemes
+        if (currentTheme.selectedSubThemes) {
+          currentTheme.selectedSubThemes.forEach((subThem: any) => {
+            subThem['selected'] = false // as it contains reference from root object false will be added to root object
+          })
+        }
+        currentTheme.selectedSubThemes = []
       }
     }
   }
 
-  selectSubTheme(index: number) {
-    const currentSubTheme = this.filteredSubThemes[index]
+  selectSubTheme(currentSubTheme: any, theme: any) {
     if (currentSubTheme) {
       const checked = currentSubTheme['selected'] !== true ? true : false
       currentSubTheme['selected'] = checked
       if (checked) {
-        this.selectedSubThemesList.push(currentSubTheme)
+        theme.selectedSubThemes.push(currentSubTheme)
       } else {
-        this.selectedSubThemesList = this.selectedSubThemesList.filter((selectedSubTheme) => selectedSubTheme.identifier !== currentSubTheme.identifier)
+        theme.selectedSubThemes = theme.selectedSubThemes.filter((selectedSubTheme: any) => selectedSubTheme.identifier !== currentSubTheme.identifier)
       }
     }
+  }
+
+  get canAddCompetencies(): boolean {
+    if (!this.selectedThemesList || (
+      this.selectedThemesList &&
+      !this.selectedThemesList.find((selectedThem: any) => (selectedThem.selectedSubThemes && selectedThem.selectedSubThemes.length > 0)))) {
+      return false
+    }
+    return true
+  }
+
+  saveCompetencies() {
+    const competencies = this.generateCompetencies()
+    this.dialogRef.close(competencies)
+  }
+
+  generateCompetencies(): any[] {
+    let competenciesList: any[] = []
+    if (this.selectedThemesList && this.comptencyAreasList) {
+      this.selectedThemesList.forEach((selctedThem: any) => {
+        const competencyAreaDetails = this.comptencyAreasList[selctedThem.competency_index]
+        if (selctedThem.selectedSubThemes && competencyAreaDetails) {
+          selctedThem.selectedSubThemes.forEach((subThem: any) => {
+            const competencyDetails = {
+              competencyAreaDescription: competencyAreaDetails.description,
+              competencyAreaIdentifier: competencyAreaDetails.identifier,
+              competencyAreaName: competencyAreaDetails.name,
+              competencyAreaRefId: competencyAreaDetails.refId,
+
+              competencyThemeDescription: selctedThem.description,
+              competencyThemeIdentifier: selctedThem.identifier,
+              competencyThemeName: selctedThem.name,
+              competencyThemeRefId: selctedThem.refId,
+              competencyThemeType: 'Theme',
+              competencyThemeAdditionalProperties: selctedThem.additionalProperties,
+
+              competencySubThemeDescription: subThem.description,
+              competencySubThemeIdentifier: subThem.identifier,
+              competencySubThemeName: subThem.name,
+              competencySubThemeRefId: subThem.refId,
+              competencySubThemeAdditionalProperties: subThem.additionalProperties
+            }
+            competenciesList.push(competencyDetails)
+          })
+        }
+      })
+    }
+    return competenciesList
   }
 
   closeDialog() {

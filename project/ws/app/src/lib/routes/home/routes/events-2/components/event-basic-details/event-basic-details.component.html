@@ -104,12 +104,12 @@
     </div>
     <div class="flex flex-column gap-2 event-form w-full disable-round">
       <div class="form-lable required">
-        Start Time
+        End Time
       </div>
       <mat-form-field appearance="outline" class="">
         <input matInput placeholder="Enter End Time" formControlName="endTime">
         <mat-error *ngIf="showValidationMsg('endTime','required')">
-          start time is mandatory
+          end time is mandatory
         </mat-error>
       </mat-form-field>
     </div>

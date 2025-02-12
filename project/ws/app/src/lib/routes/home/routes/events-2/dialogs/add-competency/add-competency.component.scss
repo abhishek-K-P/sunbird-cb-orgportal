@@ -8,9 +8,9 @@
   padding-bottom: 0 !important;
 }
 .add-competency-header {
-  font-family: Montserrat;
-  font-size: 16px;
-  font-weight: 600;
+  /* stylelint-enable */
+  font: 600 16px Montserrat;
+  /* stylelint-disable */
   line-height: 19.5px;
   text-align: left;
   text-underline-position: from-font;
@@ -19,9 +19,9 @@
 }
 
 .themes-header {
-  font-family: Montserrat;
-  font-size: 14px;
-  font-weight: 600;
+  /* stylelint-enable */
+  font: 600 14px Montserrat;
+  /* stylelint-disable */
   line-height: 17.07px;
   text-align: left;
   text-underline-position: from-font;
@@ -34,6 +34,12 @@
   gap: 8px;
 }
 
+.disableChip {
+  background-color: #d6d6d6;
+  cursor: default !important;
+  pointer-events: none;
+}
+
 .chip-themes {
   display: flex;
   align-items: center;
@@ -41,9 +47,9 @@
   padding: 8px 16px;
   border: 1px solid #ccc;
   border-radius: 16px;
-  font-family: Lato;
-  font-size: 12px;
-  font-weight: 400;
+  /* stylelint-enable */
+  font: 400 12px Lato;
+  /* stylelint-disable */
   line-height: 14.4px;
   text-align: left;
   text-underline-position: from-font;
@@ -74,4 +80,35 @@
 .content-section {
   height: calc(100vh - 190px);
   overflow: auto;
+}
+
+.cancel-btn {
+  border: 1px solid #1B4CA1;
+  border-radius: 17px;
+  height: 32px;
+  width: 74px;
+  /* stylelint-enable */
+  font: 700 14px Lato;
+  /* stylelint-disable */
+  color: #1B4CA1 !important;
+}
+
+.disableAdd {
+  background-color: #999999 !important;
+  cursor: unset;
+  pointer-events: none;
+}
+
+.enable-btn {
+  background-color: #1B4CA1 !important;
+}
+
+.add-btn {
+  height: 32px;
+  width: 60px;
+  border-radius: 17px;
+  color: #FFFFFF !important;
+  /* stylelint-enable */
+  font: 700 14px Lato;
+  /* stylelint-disable */
 }

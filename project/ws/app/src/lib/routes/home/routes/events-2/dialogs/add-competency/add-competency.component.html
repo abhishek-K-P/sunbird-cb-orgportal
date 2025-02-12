@@ -20,58 +20,48 @@
       <div class="themes-header">Themes</div>
       <div class="themes-container mt-4">
         <ng-container *ngFor="let theme of filteredThemes; let i = index">
-          <div class="chip-themes {{theme.checked ? 'active' : ''}}" (click)="selectTheme(i)">
+          <div [ngClass]="{'disableChip': theme?.preSelected}" class="chip-themes {{theme.checked ? 'active' : ''}}"
+            (click)="selectTheme(i)">
             <label class="theme-name mr-2">
               {{ theme.name }}
             </label>
-            <mat-checkbox [checked]="theme?.selected" (click)="$event.preventDefault()"></mat-checkbox>
+            <mat-checkbox [checked]="theme?.selected" (click)="$event.preventDefault()"
+              [disabled]="theme?.preSelected"></mat-checkbox>
           </div>
         </ng-container>
         <a (click)="toggleThemes()" class="see-more">{{themesShowMore ? 'See Less' : 'See More'}}</a>
       </div>
     </div>
-
-    <!-- <div class="mt-8 px-5">
-      <div class="themes-header">Add Sub Themes</div>
-      <div class="themes-container mt-4">
-        <ng-container *ngFor="let subTheme of filteredSubThemes; let i = index">
-          <div class="chip-themes {{subTheme.checked ? 'active' : ''}}" (click)="selectSubTheme(i)">
-            <label class="theme-name">
-              {{ subTheme.name }}
-              <mat-checkbox [checked]="subTheme?.selected" (click)="$event.preventDefault()"></mat-checkbox>
-            </label>
+    <ng-container *ngIf="selectedThemesList?.length">
+      <div class="mt-8 px-5">
+        <div class="themes-header">Add Sub Themes</div>
+        <ng-container *ngFor="let selectedTheme of selectedThemesList ">
+          <div class="themes-header mt-5">{{selectedTheme.name}}</div>
+          <div class="themes-container mt-2">
+            <ng-container *ngFor="let subTheme of selectedTheme.associations; let i = index">
+              <div [ngClass]="{'disableChip': subTheme?.preSelected}"
+                class="chip-themes {{subTheme.checked ? 'active' : ''}}"
+                (click)="selectSubTheme(subTheme, selectedTheme)">
+                <label class="theme-name">
+                  {{ subTheme.name }}
+                  <mat-checkbox [checked]="subTheme?.selected" (click)="$event.preventDefault()"
+                    [disabled]="subTheme?.preSelected"></mat-checkbox>
+                </label>
+              </div>
+            </ng-container>
           </div>
         </ng-container>
-        <a (click)="toggleSubThemes()" class="see-more">{{subThemesShowMore ?'See Less' : 'See More'}}</a>
       </div>
-    </div> -->
-
-    <div class="mt-8 px-5">
-      <div class="themes-header">Add Sub Themes</div>
-      <ng-container *ngFor="let selectedTheme of selectedThemesList "></ng-container>
-      <div class="themes-container mt-4">
-        <div class="themes-header">{{selectedTheme.name}}</div>
-        <ng-container *ngFor="let subTheme of selectedTheme.associations; let i = index">
-          <div class="chip-themes {{subTheme.checked ? 'active' : ''}}" (click)="selectSubTheme(i, theme)">
-            <label class="theme-name">
-              {{ subTheme.name }}
-              <mat-checkbox [checked]="subTheme?.selected" (click)="$event.preventDefault()"></mat-checkbox>
-            </label>
-          </div>
-        </ng-container>
-        <!-- <a (click)="toggleSubThemes()" class="see-more">{{subThemesShowMore ?'See Less' : 'See More'}}</a> -->
-      </div>
-    </div>
+    </ng-container>
   </div>
   <hr class="mt-4">
   <div class="footer-section flex justify-end px-5 mt-4">
     <div class="flex gap-4 action-buttons-cfq">
-      <button mat-flat-button (click)="closeDialog()"
-        class="rounded-full mat-flat-button px-4 py-2 font-bold text-sm mat-btn-outline font-bold text-sm cursor-pointer">
+      <button mat-button (click)="closeDialog()" class="cancel-btn cursor-pointer">
         Cancel
       </button>
-      <button mat-flat-button
-        class="flex items-center rounded-full px-4 py-2 new-bg-color font-bold text-sm text-white cursor-pointer">
+      <button [ngClass]="{'disableAdd' : !canAddCompetencies, 'enable-btn' : canAddCompetencies}"
+        class="flex items-center cursor-pointer add-btn" (click)="saveCompetencies()" mat-button>
         Add
       </button>
     </div>
