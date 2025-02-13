@@ -9,9 +9,9 @@
   }
 
   .event-text {
-    /* stylelint-enable */
-    font: 400 14px Lato;
     /* stylelint-disable */
+    font: 400 14px Lato;
+    /* stylelint-enable */
   }
 
   .chevron-arrow {
@@ -19,9 +19,9 @@
   }
 
   .event-builder-text {
-    /* stylelint-enable */
-    font: 700 14px Lato;
     /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
     color: #1B4CA1;
   }
 
@@ -31,9 +31,9 @@
     border-radius: 17px;
     border: 1px solid #1B4CA1;
     color: #1B4CA1 !important;
-    /* stylelint-enable */
-    font: 700 14px Lato;
     /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
   }
 
   .next-btn {
@@ -42,31 +42,42 @@
     border-radius: 17px;
     background-color: #1B4CA1 !important;
     color: #FFFFFF !important;
-    /* stylelint-enable */
-    font: 700 14px Lato;
     /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+
+  .publish-btn {
+    height: 32px;
+    border-radius: 17px;
+    background-color: #1B4CA1 !important;
+    color: #FFFFFF !important;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+    padding: 0px 10px;
   }
 }
 
 :host ::ng-deep .events {
+  .mat-stepper-label-position-bottom .mat-horizontal-stepper-header-container {
+    width: calc(100% - 400px);
+    min-width: 800px;
+    align-self: center;
+  }
   .mat-step-icon {
     width: 25px;
     height: 25px;
     border-radius: 12.5px;
     color: #FFFFFF;
-    // background-color: #96ADD4!important;
-    /* stylelint-enable */
-    font: 700 14px Lato;
     /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
   }
 
   .mat-step-icon-selected {
     background-color: #F3962F!important;
   }
-
-  // .mat-step-icon-active {
-  //   background-color: #F3962F!important; /* Active color */
-  // }
 
   // .mat-step-icon-completed {
   //   background-color: #1D8923!important;

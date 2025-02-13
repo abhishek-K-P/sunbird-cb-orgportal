@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core'
+import { Component, Input } from '@angular/core'
 import { speaker } from '../../models/events.model'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { AddSpeakersComponent } from '../../dialogs/add-speakers/add-speakers.component'
@@ -8,24 +8,22 @@ import { AddSpeakersComponent } from '../../dialogs/add-speakers/add-speakers.co
   templateUrl: './speakers.component.html',
   styleUrls: ['./speakers.component.scss']
 })
-export class SpeakersComponent implements OnInit, OnChanges {
+export class SpeakersComponent {
   @Input() speakersList: speaker[] = []
   @Input() openMode = 'edit'
+  @Input() userProfile: any
 
   constructor(
     private dialog: MatDialog,
   ) { }
 
-  ngOnInit(): void {
-  }
-
-  ngOnChanges(): void {
-  }
-
   openAddSpeakerPopu() {
     const dialogRef = this.dialog.open(AddSpeakersComponent, {
       panelClass: 'dialog_sidenav',
-      width: '600px'
+      width: '600px',
+      data: {
+        rootOrgId: this.userProfile ? this.userProfile.rootOrgId : ''
+      }
     })
 
     dialogRef.afterClosed().subscribe((speakerDetails: speaker) => {
@@ -39,7 +37,10 @@ export class SpeakersComponent implements OnInit, OnChanges {
     if (this.speakersList && this.speakersList[index]) {
       const dialogRef = this.dialog.open(AddSpeakersComponent, {
         panelClass: 'dialog_sidenav',
-        data: this.speakersList[index],
+        data: {
+          rootOrgId: this.userProfile ? this.userProfile.rootOrgId : '',
+          speaker: this.speakersList[index]
+        },
         width: '600px'
       })
 

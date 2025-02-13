@@ -11,21 +11,31 @@
         <button mat-raised-button class="flex justify-center items-center save-and-exit" (click)="saveAndExit()">Save
           Draft & Exit</button>
       </ng-container>
-      <button mat-raised-button class="flex justify-center items-center next-btn"
-        (click)="moveToNextForm()">Next</button>
+      <ng-container *ngIf="currentStepperIndex !== 3">
+        <button mat-raised-button class="flex justify-center items-center next-btn"
+          (click)="moveToNextForm()">Next</button>
+      </ng-container>
+      <ng-container *ngIf="!showPreview && currentStepperIndex === 3">
+        <button mat-raised-button class="flex items-center publish-btn" (click)="preview()">Preview</button>
+      </ng-container>
+      <ng-container *ngIf="showPreview && showPublish">
+        <button mat-raised-button class="flex items-center publish-btn" (click)="publish()">Send to Publisher</button>
+      </ng-container>
     </div>
   </div>
 
   <mat-stepper labelPosition="bottom" [selectedIndex]="currentStepperIndex"
     (selectionChange)="onSelectionChange($event)" class="mx-10" #stepper>
-    <mat-step completed="true">
+    <mat-step [stepControl]="eventDetailsForm">
       <ng-template matStepLabel>Basic Details</ng-template>
-      <ws-app-event-basic-details [eventDetails]="eventDetailsForm" [openMode]="openMode"></ws-app-event-basic-details>
+      <ws-app-event-basic-details [eventDetails]="eventDetailsForm" [openMode]="openMode"
+        [userProfile]="userProfile"></ws-app-event-basic-details>
     </mat-step>
 
     <mat-step>
       <ng-template matStepLabel>Add Speaker</ng-template>
-      <ws-app-speakers [speakersList]="speakersList" [openMode]="openMode"></ws-app-speakers>
+      <ws-app-speakers [speakersList]="speakersList" [openMode]="openMode"
+        [userProfile]="userProfile"></ws-app-speakers>
     </mat-step>
 
     <mat-step>
@@ -35,7 +45,13 @@
 
     <mat-step>
       <ng-template matStepLabel>Add Competency</ng-template>
-      <ws-app-event-competencies [openMode]="openMode"></ws-app-event-competencies>
+      <ng-container *ngIf="showPreview; else add_competencies">
+        <ws-app-events-preview [event]="updatedEventDetails"></ws-app-events-preview>
+      </ng-container>
+      <ng-template #add_competencies>
+        <ws-app-event-competencies [competenciesList]="competencies" [openMode]="openMode"
+          (addCompetencies)="addCompetencies($event)"></ws-app-event-competencies>
+      </ng-template>
     </mat-step>
   </mat-stepper>
 </div>

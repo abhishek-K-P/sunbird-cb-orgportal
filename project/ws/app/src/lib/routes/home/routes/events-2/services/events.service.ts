@@ -12,7 +12,8 @@ const API_END_POINTS = {
   CREATE_EVENT: '/apis/proxies/v8/event/v4/create',
   EVENT_READ: (eventId: string) => `apis/proxies/v8/event/v4/read/${eventId}`,
   UPDATE_EVENT: (eventId: string) => `apis/proxies/v8/event/v4/update/${eventId}`,
-  PUBLISH_EVENT: (eventId: string) => `apis/proxies/v8/event/v4/publish/${eventId}`
+  PUBLISH_EVENT: (eventId: string) => `apis/proxies/v8/event/v4/publish/${eventId}`,
+  SEARCH_USERS: '/apis/proxies/v8/user/v1/search',
 }
 
 @Injectable({
@@ -66,10 +67,6 @@ export class EventsService {
 
   publishEvent(eventId: string, formBody: any) {
     return this.http.post<any>(API_END_POINTS.PUBLISH_EVENT(eventId), formBody)
-  }
-
-  convertToTabularView() {
-
   }
 
   convertToTreeView(competencies: any) {
@@ -133,6 +130,19 @@ export class EventsService {
       }]
     }
     return themeObj
+  }
+
+  searchUser(value: string, rootOrgId: string) {
+    const reqBody = {
+      request: {
+        query: value,
+        filters: {
+          rootOrgId
+        },
+      },
+    }
+
+    return this.http.post<any>(`${API_END_POINTS.SEARCH_USERS}`, reqBody)
   }
 
 }

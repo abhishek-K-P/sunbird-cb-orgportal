@@ -63,9 +63,9 @@ $primary-color: #1B4CA1;
 .cancel-button {
   width: 74px;
   height: 32px !important;
-  /* stylelint-enable */
-  font: 700 14px Lato;
   /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
   border-radius: 17px;
 }
 
@@ -74,9 +74,9 @@ $primary-color: #1B4CA1;
   height: 32px !important;
   background-color: #1B4CA1 !important;
   color: #FFFFFF !important;
-  /* stylelint-enable */
-  font: 700 14px Lato;
   /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
   border-radius: 17px;
 }
 
@@ -153,9 +153,9 @@ $primary-color: #1B4CA1;
   }
 
   .custome-title {
-    /* stylelint-enable */
-    font-family: 'Montserrat';
     /* stylelint-disable */
+    font-family: 'Montserrat';
+    /* stylelint-enable */
     font-weight: 600;
     font-size: 20px;
     color: rgba(0, 0, 0, 0.40);
@@ -192,7 +192,7 @@ $primary-color: #1B4CA1;
 
 .karmayogi-text {
   color: #1B2133;
-  /* stylelint-enable */
-  font: 400 14px Lato;
   /* stylelint-disable */
+  font: 400 14px Lato;
+  /* stylelint-enable */
 }

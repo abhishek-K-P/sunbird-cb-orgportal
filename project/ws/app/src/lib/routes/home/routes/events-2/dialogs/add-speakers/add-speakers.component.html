@@ -8,10 +8,29 @@
       <div class="form-lable required">
         Email
       </div>
-      <mat-form-field appearance="outline" class="">
-        <input matInput placeholder="Enter email" formControlName="email">
+      <mat-form-field appearance="outline" class="emailForm">
+        <input matInput placeholder="Enter email" formControlName="email" [matAutocomplete]="auto">
+        <mat-autocomplete #auto="matAutocomplete">
+          <ng-container *ngFor="let user of filteredUsers">
+            <mat-option class="users-option" [value]="user.maskedEmail" (click)="selected(user)">
+              <div class="flex gap-3">
+                <div class="iconDiv">
+                  <span class="iconText">{{user.iconText.substring(0,2)}}</span>
+                </div>
+                <div class="flex flex-column">
+                  <div class="userName">{{user.name}}</div>
+                  <div class="emailText">{{user.maskedEmail}}</div>
+                </div>
+              </div>
+            </mat-option>
+          </ng-container>
+        </mat-autocomplete>
         <mat-error *ngIf="speakerForm?.controls?.email?.touched && speakerForm?.controls?.email?.hasError('required')">
           email is mandatory
+        </mat-error>
+        <mat-error *ngIf="speakerForm?.controls?.email?.touched &&
+                speakerForm?.controls?.email?.hasError('pattern')" aria-label="Please enter a valid email">
+          Please enter a valid email
         </mat-error>
       </mat-form-field>
     </div>

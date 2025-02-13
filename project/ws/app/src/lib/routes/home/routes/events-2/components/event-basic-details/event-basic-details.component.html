@@ -4,6 +4,29 @@
     Basic Details
   </div>
 
+  <ng-container *ngIf="appIconName; else uploadIcon">
+    <div class="appIconCard flex justify-between px-2 items-center">
+      <div class="flex gap-2 items-center">
+        <img src="/assets/icons/image.svg" alt="app icon">
+        <span class="iconName">{{appIconName}}</span>
+      </div>
+      <mat-icon class="remove-app-icon" (click)="removeIcon()">close</mat-icon>
+    </div>
+  </ng-container>
+  <ng-template #uploadIcon>
+    <div class="upload flex justify-center items-center cursor-pointer dashed-border"
+      onclick="document.getElementById('upload-file').click();">
+      <input #file type="file" name="upload-file" id="upload-file" class="hidden" accept=".png, .jpg, .jpeg"
+        (change)="onFileSelected(file.files);">
+      <div class="flex flex-column items-center gap-2">
+        <img src="/assets/icons/upload-upward-arrow.svg" alt="icon">
+        <span class="text-sm font-bold text-blue">Upload Images <strong class="text-red-700">*</strong></span>
+        <span class="text-xs font-normal">Supported file types: PNG, JPG</span>
+        <span class="text-xs font-normal">Max Size - 400MB</span>
+      </div>
+    </div>
+  </ng-template>
+
   <div class="flex flex-column gap-2 event-form disable-round">
     <div class="form-lable required">
       Event Name
@@ -92,11 +115,9 @@
         Start Time
       </div>
       <mat-form-field appearance="outline" class="">
-        <input matInput placeholder="Enter Start Date" formControlName="startTime">
-        <!-- <input matInput placeholder="Enter Start Date" formControlName="startTime" [matTimepicker]="startTimepicker"
-          [ngModelOptions]="{updateOn: 'blur'}">
-        <mat-timepicker #startTimepicker />
-        <mat-timepicker-toggle [for]="startTimepicker" matSuffix /> -->
+        <input matInput placeholder="Enter Start Date" formControlName="startTime" [ngxTimepicker]="startTimepicker">
+        <ngx-material-timepicker-toggle [for]="startTimepicker" matSuffix></ngx-material-timepicker-toggle>
+        <ngx-material-timepicker #startTimepicker></ngx-material-timepicker>
         <mat-error *ngIf="showValidationMsg('startTime','required')">
           start time is mandatory
         </mat-error>
@@ -107,9 +128,11 @@
         End Time
       </div>
       <mat-form-field appearance="outline" class="">
-        <input matInput placeholder="Enter End Time" formControlName="endTime">
+        <input matInput placeholder="Enter Start Date" formControlName="endTime" [ngxTimepicker]="endTimepicker">
+        <ngx-material-timepicker-toggle [for]="endTimepicker" matSuffix></ngx-material-timepicker-toggle>
+        <ngx-material-timepicker #endTimepicker></ngx-material-timepicker>
         <mat-error *ngIf="showValidationMsg('endTime','required')">
-          end time is mandatory
+          start time is mandatory
         </mat-error>
       </mat-form-field>
     </div>

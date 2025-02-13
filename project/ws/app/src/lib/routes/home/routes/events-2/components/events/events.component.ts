@@ -19,6 +19,7 @@ export class EventsComponent implements OnInit, OnDestroy {
   currentRoute = 'pending-approval'
   routeSubscription: Subscription = new Subscription()
   userProfile: any
+  userEmail = ''
   pathUrl = ''
   //#endregion
 
@@ -51,6 +52,7 @@ export class EventsComponent implements OnInit, OnDestroy {
     })
     if (_.get(this.activatedRoute, 'snapshot.data.configService.userProfile')) {
       this.userProfile = _.get(this.activatedRoute, 'snapshot.data.configService.userProfile')
+      this.userEmail = _.get(this.activatedRoute, 'snapshot.data.configService.userProfileV2.email')
     }
     this.pathUrl = _.get(this.activatedRoute, 'snapshot.url[0].path', 'pending-approval')
   }
@@ -64,7 +66,10 @@ export class EventsComponent implements OnInit, OnDestroy {
   openBasicInfoDialog() {
     const dialgRrf = this.dialog.open(BasicInfoComponent, {
       panelClass: 'create-event-dialog',
-      data: this.userProfile,
+      data: {
+        userProfile: this.userProfile,
+        userEmail: this.userEmail
+      }
     })
 
     dialgRrf.afterClosed().subscribe((identifier: any) => {

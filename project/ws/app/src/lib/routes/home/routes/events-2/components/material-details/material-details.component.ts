@@ -20,7 +20,7 @@ export class MaterialDetailsComponent implements OnChanges {
   currentMaterialSaved = true
 
   eventForm!: FormGroup
-  fileUrl = ''
+  content = ''
 
   constructor(
     private formBuilder: FormBuilder
@@ -38,12 +38,12 @@ export class MaterialDetailsComponent implements OnChanges {
         this.eventForm.setValue(this.materialDetails)
       } else {
         this.eventForm = this.formBuilder.group({
-          fullName: new FormControl(_.get(this.materialDetails, 'fullName', ''), [Validators.required]),
-          fileUrl: new FormControl(_.get(this.materialDetails, 'fileUrl', '')),
+          title: new FormControl(_.get(this.materialDetails, 'title', ''), [Validators.required]),
+          content: new FormControl(_.get(this.materialDetails, 'content', '')),
         })
 
-        this.eventForm.controls.fullName.valueChanges.subscribe((value: string) => {
-          if (value && _.get(this.materialDetails, 'fullName') !== value && this.currentMaterialSaved) {
+        this.eventForm.controls.title.valueChanges.subscribe((value: string) => {
+          if (value && _.get(this.materialDetails, 'title') !== value && this.currentMaterialSaved) {
             this.currentMaterialSaved = false
             this.currentMaterialSaveUpdate.emit(this.currentMaterialSaved)
           }

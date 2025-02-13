@@ -12,9 +12,9 @@
 
   .pdfName {
     color: #000000;
-    /* stylelint-enable */
-    font: 600 14px Montserrat;
     /* stylelint-disable */
+    font: 600 14px Montserrat;
+    /* stylelint-enable */
   }
 
   .edit-icon {
@@ -31,9 +31,9 @@
 
   .form-lable {
     color: #212529;
-    /* stylelint-enable */
-    font: 700 14px Lato;
     /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
   }
 
   .file-card {
@@ -42,9 +42,9 @@
 
     .pdfName {
       color: #1B4CA1;
-      /* stylelint-enable */
-      font: 700 14px Lato;
       /* stylelint-disable */
+      font: 700 14px Lato;
+      /* stylelint-enable */
     }
   }
 
@@ -56,9 +56,9 @@
   border-radius: 17px;
   border: 1px solid #1B4CA1 !important;
   color: #1B4CA1 !important;
-  /* stylelint-enable */
-  font: 700 14px Lato;
   /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
 }
 
 .save-btn {
@@ -67,9 +67,9 @@
   border-radius: 17px;
   background-color: #1B4CA1 !important;
   color: #FFFFFF !important;
-  /* stylelint-enable */
-  font: 700 14px Lato;
   /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
 }
 
 :host ::ng-deep .disableForm {

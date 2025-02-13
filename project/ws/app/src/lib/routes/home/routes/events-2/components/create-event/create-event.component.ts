@@ -8,6 +8,7 @@ import { StepperSelectionEvent } from '@angular/cdk/stepper'
 import { MatStepper } from '@angular/material/stepper'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { HttpErrorResponse } from '@angular/common/http'
+import { DatePipe } from '@angular/common'
 
 @Component({
   selector: 'ws-app-create-event',
@@ -20,13 +21,16 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   eventId = ''
   eventIconUrl = ''
   eventDetails: any
+  updatedEventDetails: any
   eventDetailsForm!: FormGroup
   speakersList: speaker[] = []
   materialsList: material[] = []
-  competencies: any
-  currentStepperIndex = 3
+  competencies: any = []
+  currentStepperIndex = 0
   openMode = 'edit'
   pathUrl = ''
+  userProfile: any
+  showPreview = false
   //#endregion
 
   constructor(
@@ -35,6 +39,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private matSnackBar: MatSnackBar,
+    private datePipe: DatePipe
   ) { }
 
   //#region (onInit)
@@ -42,7 +47,6 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     this.initializeFormAndParams()
     this.getEventDetailsFromResolver()
   }
-
 
   initializeFormAndParams() {
     this.eventDetailsForm = this.formBuilder.group({
@@ -53,11 +57,14 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startDate: new FormControl('', [Validators.required]),
       startTime: new FormControl('', [Validators.required]),
       endTime: new FormControl('', [Validators.required]),
-      resourceUrl: new FormControl('')
+      resourceUrl: new FormControl(''),
+      // uploadUrl: new FormControl(''),
+      appIcon: new FormControl('', [Validators.required]),
     })
   }
 
   getEventDetailsFromResolver() {
+    this.userProfile = _.get(this.activatedRoute, 'snapshot.data.configService.userProfile')
     if (_.get(this.activatedRoute, 'snapshot.data.eventDetails')) {
       this.eventDetails = _.get(this.activatedRoute, 'snapshot.data.eventDetails.data')
       this.patchEventDetails()
@@ -73,21 +80,24 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
   patchEventDetails() {
     this.eventId = _.get(this.eventDetails, 'identifier')
+    const startDate = _.get(this.eventDetails, 'startDate', '')
     const eventBaseDetails = {
       eventName: _.get(this.eventDetails, 'name', ''),
       description: _.get(this.eventDetails, 'description', ''),
       eventCategory: _.get(this.eventDetails, 'resourceType', ''),
       streamType: _.get(this.eventDetails, 'streamType', ''),//new key to add
-      startDate: new Date(_.get(this.eventDetails, 'startDate', '')),
+      startDate: startDate ? new Date(startDate) : startDate,
       startTime: _.get(this.eventDetails, 'startTime', ''),
       endTime: _.get(this.eventDetails, 'endTime', ''),
-      resourceUrl: _.get(this.eventDetails, 'resourceUrl', '')
+      resourceUrl: _.get(this.eventDetails, 'resourceUrl', ''),
+      appIcon: _.get(this.eventDetails, 'appIcon', '')
     }
     this.eventDetailsForm.setValue(eventBaseDetails)
     this.eventDetailsForm.updateValueAndValidity()
 
     this.speakersList = _.get(this.eventDetails, 'speakers', [])
     this.materialsList = _.get(this.eventDetails, 'eventHandouts', [])
+    this.competencies = _.get(this.eventDetails, 'competencies_v6', [])
   }
 
   ngAfterViewInit() {
@@ -100,6 +110,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   //#region (ui interactions)
   onSelectionChange(event: StepperSelectionEvent) {
     this.currentStepperIndex = event.selectedIndex
+    this.showPreview = false
   }
 
   navigateBack() {
@@ -110,6 +121,16 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     if (this.canMoveToNext || this.openMode === 'view') {
       this.currentStepperIndex = this.currentStepperIndex + 1
     }
+  }
+
+  preview() {
+    this.showPreview = true
+    this.updatedEventDetails = this.getFormBodyOfEvent()
+  }
+
+  publish() {
+    this.eventDetails['status'] = 'SentToPublish'
+    this.saveAndExit()
   }
 
   get canMoveToNext() {
@@ -128,6 +149,26 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       }
     }
     return currentFormIsValid
+  }
+
+  get showPublish(): boolean {
+    if (this.currentStepperIndex === 3) {
+      if (this.eventDetailsForm.invalid) {
+        return false
+      }
+      if (!(this.speakersList && this.speakersList.length)) {
+        return false
+      }
+      if (!(this.materialsList && this.materialsList.length)) {
+        return false
+      }
+      return true
+    }
+    return false
+  }
+
+  addCompetencies(competencies: any) {
+    this.competencies = competencies
   }
 
   saveAndExit(navigateBack = true) {
@@ -154,16 +195,24 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
   getFormBodyOfEvent() {
     const eventDetails: any = JSON.parse(JSON.stringify(this.eventDetails))
-
     const eventBaseDetails = this.eventDetailsForm.value
+    let startTime = ''
+    if (eventBaseDetails.startTime) {
+      startTime = this.getFormatedTime(eventBaseDetails.startTime)
+    }
+    let endTime = ''
+    if (eventBaseDetails.endTime) {
+      endTime = this.getFormatedTime(eventBaseDetails.endTime)
+    }
     eventDetails['name'] = eventBaseDetails.eventName
     eventDetails['description'] = eventBaseDetails.description
     eventDetails['resourceType'] = eventBaseDetails.eventCategory
     eventDetails['streamType'] = eventBaseDetails.streamType
-    eventDetails['startDate'] = eventBaseDetails.startDate
-    eventDetails['startTime'] = eventBaseDetails.startTime
-    eventDetails['endTime'] = eventBaseDetails.endTime
+    eventDetails['startDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
+    eventDetails['startTime'] = startTime
+    eventDetails['endTime'] = endTime
     eventDetails['resourceUrl'] = eventBaseDetails.resourceUrl
+    eventDetails['appIcon'] = eventBaseDetails.appIcon
 
     if (this.speakersList) {
       eventDetails['speakers'] = this.speakersList
@@ -171,8 +220,41 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     if (this.materialsList) {
       eventDetails['eventHandouts'] = this.materialsList
     }
+    if (this.competencies) {
+      eventDetails['competencies_v6'] = this.competencies
+    }
 
     return eventDetails
+  }
+
+  getFormatedTime(selectedTime: string): string {
+    const timeString = selectedTime.trim()
+    const timeParts = timeString.split(' ')
+
+    const time = timeParts[0]
+    const amPm = timeParts[1]
+
+    const [hours, minutes] = time.split(':').map(num => parseInt(num))
+
+    let hours24 = hours
+    if (amPm === 'PM' && hours !== 12) {
+      hours24 += 12
+    } else if (amPm === 'AM' && hours === 12) {
+      hours24 = 0
+    }
+
+    const timeFormatted = this.formatTime(hours24, minutes)
+    const fixedTimezone = '+05:30'
+
+
+    return `${timeFormatted}${fixedTimezone}`
+  }
+
+  formatTime(hours: number, minutes: number): string {
+    const hoursFormatted = hours.toString().padStart(2, '0')
+    const minutesFormatted = minutes.toString().padStart(2, '0')
+    const seconds = '00'
+    return `${hoursFormatted}:${minutesFormatted}:${seconds}`
   }
 
   //#endregion

@@ -1,6 +1,6 @@
 <div [ngClass]="{'hideElement': openMaterial}" class="closedCard">
   <div class="flex justify-between">
-    <div class="pdfName">{{materialDetails?.fullName}}</div>
+    <div class="pdfName">{{materialDetails?.title}}</div>
     <div class="flex gap-1">
       <mat-icon class="edit-icon flex items-center" (click)="openStatus(true)">edit</mat-icon>
       <ng-container *ngIf="openMode === 'edit'">
@@ -17,8 +17,8 @@
       Full Name
     </div>
     <mat-form-field appearance="outline" class="">
-      <input matInput placeholder="Enter name" formControlName="fullName">
-      <mat-error *ngIf="eventForm?.controls?.fullName?.touched && eventForm?.controls?.fullName?.hasError('required')">
+      <input matInput placeholder="Enter name" formControlName="title">
+      <mat-error *ngIf="eventForm?.controls?.title.touched && eventForm?.controls?.title.hasError('required')">
         Name is mandatory
       </mat-error>
     </mat-form-field>
@@ -39,7 +39,7 @@
   <div class="flex justify-center gap-4 mb-2">
     <button mat-button class="cancel-btn" (click)="openStatus(false)">Cancel</button>
     <ng-container *ngIf="openMode === 'edit'">
-      <button mat-button class="save-btn" (click)="saveDetails()">{{materialDetails?.fullName ? 'Update' :
+      <button mat-button class="save-btn" (click)="saveDetails()">{{materialDetails?.title ? 'Update' :
         'Save'}}</button>
     </ng-container>
   </div>

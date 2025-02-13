@@ -20,6 +20,7 @@ export class BasicInfoComponent implements OnInit {
   imgURL: string | ArrayBuffer | null = null
   imagePath: any
   userProfile: any
+  userEmail = ''
 
   constructor(
     private dialogRef: MatDialogRef<BasicInfoComponent>,
@@ -28,7 +29,8 @@ export class BasicInfoComponent implements OnInit {
     private matSnackBar: MatSnackBar,
     private eventSvc: EventsService
   ) {
-    this.userProfile = data
+    this.userProfile = data.userProfile
+    this.userEmail = data.userEmail
   }
 
   ngOnInit(): void {
@@ -111,11 +113,11 @@ export class BasicInfoComponent implements OnInit {
         next: res => {
           if (res) {
             const createdUrl = res
-            const urlToReplace = 'https://storage.googleapis.com/igot'
+            const urlToReplace = 'https://storage.googleapis.com/igot'//https://portal.dev.karmayogibharat.net
             let appIcon = createdUrl
             if (createdUrl.startsWith(urlToReplace)) {
               const urlSplice = createdUrl.slice(urlToReplace.length).split('/')
-              appIcon = `${environment.karmYogiPath}/assets/public/${urlSplice.slice(1).join('/')}`
+              appIcon = `${environment.domainName}/assets/public/${urlSplice.slice(1).join('/')}`
             }
             this.createEvent(appIcon)
           }
@@ -143,6 +145,8 @@ export class BasicInfoComponent implements OnInit {
             appIcon: appIcon,
             category: 'Event',
             createdBy: _.get(this.userProfile, 'userId', ''),
+            createdByName: _.get(this.userProfile, 'userName', ''),
+            createrEmail: this.userEmail ? this.userEmail : _.get(this.userProfile, 'email', ''),
             authoringDisabled: false,
             isContentEditingDisabled: false,
             isMetaEditingDisabled: false,

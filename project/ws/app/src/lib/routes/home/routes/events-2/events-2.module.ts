@@ -27,7 +27,6 @@ import { MatIconModule } from '@angular/material/icon'
 import { EventsService } from './services/events.service'
 import { BasicInfoComponent } from './dialogs/basic-info/basic-info.component'
 import { MatStepperModule } from '@angular/material/stepper'
-// import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { AddSpeakersComponent } from './dialogs/add-speakers/add-speakers.component'
 import { MaterialDetailsComponent } from './components/material-details/material-details.component'
@@ -36,7 +35,14 @@ import { MatLegacyPaginatorModule } from '@angular/material/legacy-paginator'
 import { EventResolverService } from './services/event-resolver'
 import { AddCompetencyComponent } from './dialogs/add-competency/add-competency.component'
 import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
-// import { MatTimepickerModule } from '@angular/material/timepicker';
+import { MatLegacyAutocompleteModule } from '@angular/material/legacy-autocomplete'
+import { EventsPreviewComponent } from './components/events-preview/events-preview.component'
+import { YoutubePlayerComponent } from './dialogs/youtube-player/youtube-player.component'
+import { MatLegacyTabsModule } from '@angular/material/legacy-tabs'
+import { CardCompetencyComponent } from './components/card-competency/card-competency.component'
+import { WidgetResolverModule } from '@sunbird-cb/resolver'
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
+// import { MatTimepickerModule } from 'mat-timepicker'
 
 
 @NgModule({
@@ -52,7 +58,10 @@ import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
     AddSpeakersComponent,
     MaterialDetailsComponent,
     EventsListComponent,
-    AddCompetencyComponent
+    AddCompetencyComponent,
+    EventsPreviewComponent,
+    YoutubePlayerComponent,
+    CardCompetencyComponent
   ],
   imports: [
     CommonModule,
@@ -75,11 +84,13 @@ import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
     MatIconModule,
     MatLegacyPaginatorModule,
     MatStepperModule,
-    // NgxMaterialTimepickerModule,
     MatFormFieldModule,
     MatDatepickerModule,
-
-
+    MatLegacyAutocompleteModule,
+    MatLegacyTabsModule,
+    WidgetResolverModule,
+    // MatTimepickerModule
+    NgxMaterialTimepickerModule
   ],
   providers: [
     DatePipe,

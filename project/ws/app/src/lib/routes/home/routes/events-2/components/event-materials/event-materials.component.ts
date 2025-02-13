@@ -102,7 +102,7 @@ export class EventMaterialsComponent implements OnInit {
             let fileUrl = createdUrl
             if (createdUrl.startsWith(urlToReplace)) {
               const urlSplice = createdUrl.slice(urlToReplace.length).split('/')
-              fileUrl = `${environment.karmYogiPath}/assets/public/${urlSplice.slice(1).join('/')}`
+              fileUrl = `${environment.domainName}/assets/public/${urlSplice.slice(1).join('/')}`
             }
             this.addNewFileToList(fileUrl)
           }
@@ -117,8 +117,8 @@ export class EventMaterialsComponent implements OnInit {
 
   addNewFileToList(fileUrl: string) {
     const fileDetails: material = {
-      fullName: '',
-      fileUrl: fileUrl
+      title: '',
+      content: fileUrl
     }
     this.materialsList.unshift(fileDetails)
     this.currentIndex = 0

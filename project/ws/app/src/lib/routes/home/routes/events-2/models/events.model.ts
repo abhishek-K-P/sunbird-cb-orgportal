@@ -38,6 +38,6 @@ export interface speaker {
 }
 
 export interface material {
-  fullName: string,
-  fileUrl: string
+  title: string,
+  content: string
 }
