@@ -1,0 +1,55 @@
+.event-details {
+  border: 1px solid #1B4CA1;
+  border-radius: 12px;
+
+  .event-header {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 600 14px Montserrat;
+    /* stylelint-enable */
+  }
+}
+
+.disableAddFile {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.add-file-card {
+  height: 65px;
+  width: 260px;
+  border-radius: 8px;
+  border: 1px solid #00000014;
+  cursor: pointer;
+
+  .upload-icon-card {
+    height: 48px;
+    width: 48px;
+    background-color: #1B4CA114;
+    border-radius: 8px;
+
+    .uploadIcon {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .add-file-text {
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+     width: 148px;
+  }
+
+  .add-file-type {
+    /* stylelint-disable */
+    font: 400 10px Lato;
+    /* stylelint-enable */
+    width: 148px;
+  }
+
+  .right-arrow {
+    color: #1B4CA1 !important;
+    font-size: 24px;
+  }
+}

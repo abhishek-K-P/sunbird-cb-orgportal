@@ -1,0 +1,178 @@
+<div class="cqf-details flex-grow preview-toc">
+  <div class="toc-outer-container">
+    <div class="toc-banner">
+      <div class="flex flex-row gap-6 fixed-width">
+        <div class="banner-details toc-content" #bannerDetails>
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center justify-between gap-4">
+              <div class="flex flex-row gap-2">
+                <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2">
+                  <mat-icon class="ws-mat-orange-text">video_library</mat-icon>
+                  <ng-container *ngIf="event?.resourceType">
+                    <div class="text-xs font-bold text-white leading-3">{{ event?.resourceType}}</div>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-2">
+              <div class="banner-text text-base sm:text-4xl leading-6 sm:leading-10 font-bold">{{
+                handleCapitalize(event?.name) }}
+              </div>
+              <div class="text-sm sm:text-base source-text font-semibold break-words">
+                By {{event?.sourceName}}
+              </div>
+            </div>
+            <div class="text-xs leading-4 source-text ng-star-inserted">
+              (Last updated on {{
+              event?.lastUpdatedOn | date: 'MMM d, y' }})
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-row gap-6 fixed-width">
+      <div class="toc-content">
+        <div class="pb-4 lg:py-4">
+          <mat-tab-group (selectedTabChange)="handleTabChange($event)" [selectedIndex]="selectedTabIndex">
+            <mat-tab label="About">
+              <ng-container>
+                <div class="flex flex-col my-4 px-4 gap-5">
+                  <div class="flex flex-col">
+                    <div class="mat-subheading-1 font-bold">Description</div>
+                    <div class="mob-text">{{event?.description}}</div>
+                  </div>
+                  <div class="flex flex-col">
+                    <div class="mat-subheading-1 font-bold flex items-center gap-2">
+                      Competencies
+                      <mat-icon
+                        class="cursor-pointer ws-mat-black60-text info-icon mat-icon notranslate material-icons mat-icon-no-color"
+                        [matTooltipPosition]="'below'" #tooltip="matTooltip" (click)="tooltip.toggle()"
+                        matTooltip="Competency: Set of demonstrable characteristics and skills that enable and improve the efficiency of performing a job. Behavioural competencies describe the key values and strengths that help an official perform effectively in a range of roles. Domain competencies are defined for a specific MDO (for example, the Ministry of Personnel or the Department of Biotechnology) but that does not mean that others will not need them. Functional competencies are common among many domains, cutting across MDOs, as well as roles and activities.">info_outline</mat-icon>
+                    </div>
+                    <ng-container *ngIf="strip?.loaderWidgets?.length > 0">
+                      <div class="flex flex-col gap-3">
+                        <div class="flex flex-row gap-3 sm:gap-4 mb-3">
+                          <ng-container *ngFor="let item of competenciesObject">
+                            <div class="themes-button" [ngClass]="{'theme-activated': competencySelected === item.key}"
+                              (click)="handleShowCompetencies(item, 'selected')">{{ item.key }}</div>
+                          </ng-container>
+                        </div>
+                        <ng-container *ngFor="let item of competenciesObject">
+                          <div *ngIf="item?.key === competencySelected" class="competency-cards">
+                            <ws-utils-horizontal-scroller-v2 [loadStatus]="'done'" [stripConfig]="strip.stripConfig">
+                              <ng-container *ngFor="let widget of strip?.loaderWidgets; trackBy: tracker">
+                                <ng-container [wsResolverWidget]="widget"></ng-container>
+                              </ng-container>
+                            </ws-utils-horizontal-scroller-v2>
+                          </div>
+                        </ng-container>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </ng-container>
+            </mat-tab>
+
+            <mat-tab label="Materials">
+              <ng-container>
+                <ng-container>
+                  <div class="flex flex-col my-4 px-4 gap-5">
+                    <ng-container *ngIf="event?.eventHandouts?.length">
+                      <ng-container *ngFor="let handout of event?.eventHandouts">
+                        <div class="content-card">
+                          <div class="flex flex-col my-4 px-4">
+                            <div class="r-name text-truncate">{{handout?.title}}</div>
+                            <div class="r-type flex items-center gap-2">
+                              <img src="/assets/icons/event_pdf.svg" alt="pdf" />
+                              <a href="{{handout?.content1 || handout?.content}}" target="_blank">{{handout?.title}}</a>
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="!event?.eventHandouts?.length">
+                      No material is added.
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </mat-tab>
+
+            <mat-tab label="Speakers">
+              <ng-container>
+                <ng-container>
+                  <div class="flex flex-col my-4 px-4 gap-5">
+                    <ng-container *ngIf="event?.speakers?.length">
+                      <ng-container *ngFor="let speaker of event?.speakers">
+                        <div class="content-card">
+                          <div class="flex flex-col my-4 px-4">
+                            <div class="r-name text-truncate speaker-name pb-2">{{speaker?.name}}</div>
+                            <div class="r-type flex items-center gap-2 speaker-description">
+                              {{speaker?.description}}
+                            </div>
+                          </div>
+                        </div>
+                      </ng-container>
+                    </ng-container>
+                    <ng-container *ngIf="!event?.speakers?.length">
+                      No speakers are added.
+                    </ng-container>
+                  </div>
+                </ng-container>
+              </ng-container>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </div>
+      <div class="right-container">
+        <div class="right-content" #rightContainer>
+          <div class="right-content-inner">
+            <div class="flex flex-col image-div"
+              [ngStyle]="{
+                    'background-image': 'url(' + event?.appIcon + ')', 'background-repeat': 'no-repeat', 'background-size': 'cover'}"
+              [ngClass]="{'image-backdrop': scrolled}">
+              <div class="flex flex-col justify-between text-container">
+                <div class="flex items-center gap-4 justify-between"
+                  [ngClass]="{'justify-between': scrolled, 'justify-end': !scrolled}">
+                  <div class="flex flex-row tag-div rounded-2xl gap-1 items-center p-2" *ngIf="scrolled">
+                    <mat-icon class="ws-mat-orange-text">video_library</mat-icon>
+                    <ng-container *ngIf="event?.resourceType">
+                      <div class="text-xs font-bold text-white leading-3">{{ event?.resourceType}}</div>
+                    </ng-container>
+
+                  </div>
+                </div>
+                <div class="flex flex-col gap-1" *ngIf="scrolled">
+                  <div class="text-xl leading-6 text-white font-bold">{{ handleCapitalize(event?.name) }}
+                  </div>
+                  <div class="text-sm source-text font-semibold break-words" #contentSource
+                    [ngClass]="{'sourceEllipsis': sourceEllipsis}" title="{{event?.source}}">By {{ event?.sourceName
+                    }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-4 p-5 border-bottom">
+              <div class="flex flex-col gap-4">
+                <div class="view-btn" (click)="viewPlayer()">View</div>
+              </div>
+              <div class="flex flex-col gap-2 p-3 duration-section">
+                <div class="duration font-bold">{{ event?.startDate | date: 'MMM d, y'}}</div>
+                <div class="time font-bold">{{getHoursAndMinites(event?.startTime)}} -
+                  {{getHoursAndMinites(event?.endTime)}}</div>
+              </div>
+              <div class="flex flex-col">
+                <div class="time font-bold">Event Type</div>
+                <div class="font-bold">{{ event?.resourceType}}</div>
+              </div>
+              <div class="flex flex-col">
+                <div class="time font-bold">Hosted By</div>
+                <div class="font-bold">{{ event?.sourceName}}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

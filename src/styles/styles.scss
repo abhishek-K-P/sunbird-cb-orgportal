@@ -852,3 +852,14 @@ h3.shepherd-title {
   box-shadow: 0px 8px 24px 0px #0000003d !important;
   padding: 0 24px !important;
 }
+
+.dialog_sidenav {
+  height: 100vh;
+  position: fixed !important;
+  right: 0px;
+
+  .mat-dialog-container {
+    border-radius: 0px !important;
+    padding: 0px !important;
+  }
+}

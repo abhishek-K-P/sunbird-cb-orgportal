@@ -1,0 +1,107 @@
+.add-speaker-header {
+  border-bottom: 1px solid #00000014;
+  height: 70px;
+
+  .add-speaker-text {
+    /* stylelint-disable */
+    font: 600 16px Montserrat;
+    /* stylelint-enable */
+  }
+
+  .close-icon {
+    color: #666666;
+    cursor: pointer;
+  }
+}
+
+.add-speaker-content {
+  height: calc(100vh - 195px);
+  border-bottom: 1px solid #00000014;
+  overflow-y: auto;
+}
+
+.form-lable {
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+}
+
+.add-speaker-footer {
+  height: 50px;
+
+  .cancelBtn {
+    border: 1px solid #1B4CA1;
+    border-radius: 17px;
+    height: 32px;
+    width: 75px;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+    color: #1B4CA1 !important;
+  }
+
+  .add-user-btn {
+    border-radius: 17px;
+    height: 32px;
+    background-color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+    color: #FFFFFF !important;
+  }
+}
+
+.description-count {
+  margin-top: -30px;
+}
+
+:host ::ng-deep .event-form {
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0px 10px;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-left-style: solid !important;
+    border-radius: 25px !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-start {
+    display: none;
+  }
+}
+
+.users-option {
+  line-height: unset !important;
+}
+
+.iconDiv {
+
+  .iconText {
+    border-radius: 50%;
+    background-color: black;
+    color: white;
+    width: 30px;
+    display: inline-block;
+    text-align: center;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.userName {
+  height: 14px;
+  margin-top: -3px;
+}
+
+.emailText {
+  opacity: 0.6;
+  height: 14px;
+}
+
+:host ::ng-deep .emailForm {
+  .mat-option {
+    line-height: unset !important;
+  }
+}

@@ -1,0 +1,114 @@
+:host ::ng-deep .mat-form-field-wrapper {
+  margin: 0 !important;
+  width: 760px;
+
+}
+
+:host ::ng-deep .mat-form-field-appearance-outline .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+.add-competency-header {
+  /* stylelint-disable */
+  font: 600 16px Montserrat;
+  /* stylelint-enable */
+  line-height: 19.5px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.themes-header {
+  /* stylelint-disable */
+  font: 600 14px Montserrat;
+  /* stylelint-enable */
+  line-height: 17.07px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+}
+
+.themes-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.disableChip {
+  background-color: #d6d6d6;
+  cursor: default !important;
+  pointer-events: none;
+}
+
+.chip-themes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  /* stylelint-disable */
+  font: 400 12px Lato;
+  /* stylelint-enable */
+  line-height: 14.4px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  cursor: pointer;
+}
+
+.active {
+  border: 1px solid rgba(27, 76, 161, 1);
+  color: rgba(27, 76, 161, 1);
+}
+
+.theme-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.see-more {
+  color: rgba(27, 76, 161, 1);
+  cursor: pointer;
+  text-decoration: underline !important;
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+.content-section {
+  height: calc(100vh - 190px);
+  overflow: auto;
+}
+
+.cancel-btn {
+  border: 1px solid #1B4CA1;
+  border-radius: 17px;
+  height: 32px;
+  width: 74px;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+  color: #1B4CA1 !important;
+}
+
+.disableAdd {
+  background-color: #999999 !important;
+  cursor: unset;
+  pointer-events: none;
+}
+
+.enable-btn {
+  background-color: #1B4CA1 !important;
+}
+
+.add-btn {
+  height: 32px;
+  width: 60px;
+  border-radius: 17px;
+  color: #FFFFFF !important;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+}

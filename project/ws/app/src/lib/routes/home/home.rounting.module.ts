@@ -326,6 +326,10 @@ const routes: Routes = [
         },
       },
       {
+        path: 'events',
+        loadChildren: () => import('./routes/events-2/events-2.module').then(m => m.Events2Module),
+      },
+      {
         path: 'reports-section',
         component: ReportsSectionComponent,
         data: {

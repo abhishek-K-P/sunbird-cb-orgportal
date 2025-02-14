@@ -1,0 +1,112 @@
+.event-details {
+  border: 1px solid #1B4CA1;
+  border-radius: 12px;
+
+  .event-header {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 600 14px Montserrat;
+    /* stylelint-enable */
+  }
+}
+
+.appIconCard {
+  background-color: #1B4CA114;
+  height: 40px;
+  border-radius: 3px;
+
+  .iconName {
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+    border-bottom: 1px solid #1B4CA1;
+  }
+
+  .remove-app-icon {
+    color: #00000099 !important;
+    font-size: 17px;
+    height: 17px;
+    cursor: pointer;
+    pointer-events: all;
+  }
+}
+
+.dashed-border {
+  border: 2px dashed #1B4CA1;
+
+}
+
+.upload {
+  background: linear-gradient(0deg, #EDF7FF 0%, #EDF7FF 100%), #FFF;
+  height: 125px;
+  width: 460px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 12px;
+
+
+  span:first-child {
+    color: #1B4CA1;
+  }
+
+  span:last-child {
+    line-height: 14.4px;
+    color: #666666;
+  }
+}
+
+
+.form-lable {
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+}
+
+.form-url-lable {
+  color: #1B4CA1;
+  /* stylelint-disable */
+  font: 600 14px Montserrat;
+  /* stylelint-enable */
+}
+
+.description-count {
+  margin-top: -30px;
+}
+
+
+:host ::ng-deep .disableForm {
+  .mat-form-field-outline {
+    background-color: #ededed;
+  }
+
+  .disable-round {
+    .mat-form-field-outline {
+      border-radius: 20px;
+    }
+  }
+}
+
+
+:host ::ng-deep .event-form {
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0px 10px;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-left-style: solid !important;
+    border-radius: 25px !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-start {
+    display: none;
+  }
+}
+
+::ng-deep ngx-material-timepicker-content{
+  --button-color: #1B4CA1 !important;
+  --dial-background-color: #1B4CA1 !important;
+  --dial-editable-active-color: #1B4CA1 !important;
+  --clock-hand-color: #1B4CA1 !important;
+}
+

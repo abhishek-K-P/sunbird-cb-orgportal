@@ -1,0 +1,198 @@
+@import 'ws-vars';
+$secondary-color: #F3962F;
+$primary-color: #1B4CA1;
+
+::ng-deep .create-event-dialog {
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 5px 0px 10px;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-left-style: solid !important;
+    border-radius: 25px !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-start {
+    display: none;
+  }
+
+  .mat-dialog-container {
+    padding: 0 !important;
+    border-radius: 8px !important;
+  }
+
+  &::-webkit-scrollbar {
+    width: 12px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #fff;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #E9ECEF;
+    border-radius: 8px;
+    border: 3px solid transparent;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #ccc;
+  }
+}
+
+.search-c ::ng-deep.mat-form-field-infix {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 9px;
+  align-items: center;
+}
+
+.event-input-wrapper p {
+  line-height: 24.38px;
+}
+
+.height-480 {
+  height: 480px !important;
+}
+
+.create-cont {
+  height: 451px;
+  width: 1016px !important;
+}
+
+.cancel-button {
+  width: 74px;
+  height: 32px !important;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+  border-radius: 17px;
+}
+
+.save-button {
+  width: 62px;
+  height: 32px !important;
+  background-color: #1B4CA1 !important;
+  color: #FFFFFF !important;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+  border-radius: 17px;
+}
+
+.save-event {
+  position: absolute;
+  bottom: 16px;
+  left: 0;
+  right: 0;
+}
+
+.event-img {
+  height: 16px;
+  width: 16px;
+  margin-bottom: 2px;
+}
+
+
+
+.upload-event-details {
+  // background-color: #a4b7d9;
+  height: 100%;
+  background: url('/assets/icons/Card BG png.png') no-repeat center center/cover;
+
+    .upload-card {
+      padding: 0;
+      width: 350px;
+      margin: 47px 41px 48px 41px;
+      border-radius: 16px;
+
+
+      .upload {
+        background: linear-gradient(0deg, #EDF7FF 0%, #EDF7FF 100%), #FFF;
+
+        min-height: 201px;
+        height: 201px;
+        overflow: hidden;
+        position: relative;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+
+
+        span:first-child {
+          color: $primary-color;
+        }
+
+        span:last-child {
+          line-height: 14.4px;
+          color: #666666;
+        }
+      }
+
+      .preview-img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      mat-icon {
+        color: $secondary-color;
+      }
+
+      .details-event {
+        .content-type {
+          border: 1px solid $secondary-color;
+          padding: 3.5px 8.5px 3.5px 7.5px;
+          background-color: #FEFAF4;
+          border-radius: 15px;
+        }
+      }
+  }
+
+  .custome-title {
+    /* stylelint-disable */
+    font-family: 'Montserrat';
+    /* stylelint-enable */
+    font-weight: 600;
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.40);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-height: 24.38px;
+    max-height: 2.4em;
+    text-overflow: ellipsis;
+  }
+}
+
+ ::ng-deep .new-toolTip {
+    background: #000000 !important;
+    font-size: 14px;
+  }
+
+.text-blue {
+  color: #1B4CA1
+}
+
+.dashed-border {
+  border: 2px dashed #1B4CA1;
+
+}
+
+.favicon {
+  width: 38px;
+  height: 38px;
+  border-radius: 5px;
+  border: 1px solid #00000029;
+}
+
+.karmayogi-text {
+  color: #1B2133;
+  /* stylelint-disable */
+  font: 400 14px Lato;
+  /* stylelint-enable */
+}
