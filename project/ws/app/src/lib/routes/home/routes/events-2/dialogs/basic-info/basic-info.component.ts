@@ -59,7 +59,7 @@ export class BasicInfoComponent implements OnInit {
     const reader = new FileReader()
     this.imagePath = files[0]
     if (this.imagePath && this.imagePath.size > events.IMAGE_MAX_SIZE) {
-      this.openSnackBar('Selected image size is more')
+      this.openSnackBar('Please select an image with a size of less than 400MB.')
       this.imagePath = ''
       return
     }
@@ -72,6 +72,8 @@ export class BasicInfoComponent implements OnInit {
   onSave() {
     if (this.eventForm.valid && this.imgURL) {
       this.saveImage()
+    } else if (this.eventForm.valid && !this.imgURL) {
+      this.openSnackBar('please upload image')
     }
   }
 

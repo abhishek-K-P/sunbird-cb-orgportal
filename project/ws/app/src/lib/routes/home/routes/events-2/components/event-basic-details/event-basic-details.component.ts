@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core'
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core'
 import { FormGroup } from '@angular/forms'
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import * as _ from 'lodash'
@@ -7,13 +7,14 @@ import { EventsService } from '../../services/events.service'
 import { map, mergeMap } from 'rxjs/operators'
 import { environment } from '../../../../../../../../../../../src/environments/environment'
 import { HttpErrorResponse } from '@angular/common/http'
+import moment from 'moment'
 
 @Component({
   selector: 'ws-app-event-basic-details',
   templateUrl: './event-basic-details.component.html',
   styleUrls: ['./event-basic-details.component.scss']
 })
-export class EventBasicDetailsComponent implements OnInit {
+export class EventBasicDetailsComponent implements OnInit, OnChanges {
 
   //#region (global variables)
   @Input() eventDetails!: FormGroup
@@ -22,6 +23,11 @@ export class EventBasicDetailsComponent implements OnInit {
 
   evntCategorysList = ['Webinar', 'Karmayogi Talks', 'Karmayogi Saptah']
   todayDate = new Date()
+
+  maxTimeToStart = '11:30 pm'
+  minTimeToEnd = '12:30 am'
+  timeGap = 15
+
   //#endregion
 
   constructor(
@@ -29,7 +35,70 @@ export class EventBasicDetailsComponent implements OnInit {
     private eventSvc: EventsService
   ) { }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.eventDetails) {
+      const startTime = _.get(this.eventDetails, 'value.startTime')
+      if (startTime) {
+        this.eventDetails.controls.startTime.patchValue(this.convertTo12HourFormat(startTime))
+      }
+
+      const endTime = _.get(this.eventDetails, 'value.endTime')
+      if (endTime) {
+        this.eventDetails.controls.endTime.patchValue(this.convertTo12HourFormat(endTime))
+      }
+    }
+  }
+
+  convertTo12HourFormat(timeWithTimezone: string): string {
+    const time = timeWithTimezone.split('+')[0]
+    const [hours, minutes] = time.split(':')
+    let hour = parseInt(hours)
+    let period = 'AM'
+    if (hour >= 12) {
+      period = 'PM'
+      if (hour > 12) {
+        hour -= 12
+      }
+    } else if (hour === 0) {
+      hour = 12
+    }
+    const formattedTime = `${hour}:${minutes} ${period}`
+    return formattedTime
+  }
+
   ngOnInit(): void {
+    if (this.eventDetails.controls.startTime) {
+      this.eventDetails.controls.startTime.valueChanges.subscribe((time) => {
+        this.generatMinTimeToEnd(time)
+      })
+    }
+  }
+
+
+  generatMinTimeToEnd(time: string) {
+    let [timePart, period] = time.split(' ')
+    let [hours, minutes] = timePart.split(':').map(Number)
+    minutes += this.timeGap
+    if (minutes >= 60) {
+      minutes -= 60
+      hours += 1
+    }
+    if (hours > 12) {
+      hours -= 12
+      if (period === 'AM') {
+        period = 'PM'
+      } else {
+        period = 'AM'
+      }
+    }
+    if (hours === 12 && minutes === 0) {
+      period = period === 'AM' ? 'PM' : 'AM'
+    }
+    const formattedTime = `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${period}`
+    this.minTimeToEnd = formattedTime
+    if (this.eventDetails.controls.startTime) {
+      this.eventDetails.controls.endTime.patchValue('')
+    }
   }
 
   get appIconName(): string {
@@ -140,6 +209,26 @@ export class EventBasicDetailsComponent implements OnInit {
       showMsg = true
     }
     return showMsg
+  }
+
+  onStartTimeChange(event: any) {
+    const startTime = event ? event.formatted : ''
+    if (startTime) {
+      const minEndTime = this.calculateMinEndTime(startTime)
+      this.minTimeToEnd = minEndTime
+      if (this.eventDetails) {
+        const endTimeControl = this.eventDetails.get('endTime')
+        if (endTimeControl) {
+          endTimeControl.setValue('')
+        }
+      }
+    }
+  }
+
+  calculateMinEndTime(startTime: string): string {
+    const startMoment = moment(startTime, 'HH:mm')
+    const minEndTimeMoment = startMoment.add(30, 'minutes')
+    return minEndTimeMoment.format('HH:mm')
   }
 
   private openSnackBar(message: string) {

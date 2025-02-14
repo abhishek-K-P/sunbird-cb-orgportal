@@ -102,3 +102,11 @@
     display: none;
   }
 }
+
+::ng-deep ngx-material-timepicker-content{
+  --button-color: #1B4CA1 !important;
+  --dial-background-color: #1B4CA1 !important;
+  --dial-editable-active-color: #1B4CA1 !important;
+  --clock-hand-color: #1B4CA1 !important;
+}
+

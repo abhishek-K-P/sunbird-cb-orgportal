@@ -57,7 +57,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startDate: new FormControl('', [Validators.required]),
       startTime: new FormControl('', [Validators.required]),
       endTime: new FormControl('', [Validators.required]),
-      resourceUrl: new FormControl(''),
+      resourceUrl: new FormControl('', [Validators.required]),
       // uploadUrl: new FormControl(''),
       appIcon: new FormControl('', [Validators.required]),
     })
@@ -110,7 +110,6 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   //#region (ui interactions)
   onSelectionChange(event: StepperSelectionEvent) {
     this.currentStepperIndex = event.selectedIndex
-    this.showPreview = false
   }
 
   navigateBack() {
@@ -118,6 +117,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   }
 
   moveToNextForm() {
+    this.eventDetailsForm.markAllAsTouched()
+    this.eventDetailsForm.updateValueAndValidity()
     if (this.canMoveToNext || this.openMode === 'view') {
       this.currentStepperIndex = this.currentStepperIndex + 1
     }
@@ -125,12 +126,16 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
   preview() {
     this.showPreview = true
-    this.updatedEventDetails = this.getFormBodyOfEvent()
+    this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status'])
+    setTimeout(() => {
+      this.currentStepperIndex = 4
+    }, 100)
   }
 
   publish() {
-    this.eventDetails['status'] = 'SentToPublish'
-    this.saveAndExit()
+    if (this.canPublish) {
+      this.saveAndExit('SentToPublish')
+    }
   }
 
   get canMoveToNext() {
@@ -151,15 +156,22 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     return currentFormIsValid
   }
 
-  get showPublish(): boolean {
+  get canPublish(): boolean {
     if (this.currentStepperIndex === 3) {
       if (this.eventDetailsForm.invalid) {
+        this.openSnackBar('Please fill mandatory fields in basic details')
         return false
       }
       if (!(this.speakersList && this.speakersList.length)) {
+        this.openSnackBar('Please add atleast one speaker')
         return false
       }
       if (!(this.materialsList && this.materialsList.length)) {
+        this.openSnackBar('Please add atleast one material')
+        return false
+      }
+      if (!(this.competencies && this.competencies.length)) {
+        this.openSnackBar('Please add atleast one competency')
         return false
       }
       return true
@@ -171,19 +183,18 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     this.competencies = competencies
   }
 
-  saveAndExit(navigateBack = true) {
+  saveAndExit(status = 'Draft') {
     const formBody = {
       request: {
-        event: this.getFormBodyOfEvent()
+        event: this.getFormBodyOfEvent(status)
       }
     }
     this.eventSvc.updateEvent(formBody, this.eventId).subscribe({
       next: res => {
         if (res) {
-          this.openSnackBar('Event details saved successfully')
-          if (navigateBack) {
-            this.navigateBack()
-          }
+          const successMessage = status === 'Draft' ? 'Event details saved successfully' : 'Event details sent for approval successfully'
+          this.openSnackBar(successMessage)
+          this.navigateBack()
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -193,7 +204,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     })
   }
 
-  getFormBodyOfEvent() {
+  getFormBodyOfEvent(status: string) {
     const eventDetails: any = JSON.parse(JSON.stringify(this.eventDetails))
     const eventBaseDetails = this.eventDetailsForm.value
     let startTime = ''
@@ -223,6 +234,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     if (this.competencies) {
       eventDetails['competencies_v6'] = this.competencies
     }
+
+    eventDetails['status'] = status
 
     return eventDetails
   }

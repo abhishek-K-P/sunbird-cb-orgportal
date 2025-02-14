@@ -33,7 +33,7 @@ export class AddSpeakersComponent implements OnInit {
   ngOnInit(): void {
     this.speakerForm = this.formBuilder.group({
       email: new FormControl(_.get(this.speakerDetails, 'email', ''), [Validators.required, Validators.pattern(EMAIL_PATTERN)]),
-      name: new FormControl(_.get(this.speakerDetails, 'name', '')),
+      name: new FormControl(_.get(this.speakerDetails, 'name', ''), [Validators.required]),
       description: new FormControl(_.get(this.speakerDetails, 'description', ''))
     })
 
@@ -96,8 +96,11 @@ export class AddSpeakersComponent implements OnInit {
   }
 
   addSpeaker() {
-    if (this.speakerForm && this.speakerForm.valid) {
-      this.dialogRef.close(this.speakerForm.value)
+    if (this.speakerForm) {
+      if (this.speakerForm.valid) {
+        this.dialogRef.close(this.speakerForm.value)
+      }
+      this.speakerForm.markAllAsTouched
     }
   }
 

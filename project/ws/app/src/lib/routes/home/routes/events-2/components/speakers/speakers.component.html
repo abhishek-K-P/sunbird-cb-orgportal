@@ -25,11 +25,13 @@
             <td class="speaker-table-cell"> {{ speaker.name ? speaker.name : '-' }}</td>
             <td class="speaker-table-cell"> {{ speaker.email ? speaker.email : '-' }}</td>
             <td class="speaker-table-cell"> {{ speaker.description ? speaker.description : '-' }}</td>
-            <td class="speaker-table-cell flex">
-              <mat-icon class="edit-icon flex items-center" (click)="editSpeaker(i)">edit</mat-icon>
-              <ng-container *ngIf="openMode === 'edit'">
-                <mat-icon class="edit-icon flex items-center" (click)="delete(i)">delete</mat-icon>
-              </ng-container>
+            <td class="speaker-table-cell">
+              <div class="flex items-center h-full">
+                <mat-icon class="edit-icon flex items-center" (click)="editSpeaker(i)">edit</mat-icon>
+                <ng-container *ngIf="openMode === 'edit'">
+                  <mat-icon class="edit-icon flex items-center" (click)="delete(i)">delete</mat-icon>
+                </ng-container>
+              </div>
             </td>
           </tr>
         </ng-container>

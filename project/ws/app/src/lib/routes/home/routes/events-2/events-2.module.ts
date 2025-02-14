@@ -41,7 +41,8 @@ import { YoutubePlayerComponent } from './dialogs/youtube-player/youtube-player.
 import { MatLegacyTabsModule } from '@angular/material/legacy-tabs'
 import { CardCompetencyComponent } from './components/card-competency/card-competency.component'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+import { RejectionReasonComponent } from './dialogs/rejection-reason/rejection-reason.component'
 // import { MatTimepickerModule } from 'mat-timepicker'
 
 
@@ -61,7 +62,8 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
     AddCompetencyComponent,
     EventsPreviewComponent,
     YoutubePlayerComponent,
-    CardCompetencyComponent
+    CardCompetencyComponent,
+    RejectionReasonComponent
   ],
   imports: [
     CommonModule,

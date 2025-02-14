@@ -20,7 +20,7 @@
         (change)="onFileSelected(file.files);">
       <div class="flex flex-column items-center gap-2">
         <img src="/assets/icons/upload-upward-arrow.svg" alt="icon">
-        <span class="text-sm font-bold text-blue">Upload Images <strong class="text-red-700">*</strong></span>
+        <span class="text-sm font-bold text-blue">Upload Image <strong class="text-red-700">*</strong></span>
         <span class="text-xs font-normal">Supported file types: PNG, JPG</span>
         <span class="text-xs font-normal">Max Size - 400MB</span>
       </div>
@@ -53,7 +53,7 @@
   </div>
 
   <div class="flex flex-column gap-2 event-form w-full disable-round">
-    <div class="form-url-lable">
+    <div class="form-url-lable required">
       upload from URL
     </div>
     <mat-form-field appearance="outline" class="">
@@ -96,7 +96,7 @@
   </div>
 
   <div class="flex flex-row gap-4">
-    <div class="flex flex-column gap-2 event-form w-full disable-round">
+    <div class="flex flex-column gap-2 event-form w-full disable-round eventTimpicker">
       <div class="form-lable required">
         Date
       </div>
@@ -114,10 +114,12 @@
       <div class="form-lable required">
         Start Time
       </div>
-      <mat-form-field appearance="outline" class="">
-        <input matInput placeholder="Enter Start Date" formControlName="startTime" [ngxTimepicker]="startTimepicker">
+      <mat-form-field appearance="outline">
+        <input matInput placeholder="Enter Start Time" formControlName="startTime" [ngxTimepicker]="startTimepicker"
+          [max]="maxTimeToStart" readonly>
         <ngx-material-timepicker-toggle [for]="startTimepicker" matSuffix></ngx-material-timepicker-toggle>
-        <ngx-material-timepicker #startTimepicker></ngx-material-timepicker>
+        <ngx-material-timepicker #startTimepicker (change)="onStartTimeChange($event)" class="eventTimpicker"
+          [enableKeyboardInput]="true"></ngx-material-timepicker>
         <mat-error *ngIf="showValidationMsg('startTime','required')">
           start time is mandatory
         </mat-error>
@@ -128,9 +130,11 @@
         End Time
       </div>
       <mat-form-field appearance="outline" class="">
-        <input matInput placeholder="Enter Start Date" formControlName="endTime" [ngxTimepicker]="endTimepicker">
+        <input matInput placeholder="Enter End Time" formControlName="endTime" [ngxTimepicker]="endTimepicker"
+          [min]="minTimeToEnd" readonly>
         <ngx-material-timepicker-toggle [for]="endTimepicker" matSuffix></ngx-material-timepicker-toggle>
-        <ngx-material-timepicker #endTimepicker></ngx-material-timepicker>
+        <ngx-material-timepicker #endTimepicker (change)="onEndTimeChange($event)"
+          [enableKeyboardInput]="true"></ngx-material-timepicker>
         <mat-error *ngIf="showValidationMsg('endTime','required')">
           start time is mandatory
         </mat-error>

@@ -38,11 +38,12 @@
   }
 
   .speaker-table-cell{
-    height: 35px;
+    min-height: 35px;
     border: 1px solid #00000014;
     margin-top: -1px;
     font: 400 12px Inter;
     padding-left: 10px;
+    height: fit-content;
   }
 
   .edit-icon {

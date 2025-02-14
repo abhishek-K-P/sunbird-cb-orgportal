@@ -6,6 +6,8 @@ import { Subscription } from 'rxjs'
 import { events } from '../../models/events.model'
 import { EventsService } from '../../services/events.service'
 import * as _ from 'lodash'
+import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { RejectionReasonComponent } from '../../dialogs/rejection-reason/rejection-reason.component'
 
 @Component({
   selector: 'ws-app-events-list',
@@ -29,7 +31,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
     private eventSvc: EventsService,
     private matSnackBar: MatSnackBar,
     private activatedRoute: ActivatedRoute,
-    private route: Router
+    private route: Router,
+    private dialog: MatLegacyDialog
   ) { }
   //#endregion
 
@@ -302,6 +305,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
           this.cancelEvent(events.rows)
           break
         case 'remarks':
+          this.openRejectionPopup(events.rows)
           break
         case 'broadcast':
           break
@@ -322,13 +326,13 @@ export class EventsListComponent implements OnInit, OnDestroy {
     const requestBody = {
       request: {
         event: {
+          identifier: rowData.identifier,
           versionKey: rowData.versionKey,
-          status: 'Cancelled',
-          identifier: rowData.identifier
+          status: 'Cancelled'
         }
       }
     }
-    this.eventSvc.publishEvent(rowData.identifier, requestBody).subscribe({
+    this.eventSvc.updateEvent(requestBody, rowData.identifier).subscribe({
       next: res => {
         if (res) {
           this.openSnackBar('event is cancelled successfully')
@@ -340,6 +344,17 @@ export class EventsListComponent implements OnInit, OnDestroy {
         this.openSnackBar(errorMessage)
       }
     })
+  }
+
+  openRejectionPopup(rowData: any) {
+    const remarks = _.get(rowData, 'rejectComment')
+    if (remarks) {
+      this.dialog.open(RejectionReasonComponent, {
+        minHeight: '200px',
+        minWidth: '400px',
+        data: remarks
+      })
+    }
   }
 
   //#endregion
