@@ -40,6 +40,7 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
   tabChange = 0
   cacheOffset: any = 0
   searchfilterValue = ''
+
   resetPagination: any = {}
   constructor(
     private router: Router,
@@ -98,7 +99,6 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
 
   filter(key: string | 'timestamp' | 'best' | 'saved') {
     this.tabChange = 1
-    console.log('key', key, this.currentFilter)
     if (key !== this.currentFilter) {
       this.searchfilterValue = ''
       this.currentFilter = key
@@ -110,8 +110,6 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
       } else if (key === 'transfers') {
         this.fetchTransfers(1)
       }
-
-
     }
     else if (key) {
 

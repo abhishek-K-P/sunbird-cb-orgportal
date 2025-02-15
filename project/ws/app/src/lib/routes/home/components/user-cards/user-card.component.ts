@@ -183,8 +183,6 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
           u.profileDetails.profileStatusUpdatedOn = val[0]
         }
       })
-
-
     }
   }
 
@@ -244,7 +242,6 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
 
       if (this.isApprovals) {
         this.getApprovalData()
-
       }
     }
     if (Object.keys(this.resetPagination).length) {
@@ -252,7 +249,6 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
         this.paginator.pageIndex = 0
         // this.onChangePage(this.resetPagination)
       }
-
     }
   }
 
@@ -271,7 +267,6 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
         this.getFieldsMappedData(this.approvalData)
       }
     }
-
   }
 
   // for approvals
