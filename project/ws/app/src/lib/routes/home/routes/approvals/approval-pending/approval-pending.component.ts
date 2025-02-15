@@ -108,7 +108,7 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
       if (key === 'profileverification') {
         this.fetchApprovals('')
       } else if (key === 'transfers') {
-        this.fetchTransfers(1)
+        this.fetchTransfers(this.limit)
       }
     }
     else if (key) {
