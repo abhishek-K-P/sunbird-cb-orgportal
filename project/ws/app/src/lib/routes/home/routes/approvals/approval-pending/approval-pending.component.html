@@ -56,7 +56,8 @@
           <ws-widget-user-card [currentFilter]="currentFilter" [usersData]="profileVerificationData"
             [isApprovals]="true" [totalRecords]="totalProfileVerificationRecords" [tabChangeIndex]="pageIndex"
             (searchByEnterKey)="onEnterkySearch($event)" (disableButton)="showButton()"
-            (paginationData)="onPaginateChange($event)" (updateList)="fetchApprovals()"></ws-widget-user-card>
+            (paginationData)="onPaginateChange($event)" (updateList)="fetchApprovals()"
+            [resetPagination]="resetPagination"></ws-widget-user-card>
         </ng-container>
         <ng-container *ngIf="totalProfileVerificationRecords === 0">
           <p class="margin-top-xl margin-bottom-xl">No approvals</p>
@@ -71,7 +72,8 @@
           <ws-widget-user-card [currentFilter]="currentFilter" [usersData]="transfersData" [isApprovals]="true"
             [totalRecords]="totalTransfersRecords" [tabChangeIndex]="pageIndex"
             (searchByEnterKey)="onEnterkySearch($event)" (disableButton)="showButton()"
-            (paginationData)="onPaginateChange($event)" (updateList)="fetchTransfers()"></ws-widget-user-card>
+            (paginationData)="onPaginateChange($event)" (updateList)="fetchTransfers()"
+            [resetPagination]="resetPagination"></ws-widget-user-card>
         </ng-container>
         <ng-container *ngIf="totalTransfersRecords === 0">
           <p class="margin-top-xl margin-bottom-xl">No transfers</p>
