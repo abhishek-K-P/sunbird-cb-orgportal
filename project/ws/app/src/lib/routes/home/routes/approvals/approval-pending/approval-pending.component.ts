@@ -41,6 +41,7 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
   cacheOffset: any = 0
   searchfilterValue = ''
 
+  resetPagination: any = {}
   constructor(
     private router: Router,
     private apprService: ApprovalsService,
@@ -98,7 +99,20 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
 
   filter(key: string | 'timestamp' | 'best' | 'saved') {
     this.tabChange = 1
-    if (key) {
+    if (key !== this.currentFilter) {
+      this.searchfilterValue = ''
+      this.currentFilter = key
+      this.pageIndex = 0
+      this.currentOffset = 0
+      this.limit = 20
+      if (key === 'profileverification') {
+        this.fetchApprovals('')
+      } else if (key === 'transfers') {
+        this.fetchTransfers(1)
+      }
+    }
+    else if (key) {
+
       this.currentFilter = key
       this.pageIndex = 0
       this.currentOffset = 0
@@ -333,6 +347,15 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
   }
 
   onSearch(enterValue: any) {
+    this.pageIndex = 0
+    this.currentOffset = 0
+    this.limit = 20
+    if (this.currentFilter === 'profileverification') {
+      this.resetPagination = { pageIndex: this.pageIndex, pageSize: this.limit, length: this.totalProfileVerificationRecords }
+    } else if (this.currentFilter === 'transfers') {
+      this.resetPagination = { pageIndex: this.pageIndex, pageSize: this.limit, length: this.totalTransfersRecords }
+    }
+
     this.searchfilterValue = enterValue.searchText.toLowerCase() ? enterValue.searchText : ''
     this.getSortOrderValue = this.getSortOrder(enterValue.sortOrder)
     if (this.getSortOrderValue && this.currentFilter === 'profileverification') {
@@ -352,6 +375,7 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
   onPaginateChange(event: PageEvent) {
     this.pageIndex = event.pageIndex
     this.limit = event.pageSize
+    this.resetPagination = {}
     // Clear the cache only for the current tab
     const cacheKey = `${this.currentFilter}DataCache`
     const cacheTimestampKey = `${this.currentFilter}CacheTimestamp`
