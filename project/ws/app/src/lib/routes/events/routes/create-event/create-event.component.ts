@@ -569,15 +569,15 @@ export class CreateEventComponent implements OnInit {
   }
 
   goToList() {
-    this.router.navigate([`/app/events`]),//NOSDONAR
+    this.router.navigate([`/app/events`]),//NOSONAR
       // this.telemetrySvc.impression()
-      this.events.raiseInteractTelemetry( //NOSDONAR
+      this.events.raiseInteractTelemetry(
         {
-          type: TelemetryEvents.EnumInteractTypes.CLICK, //NOSDONAR
-          subType: TelemetryEvents.EnumInteractSubTypes.BTN_CONTENT, //NOSDONAR
+          type: TelemetryEvents.EnumInteractTypes.CLICK,
+          subType: TelemetryEvents.EnumInteractSubTypes.BTN_CONTENT,
         },
-        {} //NOSDONAR
-      ) //NOSDONAR
+        {}
+      )
   }
   showSuccess(res: any) {
     this.dialogRef = this.matDialog.open(SuccessComponent, {
