@@ -1,10 +1,10 @@
 import { Component, ElementRef, HostListener, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core'
-// import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { environment } from '../../../../../../../../../../../src/environments/environment'
 import { OwlOptions } from 'ngx-owl-carousel-o'
 import { EventsService } from '../../services/events.service'
-// import { YoutubePlayerComponent } from '../../dialogs/youtube-player/youtube-player.component'
+import { YoutubePlayerComponent } from '../../dialogs/youtube-player/youtube-player.component'
 
 @Component({
   selector: 'ws-app-events-preview',
@@ -97,17 +97,18 @@ export class EventsPreviewComponent implements OnInit, OnChanges {
     ],
     responsive: {
       0: {
-        items: 2
+        items: 1
       },
       768: {
-        items: 2
+        items: 1
       }
     },
     nav: true
   };
 
   constructor(
-    private eventsService: EventsService
+    private eventsService: EventsService,
+    private dialog: MatLegacyDialog
   ) { }
 
   ngOnInit(): void {
@@ -126,8 +127,11 @@ export class EventsPreviewComponent implements OnInit, OnChanges {
 
   loadCompetencies(): void {
     if (this.event && this.compentencyKey && this.event[this.compentencyKey.vKey] && this.event[this.compentencyKey.vKey].length) {
+      this.selectedCompetecy = []
       this.competenciesObject = this.eventsService.convertToTreeView(this.event[this.compentencyKey.vKey])
-      this.selectedCompetecy = this.competenciesObject[0]
+      setTimeout(() => {
+        this.selectedCompetecy = this.competenciesObject[0]
+      }, 100)
     }
   }
 
@@ -168,10 +172,10 @@ export class EventsPreviewComponent implements OnInit, OnChanges {
   }
 
   viewPlayer() {
-    // this.dialog.open(YoutubePlayerComponent, {
-    //   width: '900px',
-    //   disableClose: false,
-    //   data: { event: this.event }
-    // })
+    this.dialog.open(YoutubePlayerComponent, {
+      width: '900px',
+      disableClose: false,
+      data: { event: this.event }
+    })
   }
 }

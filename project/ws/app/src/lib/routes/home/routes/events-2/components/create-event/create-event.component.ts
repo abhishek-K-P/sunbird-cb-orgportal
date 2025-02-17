@@ -109,7 +109,6 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     this.materialsList = _.get(this.eventDetails, 'eventHandouts', [])
     this.competencies = _.get(this.eventDetails, 'competencies_v6', [])
 
-    // this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status']) //need to remove
   }
 
   ngAfterViewInit() {
@@ -122,6 +121,9 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   //#region (ui interactions)
   onSelectionChange(event: StepperSelectionEvent) {
     this.currentStepperIndex = event.selectedIndex
+    if (this.currentStepperIndex === 4) {
+      this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status'])
+    }
   }
 
   navigateBack() {
@@ -243,6 +245,10 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['resourceUrl'] = eventBaseDetails.resourceUploadType === 'url' ? eventBaseDetails.resourceUrl : eventBaseDetails.uploadUrl
     eventDetails['resourceUploadType'] = eventBaseDetails.resourceUploadType
     eventDetails['appIcon'] = eventBaseDetails.appIcon
+
+    if (status === 'SentToPublish') {
+      eventDetails['submitedOn'] = this.datePipe.transform(new Date(), 'yyyy-MM-dd')
+    }
 
     if (this.speakersList) {
       eventDetails['speakers'] = this.speakersList

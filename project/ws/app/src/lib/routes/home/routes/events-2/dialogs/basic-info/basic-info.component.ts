@@ -175,6 +175,7 @@ export class BasicInfoComponent implements OnInit {
       this.eventSvc.createEvent(requestBody).subscribe({
         next: res => {
           if (res) {
+            this.openSnackBar('Event created successfully')
             this.dialogRef.close(_.get(res, 'result.identifier', ''))
           }
         },
@@ -183,7 +184,6 @@ export class BasicInfoComponent implements OnInit {
           this.openSnackBar(errorMessage)
         }
       })
-      // this.dialogRef.close()
     }
   }
 

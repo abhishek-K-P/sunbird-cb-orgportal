@@ -10,12 +10,14 @@
         <img src="/assets/icons/image.svg" alt="app icon">
         <span class="iconName">{{appIconName}}</span>
       </div>
-      <mat-icon class="remove-app-icon" (click)="removeFile('appIcon')">close</mat-icon>
+      <ng-container *ngIf="openMode === 'edit'">
+        <mat-icon class="remove-app-icon" (click)="removeFile('appIcon')">close</mat-icon>
+      </ng-container>
     </div>
   </ng-container>
   <ng-template #uploadIcon>
     <div class="upload flex justify-center items-center cursor-pointer dashed-border"
-      onclick="document.getElementById('upload-file').click();">
+      [ngClass]="{'disable': openMode === 'view'}" onclick="document.getElementById('upload-file').click();">
       <input #file type="file" name="upload-file" id="upload-file" class="hidden" accept=".png, .jpg, .jpeg"
         (change)="onFileSelected(file.files);">
       <div class="flex flex-column items-center gap-2">
@@ -58,15 +60,17 @@
         <img src="/assets/icons/image.svg" alt="app icon">
         <span class="iconName">{{uploadedVideoName}}</span>
       </div>
-      <mat-icon class="remove-app-icon" (click)="removeFile('uploadedVideo')">close</mat-icon>
+      <ng-container *ngIf="openMode === 'edit'">
+        <mat-icon class="remove-app-icon" (click)="removeFile('uploadedVideo')">close</mat-icon>
+      </ng-container>
     </div>
   </ng-container>
   <ng-template #uploadVideo>
-    <div class="upload flex justify-center items-center cursor-pointer dashed-border" cdkDropList
-      [cdkDropListData]="videoData" (cdkDropListDropped)="onVideoSelected($event)"
-      (dragover)="preventDefaultCDK($event)" (dragenter)="preventDefaultCDK($event, 'enter')"
-      (dragleave)="preventDefaultCDK($event, 'leave')" (drop)="onDrop($event)"
-      onclick="document.getElementById('upload-video').click();">
+    <div class="upload flex justify-center items-center cursor-pointer dashed-border"
+      [ngClass]="{'disable': openMode === 'view'}" cdkDropList [cdkDropListData]="videoData"
+      (cdkDropListDropped)="onVideoSelected($event)" (dragover)="preventDefaultCDK($event)"
+      (dragenter)="preventDefaultCDK($event, 'enter')" (dragleave)="preventDefaultCDK($event, 'leave')"
+      (drop)="onDrop($event)" onclick="document.getElementById('upload-video').click();">
       <input #file type="file" name="upload-video" id="upload-video" class="hidden"
         accept="video/mp4, video/mov, video/avi" (change)="onVideoSelected(file.files);">
       <div class="flex flex-column items-center gap-2">

@@ -58,14 +58,16 @@
                             (click)="getSelectedCompetecyThemes(competencie)">{{ competencie.competencyAreaName }}</div>
                         </ng-container>
                       </div>
-                      <owl-carousel-o class="event-carousel" [options]="customOptions">
-                        <ng-container *ngFor="let theme of selectedCompetecy?.themes">
-                          <ng-template carouselSlide>
-                            <ws-widget-card-competency [theme]="theme"
-                              [competencyArea]="selectedCompetecy?.competencyAreaName"></ws-widget-card-competency>
-                          </ng-template>
-                        </ng-container>
-                      </owl-carousel-o>
+                      <ng-container *ngIf="selectedCompetecy?.themes?.length">
+                        <owl-carousel-o class="event-carousel" [options]="customOptions">
+                          <ng-container *ngFor="let theme of selectedCompetecy?.themes">
+                            <ng-template carouselSlide>
+                              <ws-widget-card-competency [theme]="theme"
+                                [competencyArea]="selectedCompetecy?.competencyAreaName"></ws-widget-card-competency>
+                            </ng-template>
+                          </ng-container>
+                        </owl-carousel-o>
+                      </ng-container>
                     </div>
                   </div>
                 </div>

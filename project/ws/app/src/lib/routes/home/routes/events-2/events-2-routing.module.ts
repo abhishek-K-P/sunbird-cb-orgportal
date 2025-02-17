@@ -33,6 +33,9 @@ const routes: Routes = [
           pageId: 'app/home/events/upcoming',
           module: 'events-2',
         },
+        resolve: {
+          configService: ConfigResolveService,
+        },
       },
       {
         path: 'draft',
@@ -48,6 +51,9 @@ const routes: Routes = [
         data: {
           pageId: 'app/home/events/pending-approval',
           module: 'events-2',
+        },
+        resolve: {
+          configService: ConfigResolveService,
         },
       },
       {
