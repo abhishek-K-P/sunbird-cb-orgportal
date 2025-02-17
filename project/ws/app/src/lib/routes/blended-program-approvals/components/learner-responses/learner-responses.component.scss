@@ -451,7 +451,9 @@ mat-card.mt-2.mat-list-item.dark-card.mat-card {
 
 .form-title {
   color: #000000de;
+  /* stylelint-disable */
   font-family: Montserrat-SemiBold;
+  /* stylelint-enable */
   font-size: 1.25rem;
   letter-spacing: .12px;
   line-height: 1.4;

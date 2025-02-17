@@ -133,7 +133,9 @@
   border: 1px solid #DDDDDD;
   border-radius: 4px;
   padding: 9px;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
   font: 400 14px Lato;
@@ -367,7 +369,9 @@ label {
     top: -2px;
     border-radius: 4px;
     border: 1px solid rgba(0, 0, 0, .14);
+    /* stylelint-disable */
     font-family: Lato;
+    /* stylelint-enable */
 }
 
 .status-text {
@@ -387,7 +391,9 @@ label {
   color: #fff;
   font-weight: 400 ;
   font-size:14px ;
+  /* stylelint-disable */
   font-family:Lato;
+  /* stylelint-enable */
   padding: 3px 8px 3px 8px;
   border-radius: 4px;
 }

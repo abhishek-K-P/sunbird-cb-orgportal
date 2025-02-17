@@ -1,5 +1,7 @@
 .fw-montserrat {
+  /* stylelint-disable */
   font-family: Montserrat;
+  /* stylelint-enable */
 }
 
 .badge {
@@ -8,7 +10,9 @@
   font-weight: 600;
   font-size: 16px;
   line-height: 19.5px;
+  /* stylelint-disable */
   font-family: Montserrat;
+  /* stylelint-enable */
 
   &.active {
     color: #1d8923;

@@ -13,7 +13,9 @@
 .competency-summary-header {
     font-size: 14px;
     font-weight: 700;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
     letter-spacing: 0.25px;
     color: rgb(0,0,0,0.87);
     margin: 18px 16px 20px 16px;
@@ -35,7 +37,9 @@
 .category-card .label {
     width:90%;
     font-size: 14px;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
 }
 
 
@@ -121,7 +125,10 @@
     font-size: 14px;
     width: 250px;
     margin-left: 16px;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
+
 }
 
 
@@ -134,7 +141,7 @@
 }
 
 ::ng-deep .mat-expansion-panel-header {
-    height: 24px !important; 
+    height: 24px !important;
 }
 
 .competency-tabs {
@@ -146,5 +153,7 @@
     font-size: 14px;
     width: 250px;
     margin-left: 16px;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
 }

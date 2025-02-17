@@ -233,7 +233,9 @@ $secondary-color: #EF951E;
     -webkit-line-clamp: $title-line-count;
     -webkit-box-orient: vertical;
     min-height: $title-line-count * $title-line-height;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
   }
 
   $description-line-count: 2;

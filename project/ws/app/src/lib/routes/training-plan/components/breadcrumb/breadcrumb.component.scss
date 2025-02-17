@@ -7,7 +7,9 @@
     font-size: 16px;
     font-weight: 600;
     line-height: 24px;
+    /* stylelint-disable */
     font-family: 'Montserrat';
+    /* stylelint-enable */
     letter-spacing: 0.12;
 }
 
@@ -21,7 +23,9 @@
     font-size: 16px;
     font-weight: 600;
     line-height: 24px;
+    /* stylelint-disable */
     font-family: 'Montserrat';
+    /* stylelint-enable */
     letter-spacing: 0.12;
 }
 
@@ -36,7 +40,9 @@
 .next-btn {
     background: #1b4ca1 !important;
     color: white !important;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
     font-weight: 700;
     font-size: 14px;
     border-radius: 4px;

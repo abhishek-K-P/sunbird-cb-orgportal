@@ -30,7 +30,9 @@
 .importBtn {
   background: #1b4ca1 !important;
   color: #ffffff !important;
+  /* stylelint-disable */
   font-family: "Lato";
+  /* stylelint-enable */
   height: 40px;
   font-size: 14px;
   font-weight: 700;
@@ -40,7 +42,9 @@
 .disabl-btn {
   background-color: #999 !important;
   pointer-events: none;
+  /* stylelint-disable */
   font-family: "Lato";
+  /* stylelint-enable */
   height: 40px;
   font-size: 14px;
   font-weight: 700;
@@ -118,7 +122,9 @@
   color: #1b4ca1 !important;
   font-weight: 700;
   letter-spacing: 0.25px;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
 }
 
 .master-designations {

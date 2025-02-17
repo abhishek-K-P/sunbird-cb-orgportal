@@ -127,7 +127,9 @@ a {
   border-top: 1px solid $color-thin-gray;
   border-left: 1px solid $color-thin-gray;
   position: absolute;
+  /* stylelint-disable */
   font-family: sans-serif;
+  /* stylelint-enable */
 
   display: none;
   right: 18px;

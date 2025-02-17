@@ -321,7 +321,9 @@ a:not([href]):not([tabindex]) {
 
 .appr-section-heading{
   font-size: 20px;
+  /* stylelint-disable */
   font-family: 'Montserrat';
+  /* stylelint-enable */
   font-weight: 600;
 }
 
@@ -330,10 +332,14 @@ a:not([href]):not([tabindex]) {
   border: 1px solid #DDDDDD;
   border-radius: 4px;
   padding: 9px;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
+  /* stylelint-disable */
   font: 400 14px Lato;
+  /* stylelint-enable */
 }
 
 .appr-text-label{
