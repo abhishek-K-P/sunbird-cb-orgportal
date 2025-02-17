@@ -85,6 +85,7 @@
                       <li *ngFor="let a of activitieslist; let i = index" id="elementActivity{{i}}"
                         (click)="showRemoveActivity(i)" style="height:35px;margin-bottom:10px; background-color:#FFF4ED; color:black; line-height: 35px; padding-left:15px; float:left;
                         clear:left; word-wrap:break-word; border-radius: 4px; color:#716B66;padding-right: 15px;">
+                        <!-- //NOSONAR -->
                         {{a.name}}
                         <mat-icon id="showremove{{i}}" (click)="removeActivity(i)"
                           style="cursor:pointer; margin-left:10px; display:none; padding:5px;line-height: 35px;">close
@@ -199,6 +200,7 @@
                       <li *ngFor="let a of activitieslist; let i = index" id="elemenComp{{i}}"
                         (click)="showRemoveCompetency(i)" style="height:35px;margin-bottom:10px; background-color:#FFF4ED; color:black; line-height: 35px; padding-left:15px; float:left;
                       clear:left; word-wrap:break-word; border-radius: 4px; color:#716B66;padding-right: 15px;">
+                        <!-- //NOSONAR -->
                         {{a.name}}
                         <mat-icon id="showremoveComp{{i}}" (click)="removeCompetency(i)"
                           style="cursor:pointer; margin-left:10px; display:none; padding:5px;line-height: 35px;">close

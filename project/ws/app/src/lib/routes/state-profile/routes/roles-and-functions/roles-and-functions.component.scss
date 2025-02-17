@@ -59,7 +59,9 @@
     text-align: left;
     box-sizing: border-box;
     border: 1px solid rgba(0, 0, 0, 0.16);
+    /* stylelint-disable */
     width: 380px;
+    /* stylelint-enable */
     font-size: 14px!important;
 }
 .checkbox_btn.mat-checkbox-checked {

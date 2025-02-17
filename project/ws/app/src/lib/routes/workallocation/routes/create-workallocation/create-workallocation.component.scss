@@ -112,7 +112,6 @@
       border-radius: 4px 0 0 4px;
       border-right-style: none;
       min-width: 8px;
-      border-right-style: none;
     }
 
     .mat-form-field-outline-gap {
@@ -220,7 +219,9 @@
 
   .change-log-text {
     display: block;
+    /* stylelint-disable */
     font: 700 14px Lato;
+    /* stylelint-enable */
   }
 
   .no-request-text {

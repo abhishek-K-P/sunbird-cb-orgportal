@@ -28,7 +28,7 @@ export class CreateContentComponent implements OnInit {
 
   constructor(private tpdsSvc: TrainingPlanDataSharingService, public dialog: MatDialog,
     //  private snackbar: MatSnackBar,
-              private router: Router
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -99,7 +99,7 @@ export class CreateContentComponent implements OnInit {
     if (event) {
       this.selectedContentChips = this.tpdsSvc.trainingPlanContentData.data.content
       if (this.selectedContentChips) {
-        this.selectedContentChips.map(sitem => {
+        this.selectedContentChips.forEach(sitem => {
           if (sitem && sitem.selected) {
             this.selectContentCount = this.selectContentCount + 1
           }

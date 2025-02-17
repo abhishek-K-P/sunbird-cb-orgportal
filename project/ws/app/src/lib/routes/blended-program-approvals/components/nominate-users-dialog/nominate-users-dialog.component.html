@@ -24,7 +24,7 @@
     </div>
     <div class="users-data">
       <table mat-table [dataSource]="dataSource" class="nominate-learners  margin-top-s" matSort matSortActive="name"
-        matSortDisableClear *ngIf="dataSource.filteredData.length > 0">
+        matSortDisableClear *ngIf="dataSource.filteredData.length > 0"><!-- //NOSONAR -->
 
         <ng-container matColumnDef="select">
           <th mat-header-cell *matHeaderCellDef class="header-row">

@@ -181,7 +181,7 @@ export class AssistantMessageCardComponent implements OnInit, OnDestroy {
     // let noActivityDescCount = 0
     let roleNameCount = 0
     let roleDescriptionCount = 0
-    roles.map((role: any) => {
+    roles.forEach((role: any) => {
       const roleActivities = _.get(role, 'activities')
       if (!role.groupName) {
         roleNameCount += 1
@@ -245,7 +245,7 @@ export class AssistantMessageCardComponent implements OnInit, OnDestroy {
     let noCompCount = 0
     // let compLableCount = 0
     // let compDescriptionCount = 0
-    competencies.map((comp: any) => {
+    competencies.forEach((comp: any) => {
       const roleComps = _.get(comp, 'competincies')
       if (roleComps && !roleComps.length) {
         noCompCount += 1

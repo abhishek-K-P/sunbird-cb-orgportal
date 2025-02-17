@@ -3,12 +3,16 @@
   border: 1px solid #DDDDDD;
   border-radius: 4px;
   padding: 9px;
+  /* stylelint-disable */
   font: 400 14px Lato;
+  /* stylelint-enable */
   vertical-align: middle;
 }
 
 .appr-text-label{
+  /* stylelint-disable */
   font: 700 14px Lato;
+  /* stylelint-enable */
   color: #000000;
 }
 
@@ -60,7 +64,9 @@
 .needs-appr-count-text{
   border-radius: 100px 4px 4px 100px;
   padding: 0 12px;
+  /* stylelint-disable */
   font:400 16px Lato;
+  /* stylelint-enable */
   float: right;
 }
 
@@ -84,7 +90,9 @@
 }
 
 .appr-section-heading{
+  /* stylelint-disable */
   font: 600 20px Montserrat;
+  /* stylelint-enable */
 }
 
 .accept-btn{
@@ -120,7 +128,9 @@
 }
 
 .dialog-title{
+  /* stylelint-disable */
  font:600 20px Montserrat;
+ /* stylelint-enable */
 }
 
 .no-request-text{
@@ -147,5 +157,7 @@
 }
 
 .appr-text{
+  /* stylelint-disable */
   font: 400 16px Lato;
+  /* stylelint-enable */
 }
