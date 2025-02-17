@@ -4,6 +4,8 @@ import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/le
 import * as _ from 'lodash'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { EventsService } from '../../services/events.service'
+import { speaker } from '../../models/events.model'
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 
 const EMAIL_PATTERN = /^[a-zA-Z0-9*]+([a-zA-Z0-9._-]*[a-zA-Z0-9*]+)*@[a-zA-Z0-9]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,10}$/
 
@@ -19,14 +21,19 @@ export class AddSpeakersComponent implements OnInit {
   filteredUsers: any[] = []
   rootOrgId = ''
   allUsers: any[] = []
+  speakersList: speaker[] = []
+  speakerIndex = -1
 
   constructor(
     private dialogRef: MatLegacyDialogRef<AddSpeakersComponent>,
     @Inject(MAT_LEGACY_DIALOG_DATA) data: any,
     private formBuilder: FormBuilder,
-    private eventsService: EventsService
+    private eventsService: EventsService,
+    private matSnackBar: MatLegacySnackBar,
   ) {
-    this.speakerDetails = data.speaker
+    this.speakersList = data.speakersList ? data.speakersList : []
+    this.speakerIndex = data.speakerIndex
+    this.speakerDetails = (data.speakerIndex || data.speakerIndex === 0) && this.speakersList[data.speakerIndex] ? this.speakersList[data.speakerIndex] : null
     this.rootOrgId = data.rootOrgId
   }
 
@@ -98,10 +105,30 @@ export class AddSpeakersComponent implements OnInit {
   addSpeaker() {
     if (this.speakerForm) {
       if (this.speakerForm.valid) {
-        this.dialogRef.close(this.speakerForm.value)
+        const updatedSpeakerDetails = this.speakerForm.value
+        if (this.speakerDetails === null) {
+          if (this.speakersList.find((addedSpeaker: any) => addedSpeaker.email.toLowerCase() === updatedSpeakerDetails.email.toLocaleLowerCase())) {
+            this.openSnackBar('There is already a speaker with the same email. Please add the speaker with a different email.')
+          } else {
+            this.speakersList.push(updatedSpeakerDetails)
+            this.dialogRef.close(this.speakerForm.value)
+          }
+        } else {
+          const index = this.speakersList.findIndex((addedSpeaker: any) => addedSpeaker.email.toLowerCase() === updatedSpeakerDetails.email.toLocaleLowerCase())
+          if (index === this.speakerIndex || index < 0) {
+            this.speakersList[this.speakerIndex] = updatedSpeakerDetails
+            this.dialogRef.close(this.speakerForm.value)
+          } else {
+            this.openSnackBar('There is already a speaker with the same email. Please update speaker with a different email.')
+          }
+        }
       }
-      this.speakerForm.markAllAsTouched
+      this.speakerForm.markAllAsTouched()
     }
+  }
+
+  private openSnackBar(message: string) {
+    this.matSnackBar.open(message)
   }
 
 }

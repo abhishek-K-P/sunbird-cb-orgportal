@@ -44,6 +44,7 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
 import { RejectionReasonComponent } from './dialogs/rejection-reason/rejection-reason.component'
 import { CarouselModule } from 'ngx-owl-carousel-o'
+import { DragDropModule } from '@angular/cdk/drag-drop'
 
 
 @NgModule({
@@ -92,7 +93,8 @@ import { CarouselModule } from 'ngx-owl-carousel-o'
     MatLegacyTabsModule,
     WidgetResolverModule,
     NgxMaterialTimepickerModule,
-    CarouselModule
+    CarouselModule,
+    DragDropModule
   ],
   providers: [
     DatePipe,
