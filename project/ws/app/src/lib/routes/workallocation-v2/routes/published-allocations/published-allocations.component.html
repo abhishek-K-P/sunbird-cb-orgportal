@@ -109,7 +109,7 @@
             <td colspan="4" (click)="viewAllocation(d)">
               <ul>
                 <li *ngFor="let rc of d.roleCompetencyList">
-                  <table><!--//NOSONAR -->
+                  <table><!-- //NOSONAR -->
                     <tr>
                       <td class="table-role">
                         <b *ngIf="rc.roleDetails.name">{{rc.roleDetails.name}}</b>
@@ -119,7 +119,7 @@
                         </div> -->
                       </td>
                       <td class="table-activity">
-                        <table><!--//NOSNAR -->
+                        <table><!-- //NOSONAR -->
                           <tr *ngFor="let a of rc.roleDetails.childNodes">
                             <td class="activityname">
                               <span *ngIf="a.description">{{a.description}}</span>
