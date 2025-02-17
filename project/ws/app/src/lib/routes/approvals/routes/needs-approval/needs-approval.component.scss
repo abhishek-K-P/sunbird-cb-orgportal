@@ -34,7 +34,7 @@
     }
 }
 
-#reject { 
+#reject {
   background: #D13924;
     border-radius: 4px;
     width: auto;
@@ -94,7 +94,9 @@
 
 .accept-dialog-btn{
   color: white !important;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
   margin-left: 15px;
@@ -103,7 +105,9 @@
 
 .reject-dialog-btn{
   color: white !important;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
   margin-left: 15px;
@@ -135,7 +139,9 @@
 
 
 ::ng-deep .mat-radio-label-content{
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
 }

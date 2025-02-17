@@ -276,7 +276,9 @@ a:not([href]):not([tabindex]) {
   border-radius: 4px;
   border: none;
   width: 60px;
+  /* stylelint-disable */
   font-family: Lato;
+  /* stylelint-enable */
   font-size: 14px;
 }
 

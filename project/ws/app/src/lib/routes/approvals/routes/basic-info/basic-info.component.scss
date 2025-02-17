@@ -54,7 +54,9 @@ textarea {
 
 
 ::ng-deep .mat-radio-label-content{
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
 }

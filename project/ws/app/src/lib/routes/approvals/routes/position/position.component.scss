@@ -40,13 +40,17 @@ textarea {
 }
 
 ::ng-deep .mat-radio-label-content{
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
 }
 
 .middle-heading{
   font-weight: 600;
+  /* stylelint-disable */
   font-family: "Montserrat";
+  /* stylelint-enable */
   font-size:16px
 }

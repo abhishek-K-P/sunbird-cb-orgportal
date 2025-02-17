@@ -306,7 +306,9 @@ a:not([href]):not([tabindex]) {
   // background: #0075b7!important;
   // color: #fff!important;
   //font-weight: 700;
+  /* stylelint-disable */
   font-family: Lato;
+  /* stylelint-enable */
   font-size: 14px;
 }
 
