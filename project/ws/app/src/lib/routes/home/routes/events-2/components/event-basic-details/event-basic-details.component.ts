@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core'
-import { FormGroup } from '@angular/forms'
+import { FormGroup, Validators } from '@angular/forms'
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import * as _ from 'lodash'
 import { events } from '../../models/events.model'
@@ -72,6 +72,19 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
         this.generatMinTimeToEnd(time)
       })
     }
+    if (this.eventDetails.controls.resourceUrl) {
+      this.eventDetails.controls.resourceUrl.valueChanges.subscribe((url) => {
+        if (url && url !== '') {
+          this.eventDetails.controls.uploadUrl.patchValue('')
+          this.eventDetails.controls.uploadUrl.clearValidators()
+          this.eventDetails.controls.resourceUrl.setValidators([Validators.required])
+          this.eventDetails.controls.resourceUploadType.patchValue('url')
+          this.eventDetails.controls.uploadUrl.updateValueAndValidity()
+          this.eventDetails.controls.resourceUrl.updateValueAndValidity()
+          this.eventDetails.controls.resourceUploadType.updateValueAndValidity()
+        }
+      })
+    }
   }
 
 
@@ -113,10 +126,27 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     return name
   }
 
-  removeIcon() {
-    if (this.eventDetails.controls.appIcon) {
+  get uploadedVideoName(): string {
+    let name = ''
+    const uploadedVideoUrl = _.get(this.eventDetails, 'value.uploadUrl', '')
+    if (uploadedVideoUrl) {
+      const urlSplit = uploadedVideoUrl.split('_')
+      if (urlSplit.length > 0) {
+        name = urlSplit[urlSplit.length - 1]
+      }
+    }
+    return name
+  }
+
+  removeFile(item = 'appIcon') {
+    if (item === 'appIcon' && this.eventDetails.controls.appIcon) {
       this.eventDetails.controls.appIcon.patchValue('')
       this.eventDetails.controls.appIcon.updateValueAndValidity()
+    } else if (item === 'uploadedVideo' && this.eventDetails.controls.uploadUrl) {
+      this.eventDetails.controls.uploadUrl.patchValue('')
+      this.eventDetails.controls.uploadUrl.updateValueAndValidity()
+      this.eventDetails.controls.resourceUrl.setValidators([Validators.required])
+      this.eventDetails.controls.resourceUrl.updateValueAndValidity()
     }
   }
 
@@ -126,8 +156,8 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
       return
     }
     const mimeType = files[0].type
-    if (mimeType.match(/image\/*/) == null) {
-      this.openSnackBar('Only JPG and PNG files are supported')
+    if (!mimeType.startsWith('video/')) {
+      this.openSnackBar('Only video files are supported')
       return
     }
     const reader = new FileReader()
@@ -139,12 +169,9 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     }
     reader.readAsDataURL(files[0])
     this.saveImage(imagePath)
-    // reader.onload = _event => {
-    //   this.imgURL = reader.result
-    // }
   }
 
-  saveImage(imagePath: any) {
+  saveImage(imagePath: any, mediaType = 'image') {
     if (imagePath) {
       const org = []
       const createdforarray: any[] = []
@@ -188,9 +215,22 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
               const urlSplice = createdUrl.slice(urlToReplace.length).split('/')
               appIcon = `${environment.domainName}/assets/public/${urlSplice.slice(1).join('/')}`
             }
-            if (this.eventDetails.controls.appIcon) {
-              this.eventDetails.controls.appIcon.patchValue(appIcon)
-              this.eventDetails.controls.appIcon.updateValueAndValidity()
+            if (mediaType === 'image') {
+              if (this.eventDetails.controls.appIcon) {
+                this.eventDetails.controls.appIcon.patchValue(appIcon)
+                this.eventDetails.controls.appIcon.updateValueAndValidity()
+              }
+            } else {
+              if (this.eventDetails.controls.uploadUrl) {
+                this.eventDetails.controls.uploadUrl.patchValue(appIcon)
+                this.eventDetails.controls.uploadUrl.setValidators([Validators.required])
+                this.eventDetails.controls.resourceUrl.patchValue('')
+                this.eventDetails.controls.resourceUrl.clearValidators()
+                this.eventDetails.controls.resourceUploadType.patchValue('upload')
+                this.eventDetails.controls.uploadUrl.updateValueAndValidity()
+                this.eventDetails.controls.resourceUrl.updateValueAndValidity()
+                this.eventDetails.controls.resourceUploadType.updateValueAndValidity()
+              }
             }
           }
         },
@@ -200,6 +240,47 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
         }
       })
     }
+  }
+
+  preventDefaultCDK(event: DragEvent, isEneter = ''): void {
+    event.preventDefault()
+    event.stopPropagation()
+    if (isEneter) {
+      const dropArea = event.target as HTMLElement
+      dropArea.style.opacity = isEneter === 'enter' ? '0.5' : '1'
+    }
+  }
+
+  onDrop(event: DragEvent): void {
+    this.preventDefaultCDK(event, 'leave')
+
+    const files = event.dataTransfer?.files
+    if (files) {
+      this.onVideoSelected(files)
+    }
+  }
+
+  onVideoSelected(files: any) {
+    let videoPath: any = ''
+    if (files.length === 0) {
+      return
+    }
+    const mimeType = files[0].type
+    if (!mimeType.startsWith('video/')) {
+      this.openSnackBar('Only video files are supported')
+      return
+    }
+    videoPath = files[0]
+
+    const MAX_VIDEO_SIZE = 400 * 1024 * 1024
+
+    if (videoPath.size > MAX_VIDEO_SIZE) {
+      this.openSnackBar('Selected video size exceeds the 400MB limit')
+      videoPath = ''
+      return
+    }
+    const mediaType = 'video'
+    this.saveImage(videoPath, mediaType)
   }
 
   showValidationMsg(controlName: string, validationType: string): Boolean {

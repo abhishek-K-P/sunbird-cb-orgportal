@@ -58,7 +58,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startTime: new FormControl('', [Validators.required]),
       endTime: new FormControl('', [Validators.required]),
       resourceUrl: new FormControl('', [Validators.required]),
-      // uploadUrl: new FormControl(''),
+      uploadUrl: new FormControl(''),
+      resourceUploadType: new FormControl('url'),
       appIcon: new FormControl('', [Validators.required]),
     })
   }
@@ -81,6 +82,13 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   patchEventDetails() {
     this.eventId = _.get(this.eventDetails, 'identifier')
     const startDate = _.get(this.eventDetails, 'startDate', '')
+    const resourceUploadType = _.get(this.eventDetails, 'resourceUploadType', '')
+    if (resourceUploadType === 'upload') {
+      this.eventDetailsForm.controls.resourceUrl.clearAsyncValidators()
+      this.eventDetailsForm.controls.uploadUrl.setValidators([Validators.required])
+      this.eventDetailsForm.controls.uploadUrl.updateValueAndValidity()
+      this.eventDetailsForm.controls.resourceUrl.updateValueAndValidity()
+    }
     const eventBaseDetails = {
       eventName: _.get(this.eventDetails, 'name', ''),
       description: _.get(this.eventDetails, 'description', ''),
@@ -89,7 +97,9 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startDate: startDate ? new Date(startDate) : startDate,
       startTime: _.get(this.eventDetails, 'startTime', ''),
       endTime: _.get(this.eventDetails, 'endTime', ''),
-      resourceUrl: _.get(this.eventDetails, 'resourceUrl', ''),
+      resourceUrl: resourceUploadType === 'url' ? _.get(this.eventDetails, 'resourceUrl', '') : '',
+      uploadUrl: resourceUploadType === 'upload' ? _.get(this.eventDetails, 'resourceUrl', '') : '',
+      resourceUploadType: resourceUploadType,
       appIcon: _.get(this.eventDetails, 'appIcon', '')
     }
     this.eventDetailsForm.setValue(eventBaseDetails)
@@ -145,14 +155,20 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     if (this.currentStepperIndex === 0) {
       if (this.eventDetailsForm.valid) {
         currentFormIsValid = true
+      } else {
+        this.openSnackBar('Please fill mandatory fields')
       }
     } else if (this.currentStepperIndex === 1) {
       if (this.speakersList && this.speakersList.length) {
         currentFormIsValid = true
+      } else {
+        this.openSnackBar('Please add atleast one speaker')
       }
     } else if (this.currentStepperIndex === 2) {
       if (this.materialsList && this.materialsList.length) {
         currentFormIsValid = true
+      } else {
+        this.openSnackBar('Please add atleast one material')
       }
     }
     return currentFormIsValid
@@ -165,15 +181,15 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
         return false
       }
       if (!(this.speakersList && this.speakersList.length)) {
-        this.openSnackBar('Please add atleast one speaker')
+        this.openSnackBar('Please add atleast one speaker in add speakers')
         return false
       }
       if (!(this.materialsList && this.materialsList.length)) {
-        this.openSnackBar('Please add atleast one material')
+        this.openSnackBar('Please add atleast one material in add Material')
         return false
       }
       if (!(this.competencies && this.competencies.length)) {
-        this.openSnackBar('Please add atleast one competency')
+        this.openSnackBar('Please add atleast one competency in add competency')
         return false
       }
       return true
@@ -224,7 +240,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['startDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
     eventDetails['startTime'] = startTime
     eventDetails['endTime'] = endTime
-    eventDetails['resourceUrl'] = eventBaseDetails.resourceUrl
+    eventDetails['resourceUrl'] = eventBaseDetails.resourceUploadType === 'url' ? eventBaseDetails.resourceUrl : eventBaseDetails.uploadUrl
+    eventDetails['resourceUploadType'] = eventBaseDetails.resourceUploadType
     eventDetails['appIcon'] = eventBaseDetails.appIcon
 
     if (this.speakersList) {

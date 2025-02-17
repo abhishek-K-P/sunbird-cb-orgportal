@@ -47,13 +47,6 @@
       <ng-template matStepLabel>Add Competency</ng-template>
       <ws-app-event-competencies [competenciesList]="competencies" [openMode]="openMode"
         (addCompetencies)="addCompetencies($event)"></ws-app-event-competencies>
-      <!-- <ng-container *ngIf="showPreview; else add_competencies">
-        <ws-app-events-preview [event]="updatedEventDetails"></ws-app-events-preview>
-      </ng-container>
-      <ng-template #add_competencies>
-        <ws-app-event-competencies [competenciesList]="competencies" [openMode]="openMode"
-          (addCompetencies)="addCompetencies($event)"></ws-app-event-competencies>
-      </ng-template> -->
     </mat-step>
 
     <ng-container *ngIf="showPreview">
