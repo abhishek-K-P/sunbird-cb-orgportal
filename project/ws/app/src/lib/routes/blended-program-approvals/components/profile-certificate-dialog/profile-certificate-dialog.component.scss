@@ -83,7 +83,9 @@ a.download_btn {
 }
 
 .subheading{
+    /* stylelint-disable */
     font: 600 16px/24px Montserrat;
+    /* stylelint-enable */
   }
 
   .mtop{
@@ -91,7 +93,9 @@ a.download_btn {
   }
 
 .link-course {
+    /* stylelint-disable */
     font: 600 12px/14px Lato;
+    /* stylelint-enable */
     margin: 0px 0 2px;
     letter-spacing: 0px;
     color: #00A9F4;

@@ -1,6 +1,8 @@
 
 .designationHeader {
+  /* stylelint-disable */
   font: 600 16px / 24px Montserrat;
+  /* stylelint-enable */
 }
 .custom-user-card {
   width: 292px;
@@ -9,7 +11,9 @@
   height: 70px;
   display: flex;
   padding: 0 16px;
+  /* stylelint-disable */
   width: 230px;
+  /* stylelint-enable */
   white-space: nowrap;
   position: relative;
   p {

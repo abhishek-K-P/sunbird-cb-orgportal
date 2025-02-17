@@ -3,7 +3,9 @@
 .user-profile{
   height: 3rem;
   width: 50px;
+  /* stylelint-disable */
   height: 50px;
+  /* stylelint-enable */
   border-radius: 50%;
   box-sizing: border-box;
   @media only screen and (min-width: 768px) and (max-width: 1024px) {

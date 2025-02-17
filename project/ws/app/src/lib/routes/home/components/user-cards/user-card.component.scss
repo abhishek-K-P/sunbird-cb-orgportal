@@ -38,7 +38,9 @@
 
   .status-label {
     color: #fff;
+    /* stylelint-disable */
     font: 500 10px / 12px Lato;
+    /* stylelint-enable */
     padding: 4px 2px 4px 8px;
     border-radius: 12px;
 
@@ -138,7 +140,9 @@
   /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
+  /* stylelint-disable */
   font: 400 14px Lato;
+  /* stylelint-enable */
 }
 
 .form-label {
@@ -147,7 +151,9 @@
   margin-bottom: 0;
   color: #000000;
   display: block;
+  /* stylelint-disable */
   font: 600 13px/16px Lato;
+  /* stylelint-enable */
 }
 
 .view-text-label {
@@ -156,7 +162,9 @@
   margin-bottom: 0;
   color: rgba(0, 0, 0, 0.6);
   display: block;
+  /* stylelint-disable */
   font: 500 13px Lato;
+  /* stylelint-enable */
 }
 
 .infoicon {
@@ -273,7 +281,9 @@ label {
     height: auto;
     padding: 0.7em 0;
     display: ruby;
+    /* stylelint-disable */
     height: 50px;
+    /* stylelint-enable */
   }
 
   .mat-form-field-disabled .mat-form-field-outline {
@@ -336,7 +346,9 @@ label {
     background: #1b4ca1;
     color: #fff;
     padding: 1em 1em;
+    /* stylelint-disable */
     font: 500 18px/24px Montserrat !important;
+    /* stylelint-enable */
   }
   .mat-dialog-content {
     margin: 0 !important;

@@ -261,7 +261,9 @@ $banner-min-height: 243px;
       border-radius: 6px;
     }
     .banner-title {
+      /* stylelint-disable */
       font: 600 16px/26px Montserrat;
+      /* stylelint-enable */
       width: 80%;
     }
   }

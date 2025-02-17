@@ -115,7 +115,7 @@ export class FilterComponent implements OnInit, AfterContentChecked {
   getProviders() {
     this.trainingPlanService.getProviders().subscribe((res: any) => {
       this.providersList = res
-      this.providersList.map((pitem: any) => {
+      this.providersList.forEach((pitem: any) => {
         if (this.filterObj['providers'] && pitem && this.filterObj['providers'].indexOf(pitem.name) > -1) {
           pitem['selected'] = true
         } else {
@@ -134,7 +134,7 @@ export class FilterComponent implements OnInit, AfterContentChecked {
   checkedProviders(event: any, item: any) {
     if (event.checked) {
       item['checked'] = true
-      this.providersList.map((pitem: any) => {
+      this.providersList.forEach((pitem: any) => {
         if (item.name === pitem.name) {
           pitem['selected'] = true
         }
@@ -145,7 +145,7 @@ export class FilterComponent implements OnInit, AfterContentChecked {
       }
     } else {
       item['checked'] = false
-      this.providersList.map((pitem: any) => {
+      this.providersList.forEach((pitem: any) => {
         if (item.name === pitem.name) {
           pitem['selected'] = false
         }
@@ -187,7 +187,7 @@ export class FilterComponent implements OnInit, AfterContentChecked {
         this.filterObj[this.compentencyKey.vCompetencyArea].splice(index, 1)
       }
       if (this.filterObj[this.compentencyKey.vCompetencyTheme]) {
-        this.competencyThemeList.map(sitem => {
+        this.competencyThemeList.forEach(sitem => {
           if (sitem.parent === ctype.id) {
             if (this.filterObj[this.compentencyKey.vCompetencyTheme].indexOf(sitem.name) > -1) {
               const index = this.filterObj[this.compentencyKey.vCompetencyTheme].findIndex((x: any) => x === sitem.name)
@@ -197,7 +197,7 @@ export class FilterComponent implements OnInit, AfterContentChecked {
         })
       }
       if (this.filterObj[this.compentencyKey.vCompetencySubTheme]) {
-        this.competencySubThemeList.map(ssitem => {
+        this.competencySubThemeList.forEach(ssitem => {
           if (ssitem.parentType === ctype.id) {
             if (this.filterObj[this.compentencyKey.vCompetencySubTheme].indexOf(ssitem.name) > -1) {
               const index = this.filterObj[this.compentencyKey.vCompetencySubTheme].findIndex((x: any) => x === ssitem.name)
@@ -225,7 +225,7 @@ export class FilterComponent implements OnInit, AfterContentChecked {
 
   getCompetencySubTheme(event: any, cstype: any) {
     if (event.checked) {
-      this.competencyThemeList.map((csitem: any) => {
+      this.competencyThemeList.forEach((csitem: any) => {
         if (csitem.name === cstype.name) {
           csitem['selected'] = true
           csitem.children.map((subthemechild: any) => {
@@ -240,7 +240,7 @@ export class FilterComponent implements OnInit, AfterContentChecked {
         }
       })
     } else {
-      this.competencyThemeList.map((csitem: any) => {
+      this.competencyThemeList.forEach((csitem: any) => {
         if (csitem.name === cstype.name) {
           csitem['selected'] = false
         }
@@ -260,7 +260,7 @@ export class FilterComponent implements OnInit, AfterContentChecked {
 
   manageCompetencySubTheme(event: any, csttype: any) {
     if (event.checked) {
-      this.competencySubThemeList.map((cstlitem: any) => {
+      this.competencySubThemeList.forEach((cstlitem: any) => {
         if (csttype.name === cstlitem.name) {
           cstlitem['selected'] = true
         }
@@ -270,7 +270,7 @@ export class FilterComponent implements OnInit, AfterContentChecked {
       }
 
     } else {
-      this.competencySubThemeList.map((cstlitem: any) => {
+      this.competencySubThemeList.forEach((cstlitem: any) => {
         if (csttype.name === cstlitem.name) {
           cstlitem['selected'] = false
         }
@@ -400,28 +400,28 @@ export class FilterComponent implements OnInit, AfterContentChecked {
 
   resetFilter() {
     if (this.competencyTypeList) {
-      this.competencyTypeList.map((citem: any) => {
+      this.competencyTypeList.forEach((citem: any) => {
         if (citem && citem['selected']) {
           citem['selected'] = false
         }
       })
     }
     if (this.competencyThemeList) {
-      this.competencyThemeList.map((titem: any) => {
+      this.competencyThemeList.forEach((titem: any) => {
         if (titem && titem['selected']) {
           titem['selected'] = false
         }
       })
     }
     if (this.competencySubThemeList) {
-      this.competencySubThemeList.map((sitem: any) => {
+      this.competencySubThemeList.forEach((sitem: any) => {
         if (sitem && sitem['selected']) {
           sitem['selected'] = false
         }
       })
     }
     if (this.providersList) {
-      this.providersList.map((pitem: any) => {
+      this.providersList.forEach((pitem: any) => {
         if (pitem && pitem['selected']) {
           pitem['selected'] = false
         }

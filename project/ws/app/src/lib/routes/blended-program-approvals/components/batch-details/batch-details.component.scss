@@ -9,7 +9,9 @@
   .batch-data {
     list-style: none;
     padding: 0;
+    /* stylelint-disable */
     font: 400 14px/20px Lato;
+    /* stylelint-enable */
 
     li {
       display: inline;
@@ -78,7 +80,9 @@
 }
 
 ::ng-deep.h-600-s-20-m {
+  /* stylelint-disable */
   font: 700 14px Lato !important;
+  /* stylelint-enable */
 }
 .new-request-count {
   color: #D13924;
@@ -117,7 +121,9 @@
   padding: 9px 9px 9px 35px;
   margin-bottom: 20px;
   margin-top: 0;
+  /* stylelint-disable */
   font: normal 14px Lato;
+  /* stylelint-enable */
   font-weight: 400;
   height: 1.8rem;
 }

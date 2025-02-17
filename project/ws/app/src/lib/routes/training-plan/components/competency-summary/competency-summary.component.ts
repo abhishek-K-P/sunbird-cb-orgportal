@@ -74,7 +74,7 @@ export class CompetencySummaryComponent implements OnInit, OnChanges {
 
     if (this.selectedCardData && this.compentencyKey && this.compentencyKey.vKey) {
       let fObj = { competencyTheme: '', count: 0 }
-      this.selectedCardData.map((sitem: any) => {
+      this.selectedCardData.forEach((sitem: any) => {
         if (sitem && sitem[this.compentencyKey.vKey]) {
           sitem[this.compentencyKey.vKey].map((fitem: any) => {
             if (fitem[this.compentencyKey.vCompetencyArea].toLowerCase() === 'behavioural') {

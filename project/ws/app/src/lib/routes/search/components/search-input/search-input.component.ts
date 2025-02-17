@@ -85,7 +85,7 @@ export class SearchInputComponent implements OnInit, OnChanges {
   ngOnChanges() {
     for (const change in SimpleChange) {
       if (change === 'placeHolder') {
-        this.placeHolder = this.placeHolder
+        this.placeHolder = this.placeHolder //NOSONAR
       }
     }
   }

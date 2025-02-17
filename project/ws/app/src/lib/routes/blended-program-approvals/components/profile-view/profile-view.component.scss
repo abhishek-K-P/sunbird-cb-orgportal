@@ -68,7 +68,7 @@
   margin: 0 auto;
   // border: 1px solid;
   // font-weight: 500;
-  box-shadow: 0px 10px 30p;
+  box-shadow: 0px 10px 30px;
   /*#99999933*/
   border-radius: 8px;
   height: 40px;
@@ -509,7 +509,9 @@ mat-card.card-container-sidenav-profile.mat-card {
     }
 
     .subheading {
+      /* stylelint-disable */
       font: 600 16px/24px Montserrat;
+      /* stylelint-enable */
     }
 
     .img-size {

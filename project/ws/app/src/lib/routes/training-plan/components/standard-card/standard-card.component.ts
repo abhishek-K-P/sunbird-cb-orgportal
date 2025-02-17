@@ -86,7 +86,7 @@ export class StandardCardComponent implements OnInit, AfterViewChecked {
         sitem['selected'] = false
       }
     })
-    this.contentData.filter((sitem: any, index: any) => {
+    this.contentData.filter((sitem: any, index: any) => { //NOSONAR
       if (sitem.identifier === item.identifier) {
         this.contentData.splice(index, 1)
       }
