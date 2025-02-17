@@ -2,6 +2,8 @@ import { Component, ElementRef, HostListener, Input, OnChanges, OnInit, SimpleCh
 // import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { environment } from '../../../../../../../../../../../src/environments/environment'
+import { OwlOptions } from 'ngx-owl-carousel-o'
+import { EventsService } from '../../services/events.service'
 // import { YoutubePlayerComponent } from '../../dialogs/youtube-player/youtube-player.component'
 
 @Component({
@@ -26,6 +28,7 @@ export class EventsPreviewComponent implements OnInit, OnChanges {
   sticky = false
   competencies_v6: any = []
   competenciesObject: any = []
+  selectedCompetecy: any
   compentencyKey: any
   competencySelected = ''
   widgets?: NsWidgetResolver.IRenderConfigWithAnyData[]
@@ -81,9 +84,30 @@ export class EventsPreviewComponent implements OnInit, OnChanges {
       this.scrolled = false
     }
   }
+  customOptions: OwlOptions = {
+    loop: false,
+    mouseDrag: true,
+    touchDrag: true,
+    pullDrag: false,
+    dots: false,
+    navSpeed: 200,
+    navText: [
+      '<',
+      '>'
+    ],
+    responsive: {
+      0: {
+        items: 2
+      },
+      768: {
+        items: 2
+      }
+    },
+    nav: true
+  };
 
   constructor(
-    // private dialog: MatLegacyDialog,
+    private eventsService: EventsService
   ) { }
 
   ngOnInit(): void {
@@ -102,85 +126,13 @@ export class EventsPreviewComponent implements OnInit, OnChanges {
 
   loadCompetencies(): void {
     if (this.event && this.compentencyKey && this.event[this.compentencyKey.vKey] && this.event[this.compentencyKey.vKey].length) {
-      const competenciesObject: any = {}
-      if (typeof this.event[this.compentencyKey.vKey] === 'string'
-        && this.checkValidJSON(this.event[this.compentencyKey.vKey])) {
-        this.event[this.compentencyKey.vKey] = JSON.parse(this.event[this.compentencyKey.vKey])
-      }
-      this.event[this.compentencyKey.vKey].forEach((_obj: any) => {
-        if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]) {
-          if (competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
-          [_obj[this.compentencyKey.vCompetencyTheme]]) {
-            const competencyTheme = competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
-            [_obj[this.compentencyKey.vCompetencyTheme]]
-            if (competencyTheme.indexOf(_obj[this.compentencyKey.vCompetencySubTheme]) === -1) {
-              competencyTheme.push(_obj[this.compentencyKey.vCompetencySubTheme])
-            }
-          } else {
-            competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
-            [_obj[this.compentencyKey.vCompetencyTheme]] = []
-            competenciesObject[_obj[this.compentencyKey.vCompetencyArea]]
-            [_obj[this.compentencyKey.vCompetencyTheme]]
-              .push(_obj[this.compentencyKey.vCompetencySubTheme])
-          }
-        } else {
-          competenciesObject[_obj[this.compentencyKey.vCompetencyArea]] = {}
-          competenciesObject[_obj[this.compentencyKey.vCompetencyArea]][_obj[this.compentencyKey.vCompetencyTheme]] = []
-          competenciesObject[_obj[this.compentencyKey.vCompetencyArea]][_obj[this.compentencyKey.vCompetencyTheme]]
-            .push(_obj[this.compentencyKey.vCompetencySubTheme])
-        }
-      })
-
-      for (const key in competenciesObject) {
-        if (competenciesObject.hasOwnProperty(key)) {
-          const _temp: any = {}
-          _temp['key'] = key
-          _temp['value'] = competenciesObject[key]
-          this.competenciesObject.push(_temp)
-        }
-      }
-      this.handleShowCompetencies(this.competenciesObject[0])
+      this.competenciesObject = this.eventsService.convertToTreeView(this.event[this.compentencyKey.vKey])
+      this.selectedCompetecy = this.competenciesObject[0]
     }
   }
 
-  handleShowCompetencies(item: any): void {
-    this.competencySelected = item.key
-    const valueObj = item.value
-    const competencyArray = []
-    for (const key in valueObj) {
-      if (valueObj.hasOwnProperty(key)) {
-        const _tempObj: any = {}
-        _tempObj['key'] = key
-        _tempObj['value'] = valueObj[key]
-        competencyArray.push(_tempObj)
-      }
-    }
-
-    this.strip['loaderWidgets'] = this.transformCompetenciesToWidget(this.competencySelected, competencyArray, this.strip)
-  }
-
-  private transformCompetenciesToWidget(
-    competencyArea: string,
-    competencyArrObject: any,
-    strip: any) {
-    return (competencyArrObject || []).map((content: any, idx: number) => (
-      content ? {
-        widgetType: 'card',
-        widgetSubType: 'competencyCard',
-        widgetHostClass: 'mr-4',
-        widgetData: {
-          content,
-          competencyArea,
-          cardCustomeClass: strip.customeClass ? strip.customeClass : '',
-          context: { pageSection: strip.key, position: idx },
-        },
-      } : {
-        widgetType: 'card',
-        widgetSubType: 'competencyCard',
-        widgetHostClass: 'mr-4',
-        widgetData: {},
-      }
-    ))
+  getSelectedCompetecyThemes(competencyArea: any) {
+    this.selectedCompetecy = competencyArea
   }
 
   checkValidJSON(str: any) {

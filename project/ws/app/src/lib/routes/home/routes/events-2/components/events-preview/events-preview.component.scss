@@ -227,3 +227,75 @@
   line-height: 14.4px;
   letter-spacing: 0%;
 }
+
+// .nav-button {
+//   height: 48px;
+//   width: 48px;
+//   border-radius: 50%;
+//   background-color: #1b2133!important;
+//   color: #fff!important;
+//   font-weight: 700;
+//   position: absolute;
+
+//   .pre-btn {
+//     left: -10px;
+//   }
+
+//   .next-btn {
+//     right: -10px;
+//   }
+// }
+
+::ng-deep .event-carousel {
+  .owl-theme .owl-nav {
+    position: absolute;
+    top: calc(50% - 21px);
+    margin-top: 0px !important;
+    width: 100%;
+  }
+
+  .owl-nav {
+    position: relative;
+
+    // .nav-button {
+    //   height: 48px;
+    //   width: 48px;
+    //   border-radius: 50%;
+    //   background-color: #1b2133 !important;
+    //   color: #fff !important;
+    //   font-weight: 700;
+    // }
+
+    .owl-prev {
+      position: absolute;
+      left: -21px;
+      top: calc(50% + 7px);
+      transform: translateY(-50%);
+      background-color: #1b2133!important;
+      border-radius: 50%;
+      height: 24px !important;
+      width: 20px !important;
+      font-size: 20px;
+      opacity: 1 !important;
+    }
+
+    .owl-next {
+      position: absolute;
+      right: -21px;
+      top: calc(50% + 7px);
+      transform: translateY(-50%);
+      background-color: #1b2133!important;
+      border-radius: 50%;
+      height: 24px !important;
+      width: 20px !important;
+      font-size: 20px;
+      opacity: 1 !important;
+    }
+  }
+
+  /* Hide default owl carousel nav buttons */
+  .owl-theme .owl-nav .disabled {
+    display: none;
+  }
+}
+

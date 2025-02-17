@@ -50,25 +50,23 @@
                         [matTooltipPosition]="'below'" #tooltip="matTooltip" (click)="tooltip.toggle()"
                         matTooltip="Competency: Set of demonstrable characteristics and skills that enable and improve the efficiency of performing a job. Behavioural competencies describe the key values and strengths that help an official perform effectively in a range of roles. Domain competencies are defined for a specific MDO (for example, the Ministry of Personnel or the Department of Biotechnology) but that does not mean that others will not need them. Functional competencies are common among many domains, cutting across MDOs, as well as roles and activities.">info_outline</mat-icon>
                     </div>
-                    <ng-container *ngIf="strip?.loaderWidgets?.length > 0">
-                      <div class="flex flex-col gap-3">
-                        <div class="flex flex-row gap-3 sm:gap-4 mb-3">
-                          <ng-container *ngFor="let item of competenciesObject">
-                            <div class="themes-button" [ngClass]="{'theme-activated': competencySelected === item.key}"
-                              (click)="handleShowCompetencies(item, 'selected')">{{ item.key }}</div>
-                          </ng-container>
-                        </div>
-                        <ng-container *ngFor="let item of competenciesObject">
-                          <div *ngIf="item?.key === competencySelected" class="competency-cards">
-                            <ws-utils-horizontal-scroller-v2 [loadStatus]="'done'" [stripConfig]="strip.stripConfig">
-                              <ng-container *ngFor="let widget of strip?.loaderWidgets; trackBy: tracker">
-                                <ng-container [wsResolverWidget]="widget"></ng-container>
-                              </ng-container>
-                            </ws-utils-horizontal-scroller-v2>
-                          </div>
+                    <div class="flex flex-col gap-3">
+                      <div class="flex flex-row gap-3 sm:gap-4 mb-3">
+                        <ng-container *ngFor="let competencie of competenciesObject">
+                          <div class="themes-button"
+                            [ngClass]="{'theme-activated': selectedCompetecy?.competencyAreaName === competencie.competencyAreaName}"
+                            (click)="getSelectedCompetecyThemes(competencie)">{{ competencie.competencyAreaName }}</div>
                         </ng-container>
                       </div>
-                    </ng-container>
+                      <owl-carousel-o class="event-carousel" [options]="customOptions">
+                        <ng-container *ngFor="let theme of selectedCompetecy?.themes">
+                          <ng-template carouselSlide>
+                            <ws-widget-card-competency [theme]="theme"
+                              [competencyArea]="selectedCompetecy?.competencyAreaName"></ws-widget-card-competency>
+                          </ng-template>
+                        </ng-container>
+                      </owl-carousel-o>
+                    </div>
                   </div>
                 </div>
               </ng-container>

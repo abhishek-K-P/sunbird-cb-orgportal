@@ -98,6 +98,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     this.speakersList = _.get(this.eventDetails, 'speakers', [])
     this.materialsList = _.get(this.eventDetails, 'eventHandouts', [])
     this.competencies = _.get(this.eventDetails, 'competencies_v6', [])
+
+    // this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status']) //need to remove
   }
 
   ngAfterViewInit() {
@@ -198,7 +200,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
         }
       },
       error: (error: HttpErrorResponse) => {
-        const errorMessage = _.get(error, 'error.message', 'Something went wrong while creating event, please try again')
+        const errorMessage = _.get(error, 'error.message', 'Something went wrong while updating event, please try again')
         this.openSnackBar(errorMessage)
       }
     })
