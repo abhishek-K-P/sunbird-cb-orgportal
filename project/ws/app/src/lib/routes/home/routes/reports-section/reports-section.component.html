@@ -77,7 +77,7 @@
           <ng-container class="margin-top-l">
             <div class="table-container">
               <table matSort mat-table [dataSource]="dataSource" [matSortActive]="orgName" [matSortDirection]="asc"
-                class="mat-elevation-z8 full-width-table"><!--//NOSONAR -->
+                class="mat-elevation-z8 full-width-table"><!-- //NOSONAR -->
                 <ng-container matColumnDef="select">
                   <th mat-header-cell *matHeaderCellDef class="header-checkbox">
                     <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="isAllSelected()"
