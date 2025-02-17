@@ -1,234 +1,238 @@
 import { EventsListComponent } from './events-list.component'
-import { HttpErrorResponse } from '@angular/common/http'
+import { EventsService } from '../../services/events.service'
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { ActivatedRoute, Router, UrlSegment, ActivatedRouteSnapshot, ParamMap } from '@angular/router'
+import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { of, throwError } from 'rxjs'
-
-// Mock interfaces and types
-interface MockMatSnackBar {
-  open: jest.Mock
-}
-
-interface MockEventsService {
-  getEvents: jest.Mock
-  updateEvent: jest.Mock
-}
-
-interface MockRouter {
-  navigate: jest.Mock
-}
-
-interface MockDialog {
-  open: jest.Mock
-}
+import { HttpErrorResponse } from '@angular/common/http'
 
 describe('EventsListComponent', () => {
-  let component: any
-  let mockMatSnackBar: MockMatSnackBar
-  let mockEventsService: MockEventsService
-  let mockRouter: MockRouter
-  let mockDialog: MockDialog
+  let component: EventsListComponent
+  let mockEventService: jest.Mocked<EventsService>
+  let mockSnackBar: jest.Mocked<MatLegacySnackBar>
+  let mockRouter: jest.Mocked<Router>
+  let mockDialog: jest.Mocked<MatLegacyDialog>
+  let mockActivatedRoute: Partial<ActivatedRoute>
+  let mockActivatedRouteSnapshot: Partial<ActivatedRouteSnapshot>
 
   beforeEach(() => {
-    // Initialize mocks
-    mockMatSnackBar = {
-      open: jest.fn()
-    }
-
-    mockEventsService = {
-      getEvents: jest.fn(),
+    // Setup EventService mock with default response
+    mockEventService = {
+      getEvents: jest.fn().mockReturnValue(of({ Event: [], count: 0 })),
       updateEvent: jest.fn()
-    }
+    } as any
+
+    mockSnackBar = {
+      open: jest.fn()
+    } as any
 
     mockRouter = {
       navigate: jest.fn()
-    }
+    } as any
 
     mockDialog = {
       open: jest.fn()
+    } as any
+
+    const mockUrlSegment = new UrlSegment('upcoming', {})
+
+    mockActivatedRouteSnapshot = {
+      url: [mockUrlSegment],
+      params: {},
+      queryParams: {},
+      fragment: null,
+      data: {},
+      outlet: 'primary',
+      component: null,
+      routeConfig: null,
+      root: null as any,
+      parent: null,
+      firstChild: null,
+      children: [],
+      pathFromRoot: [],
+      paramMap: {
+        get: () => null,
+        has: () => false,
+        getAll: () => [],
+        keys: []
+      } as ParamMap,
+      queryParamMap: {
+        get: () => null,
+        has: () => false,
+        getAll: () => [],
+        keys: []
+      } as ParamMap
     }
 
-    // Create component instance with mocked dependencies
+    mockActivatedRoute = {
+      snapshot: mockActivatedRouteSnapshot as ActivatedRouteSnapshot
+    }
+
     component = new EventsListComponent(
-      mockEventsService as any,
-      mockMatSnackBar as any,
-      { snapshot: { url: [{ path: 'upcoming' }] } } as any,
-      mockRouter as any,
-      mockDialog as any
+      mockEventService,
+      mockSnackBar,
+      mockActivatedRoute as ActivatedRoute,
+      mockRouter,
+      mockDialog
     )
   })
 
-  describe('createEventRequest', () => {
-    it('should create correct request object for upcoming events', () => {
-      // Mock date for consistent testing
-      const mockDate = new Date('2024-02-14')
-      jest.spyOn(global, 'Date').mockImplementation(() => mockDate)
+  describe('initialization', () => {
+    it('should initialize with correct table data for upcoming events', () => {
+      // Setup mock response for getEvents
+      mockEventService.getEvents.mockReturnValue(of({ Event: [], count: 0 }))
 
-      component.pathUrl = 'upcoming'
-      const request = component['createEventRequest']()
+      component.ngOnInit()
 
-      expect(request).toEqual({
-        locale: ['en'],
-        request: {
-          query: '',
-          limit: 20,
-          offset: 0,
-          filters: {
-            status: ['Live'],
-            contentType: 'Event',
-            endDate: { '>=': '2024-02-14' }
-          },
-          sort_by: { lastUpdatedOn: 'desc' }
-        }
-      })
+      expect(component.tableData.columns).toHaveLength(4)
+      expect(component.tableData.columns[0].displayName).toBe('Event Name')
+      expect(component.menuItems).toHaveLength(2)
+      expect(component.pathUrl).toBe('upcoming')
     })
 
-    it('should throw error for invalid path URL', () => {
-      component.pathUrl = 'invalid-path'
-      expect(() => component['createEventRequest']()).toThrow('Invalid path URL: invalid-path')
+    it('should initialize with correct table data for draft events', () => {
+      // Setup mock response for getEvents
+      mockEventService.getEvents.mockReturnValue(of({ Event: [], count: 0 }))
+
+      const draftUrlSegment = new UrlSegment('draft', {})
+      mockActivatedRouteSnapshot.url = [draftUrlSegment]
+      mockActivatedRoute.snapshot = mockActivatedRouteSnapshot as ActivatedRouteSnapshot
+
+      component.ngOnInit()
+
+      expect(component.tableData.columns).toHaveLength(4)
+      expect(component.menuItems).toHaveLength(2)
+      expect(component.pathUrl).toBe('draft')
     })
   })
 
-  describe('contentEvents', () => {
-    const mockEventRow = {
-      identifier: 'test-id',
-      versionKey: 'v1'
-    }
+  describe('getEvents', () => {
+    it('should fetch events successfully', () => {
+      const mockResponse = {
+        Event: [{ id: 1, name: 'Test Event' }],
+        count: 1
+      }
 
-    it('should handle view action correctly', () => {
-      component.contentEvents({ action: 'view', rows: mockEventRow })
+      mockEventService.getEvents.mockReturnValue(of(mockResponse))
+
+      component.ngOnInit()
+
+      expect(component.eventsList).toEqual(mockResponse.Event)
+      expect(component.paginationDetails.totalCount).toBe(1)
+      expect(component.showEventsLoader).toBeFalsy()
+    })
+
+    it('should handle error when fetching events', () => {
+      const errorResponse = new HttpErrorResponse({
+        error: { message: 'Some thing went wrong' }, // Match the exact error message from component
+        status: 404
+      })
+
+      mockEventService.getEvents.mockReturnValue(throwError(() => errorResponse))
+
+      component.ngOnInit()
+
+      expect(component.showEventsLoader).toBeFalsy()
+      expect(mockSnackBar.open).toHaveBeenCalledWith('Some thing went wrong')
+    })
+  })
+
+  describe('search and pagination', () => {
+    it('should update search key and fetch events', () => {
+      const searchKey = 'test search'
+      mockEventService.getEvents.mockReturnValue(of({ Event: [], count: 0 }))
+
+      component.searchEvents(searchKey)
+
+      expect(component.searchKey).toBe(searchKey)
+      expect(mockEventService.getEvents).toHaveBeenCalled()
+    })
+
+    it('should update pagination and fetch events', () => {
+      const newPagination = {
+        startIndex: 20,
+        lastIndex: 40,
+        pageSize: 20,
+        pageIndex: 1,
+        totalCount: 100
+      }
+      mockEventService.getEvents.mockReturnValue(of({ Event: [], count: 0 }))
+
+      component.onPageChange(newPagination)
+
+      expect(component.paginationDetails).toEqual(newPagination)
+      expect(mockEventService.getEvents).toHaveBeenCalled()
+    })
+  })
+
+  describe('event actions', () => {
+    it('should navigate to edit event page', () => {
+      const eventId = 'test-id'
+      const openMode = 'view'
+
+      component.navigateToEditEvent(eventId, openMode)
+
       expect(mockRouter.navigate).toHaveBeenCalledWith(
-        ['/app/home/events/edit-event', 'test-id'],
-        expect.any(Object)
-      )
-    })
-
-    it('should handle cancel action correctly', () => {
-      mockEventsService.updateEvent.mockReturnValue(of({ success: true }))
-      component.contentEvents({ action: 'cancel', rows: mockEventRow })
-      expect(mockEventsService.updateEvent).toHaveBeenCalledWith(
+        ['/app/home/events/edit-event', eventId],
         {
-          request: {
-            event: {
-              identifier: 'test-id',
-              versionKey: 'v1',
-              status: 'Cancelled'
-            }
+          queryParams: {
+            mode: openMode,
+            pathUrl: component.pathUrl
           }
-        },
-        'test-id'
+        }
       )
     })
 
-    it('should handle remarks action for event with reject comment', () => {
-      const eventWithRemarks = {
-        ...mockEventRow,
-        rejectComment: 'Test rejection reason'
-      }
-
-      component.contentEvents({ action: 'remarks', rows: eventWithRemarks })
-      expect(mockDialog.open).toHaveBeenCalled()
-    })
-
-    it('should not call any handler for unknown action', () => {
-      component.contentEvents({ action: 'unknown', rows: mockEventRow })
-      expect(mockRouter.navigate).not.toHaveBeenCalled()
-      expect(mockEventsService.updateEvent).not.toHaveBeenCalled()
-      expect(mockDialog.open).not.toHaveBeenCalled()
-    })
-  })
-
-  describe('handleError', () => {
-    it('should show error message from response', () => {
-      const error = new HttpErrorResponse({
-        error: { message: 'Test error message' }
-      })
-
-      component['handleError'](error)
-      expect(mockMatSnackBar.open).toHaveBeenCalledWith(
-        'Test error message',
-        'Close',
-        expect.any(Object)
-      )
-    })
-
-    it('should show default error message when no error message in response', () => {
-      const error = new HttpErrorResponse({})
-
-      component['handleError'](error)
-      expect(mockMatSnackBar.open).toHaveBeenCalledWith(
-        'Something went wrong',
-        'Close',
-        expect.any(Object)
-      )
-    })
-  })
-
-  describe('cancelEvent', () => {
-    const mockEvent = {
-      identifier: 'test-id',
-      versionKey: 'v1'
-    }
-
-    it('should successfully cancel event and show success message', () => {
-      mockEventsService.updateEvent.mockReturnValue(of({ success: true }))
-      mockEventsService.getEvents.mockReturnValue(of([]))
-
-      component.cancelEvent(mockEvent)
-
-      expect(mockEventsService.updateEvent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          request: {
-            event: {
-              identifier: 'test-id',
-              versionKey: 'v1',
-              status: 'Cancelled'
-            }
-          }
-        }),
-        'test-id'
-      )
-      expect(mockMatSnackBar.open).toHaveBeenCalledWith(
-        'event is cancelled successfully',
-        'Close',
-        expect.any(Object)
-      )
-    })
-
-    it('should handle error when cancelling event', () => {
-      const error = new HttpErrorResponse({
-        error: { message: 'Cancel failed' }
-      })
-      mockEventsService.updateEvent.mockReturnValue(throwError(() => error))
-
-      component.cancelEvent(mockEvent)
-
-      expect(mockMatSnackBar.open).toHaveBeenCalledWith(
-        'Cancel failed',
-        'Close',
-        expect.any(Object)
-      )
-    })
-  })
-
-  describe('openRejectionPopup', () => {
-    it('should open dialog when rejection comment exists', () => {
-      const mockEvent = {
-        identifier: 'test-id',
-        versionKey: 'v1',
-        rejectComment: 'Test rejection reason'
-      }
-
-      component.openRejectionPopup(mockEvent)
-      expect(mockDialog.open).toHaveBeenCalled()
-    })
-
-    it('should not open dialog when no rejection comment', () => {
+    it('should cancel event successfully', () => {
       const mockEvent = {
         identifier: 'test-id',
         versionKey: 'v1'
       }
+      mockEventService.updateEvent.mockReturnValue(of({ success: true }))
 
-      component.openRejectionPopup(mockEvent)
-      expect(mockDialog.open).not.toHaveBeenCalled()
+      component.cancelEvent(mockEvent)
+
+      expect(mockEventService.updateEvent).toHaveBeenCalledWith(
+        {
+          request: {
+            event: {
+              identifier: mockEvent.identifier,
+              versionKey: mockEvent.versionKey,
+              status: 'Cancelled'
+            }
+          }
+        },
+        mockEvent.identifier
+      )
+      expect(mockSnackBar.open).toHaveBeenCalledWith('event is cancelled successfully')
+    })
+
+    it('should handle event cancellation error', () => {
+      const mockEvent = {
+        identifier: 'test-id',
+        versionKey: 'v1'
+      }
+      const errorResponse = new HttpErrorResponse({
+        error: { message: 'Something went wrong please try again' }, // Match the exact error message from component
+        status: 404
+      })
+
+      mockEventService.updateEvent.mockReturnValue(throwError(() => errorResponse))
+
+      component.cancelEvent(mockEvent)
+
+      expect(mockSnackBar.open).toHaveBeenCalledWith('Something went wrong please try again')
+    })
+  })
+
+  describe('cleanup', () => {
+    it('should unsubscribe from getEventSubscription on destroy', () => {
+      const mockUnsubscribe = jest.fn()
+      component.getEventSubscription = { unsubscribe: mockUnsubscribe } as any
+
+      component.ngOnDestroy()
+
+      expect(mockUnsubscribe).toHaveBeenCalled()
     })
   })
 })

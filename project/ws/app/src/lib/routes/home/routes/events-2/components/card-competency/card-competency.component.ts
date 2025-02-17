@@ -1,9 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core'
 import { trigger, state, style, animate, transition } from '@angular/animations'
-// import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
-// import { NsCardContent } from '@sunbird-cb/utils/lib/services/card-content.model'
-// import { NsCardContent } from '../card-content-v2/card-content-v2.model'
-// import { NsWidgetResolver, WidgetBaseComponent } from '@ws-widget/resolver'
 
 @Component({
   selector: 'ws-widget-card-competency',
@@ -29,12 +25,11 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 
 export class CardCompetencyComponent implements OnInit {
 
-  @Input() widgetData!: any
+  @Input() theme: any[] = []
   @Input() competencyArea = ''
   isExpanded = false
 
   constructor() {
-    // super()
   }
 
   ngOnInit() {
