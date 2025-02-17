@@ -423,13 +423,13 @@ export class FilterComponent implements OnInit, AfterContentChecked {
 
     }
 
-    if (this.from === 'content') {
-      // this.getFilterData.emit(this.filterObj)
-      // this.usersSvc.getFilterDataObject.next(this.filterObj)
-    } else {
-      // this.getFilterData.emit(this.assigneeFilterObj)
-      // this.usersSvc.getFilterDataObject.next(this.assigneeFilterObj)
-    }
+    // if (this.from === 'content') {
+    //   // this.getFilterData.emit(this.filterObj)
+    //   // this.usersSvc.getFilterDataObject.next(this.filterObj)
+    // } else {
+    //   // this.getFilterData.emit(this.assigneeFilterObj)
+    //   // this.usersSvc.getFilterDataObject.next(this.assigneeFilterObj)
+    // }
 
     if (this.checkboxes) {
       this.checkboxes.forEach((element: any) => {

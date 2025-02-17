@@ -315,13 +315,13 @@ export class FilterComponent implements OnInit, AfterContentChecked {
       this.resetAssigneeFilter()
     }
 
-    if (this.from === 'content') {
-      // this.getFilterData.emit(this.filterObj)
-      // this.tpdsSvc.getFilterDataObject.next(this.filterObj)
-    } else {
-      // this.getFilterData.emit(this.assigneeFilterObj)
-      // this.tpdsSvc.getFilterDataObject.next(this.assigneeFilterObj)
-    }
+    // if (this.from === 'content') {
+    //   // this.getFilterData.emit(this.filterObj)
+    //   // this.tpdsSvc.getFilterDataObject.next(this.filterObj)
+    // } else {
+    //   // this.getFilterData.emit(this.assigneeFilterObj)
+    //   // this.tpdsSvc.getFilterDataObject.next(this.assigneeFilterObj)
+    // }
 
     if (this.checkboxes) {
       this.checkboxes.forEach((element: any) => {
