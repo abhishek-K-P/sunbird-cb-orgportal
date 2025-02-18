@@ -13,81 +13,82 @@
 
   <div class="example-table-container">
     <ng-container *ngIf="!showLoader; else tableLoader">
-      <mat-table #table matSort [dataSource]="dataSource" class="example-table table1 responsiveTable"
-        *ngIf="dataSource.filteredData.length > 0">
+      <ng-container *ngIf="dataSource.filteredData.length > 0">
+        <mat-table #table matSort [dataSource]="dataSource" class="example-table table1 responsiveTable">
 
-        <ng-container matColumnDef="{{col.key}}" *ngFor="let col of tableColumns">
-          <ng-container [ngSwitch]="col.cellType">
-            <ng-container *ngSwitchCase="'text'">
-              <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text"> {{col.displayName}}
-              </mat-header-cell>
-              <mat-cell *matCellDef="let element" class="py-2 flex flex-row gap-2">
-                <ng-container *ngIf="col.imageKey">
-                  <img class="imageCell py-2" [src]="element[col.imageKey]" alt="logo">
-                </ng-container>
-                <span [ngClass]="col.cellClass" class="cources-table-cell">
-                  {{element[col.key]}}
-                </span>
-              </mat-cell>
+          <ng-container matColumnDef="{{col.key}}" *ngFor="let col of tableColumns">
+            <ng-container [ngSwitch]="col.cellType">
+              <ng-container *ngSwitchCase="'text'">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text"> {{col.displayName}}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="py-2 flex flex-row gap-2">
+                  <ng-container *ngIf="col.imageKey">
+                    <img class="imageCell py-2" [src]="element[col.imageKey]" alt="logo">
+                  </ng-container>
+                  <span [ngClass]="col.cellClass" class="cources-table-cell">
+                    {{element[col.key]}}
+                  </span>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'date'">
+                <mat-header-cell *matHeaderCellDef class="table-header-text table-date-header">
+                  {{col.displayName}}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="table-date-column">
+                  <span [ngClass]="col.cellClass" class="cources-table-cell">
+                    {{element[col.key]}}
+                  </span>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'number'">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text table-number-cell">
+                  {{col.displayName}}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="table-number-cell">
+                  <span [ngClass]="col.cellClass" class="cources-table-cell">
+                    {{element[col.key]}}
+                  </span>
+                </mat-cell>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'menu'">
+                <mat-header-cell *matHeaderCellDef class="table-header-text flex justify-center table-menu-header">
+                  {{col.displayName}}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="justify-center table-menu-column">
+
+                  <mat-icon mat-icon-button i18n-aria-label aria-label="action items" [matMenuTriggerFor]="cardMenu"
+                    class="horizontalMenu"> more_horiz
+                  </mat-icon>
+                  <mat-menu #cardMenu="matMenu">
+                    <ng-template matMenuContent>
+                      <ng-container *ngFor="let item of menuItems">
+                        <div mat-menu-item [ngClass]="{'disableMenu': element['disableMenu']}"
+                          [disabled]="element['disableMenu'] === true" (click)="buttonClick(item.action, element)">
+                          <button class="flex item-btn items-center" mat-icon-button i18n-aria-label
+                            aria-label="Analytics">
+                            <mat-icon *ngIf="item.icon" class="menu-item-icon">{{item.icon}}</mat-icon>
+                            {{item.btnText}}
+                          </button>
+                        </div>
+                      </ng-container>
+                    </ng-template>
+                  </mat-menu>
+                </mat-cell>
+              </ng-container>
+
             </ng-container>
-
-            <ng-container *ngSwitchCase="'date'">
-              <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text table-date-header">
-                {{col.displayName}}
-              </mat-header-cell>
-              <mat-cell *matCellDef="let element" class="table-date-column">
-                <span [ngClass]="col.cellClass" class="cources-table-cell">
-                  {{element[col.key]}}
-                </span>
-              </mat-cell>
-            </ng-container>
-
-            <ng-container *ngSwitchCase="'number'">
-              <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text table-number-cell">
-                {{col.displayName}}
-              </mat-header-cell>
-              <mat-cell *matCellDef="let element" class="table-number-cell">
-                <span [ngClass]="col.cellClass" class="cources-table-cell">
-                  {{element[col.key]}}
-                </span>
-              </mat-cell>
-            </ng-container>
-
-            <ng-container *ngSwitchCase="'menu'">
-              <mat-header-cell *matHeaderCellDef class="table-header-text flex justify-center table-menu-header">
-                {{col.displayName}}
-              </mat-header-cell>
-              <mat-cell *matCellDef="let element" class="justify-center table-menu-column">
-
-                <mat-icon mat-icon-button i18n-aria-label aria-label="action items" [matMenuTriggerFor]="cardMenu"
-                  class="horizontalMenu"> more_horiz
-                </mat-icon>
-                <mat-menu #cardMenu="matMenu">
-                  <ng-template matMenuContent>
-                    <ng-container *ngFor="let item of menuItems">
-                      <div mat-menu-item [ngClass]="{'disableMenu': element['disableMenu']}"
-                        [disabled]="element['disableMenu'] === true" (click)="buttonClick(item.action, element)">
-                        <button class="flex item-btn items-center" mat-icon-button i18n-aria-label
-                          aria-label="Analytics">
-                          <mat-icon *ngIf="item.icon" class="menu-item-icon">{{item.icon}}</mat-icon>
-                          {{item.btnText}}
-                        </button>
-                      </div>
-                    </ng-container>
-                  </ng-template>
-                </mat-menu>
-              </mat-cell>
-            </ng-container>
-
           </ng-container>
-        </ng-container>
 
-        <mat-header-row *matHeaderRowDef="columnsList"></mat-header-row>
+          <mat-header-row *matHeaderRowDef="columnsList"></mat-header-row>
 
-        <mat-row *matRowDef="let row; columns: columnsList">
-        </mat-row>
+          <mat-row *matRowDef="let row; columns: columnsList">
+          </mat-row>
 
-      </mat-table>
+        </mat-table>
+      </ng-container>
       <div class="no-cbp-data" *ngIf="dataSource.filteredData.length === 0 && searchControl.value">
         <div class="mat-subheading-1 margin-remove">No results found</div>
         <div>Try adjusting your search to find what you are looking for.</div>

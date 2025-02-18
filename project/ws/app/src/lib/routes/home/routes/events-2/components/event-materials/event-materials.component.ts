@@ -7,6 +7,7 @@ import * as _ from 'lodash'
 import { ActivatedRoute } from '@angular/router'
 import { environment } from '../../../../../../../../../../../src/environments/environment'
 import { HttpErrorResponse } from '@angular/common/http'
+import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
 
 
 @Component({
@@ -28,7 +29,8 @@ export class EventMaterialsComponent implements OnInit {
   constructor(
     private matSnackBar: MatSnackBar,
     private eventSvc: EventsService,
-    private activeRoute: ActivatedRoute
+    private activeRoute: ActivatedRoute,
+    private loaderService: LoaderService
   ) { }
 
   ngOnInit(): void {
@@ -54,7 +56,9 @@ export class EventMaterialsComponent implements OnInit {
     //   return
     // }
     reader.readAsDataURL(files[0])
+    this.loaderService.changeLoaderState(true)
     reader.onload = _event => {
+      this.loaderService.changeLoaderState(false)
       this.fileURL = reader.result
       this.saveFile()
     }
@@ -83,6 +87,7 @@ export class EventMaterialsComponent implements OnInit {
           },
         },
       }
+      this.loaderService.changeLoaderState(true)
       this.eventSvc.createContent(request).pipe(mergeMap((res: any) => {
         const contentID = _.get(res, 'result.identifier')
         const formData: FormData = new FormData()
@@ -96,6 +101,7 @@ export class EventMaterialsComponent implements OnInit {
         }
       })).subscribe({
         next: res => {
+          this.loaderService.changeLoaderState(false)
           if (res) {
             const createdUrl = res
             const urlToReplace = 'https://storage.googleapis.com/igot'
@@ -108,6 +114,7 @@ export class EventMaterialsComponent implements OnInit {
           }
         },
         error: (error: HttpErrorResponse) => {
+          this.loaderService.changeLoaderState(false)
           const errorMessage = _.get(error, 'error.message', 'Something went wrong please try again')
           this.openSnackBar(errorMessage)
         }

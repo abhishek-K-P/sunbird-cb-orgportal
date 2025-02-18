@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core'
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core'
 import { FormControl } from '@angular/forms'
 import { PageEvent } from '@angular/material/paginator'
 import { MatTableDataSource } from '@angular/material/table'
 import _ from 'lodash'
 import { debounceTime } from 'rxjs/operators'
 import { events } from '../../models/events.model'
+import { MatSort } from '@angular/material/sort'
 
 @Component({
   selector: 'ws-app-events-table',
@@ -12,6 +13,7 @@ import { events } from '../../models/events.model'
   styleUrls: ['./events-table.component.scss']
 })
 export class EventsTableComponent implements OnInit, OnChanges {
+  @ViewChild(MatSort, { static: false }) sort!: MatSort
   @Input() tableData!: events.tableData
   @Input() data?: []
   @Input() paginationDetails: events.pagination = {
@@ -58,8 +60,11 @@ export class EventsTableComponent implements OnInit, OnChanges {
     if (changes.tableData) {
       this.getFinalColumns()
     }
-    if (changes.data) {
+    if (changes.data && this.dataSource) {
       this.dataSource.data = this.data
+      setTimeout(() => {
+        this.dataSource.sort = this.sort
+      }, 10)
     }
   }
 

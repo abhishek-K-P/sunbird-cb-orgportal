@@ -8,6 +8,7 @@ import { map, mergeMap } from 'rxjs/operators'
 import { environment } from '../../../../../../../../../../../src/environments/environment'
 import { HttpErrorResponse } from '@angular/common/http'
 import moment from 'moment'
+import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
 
 @Component({
   selector: 'ws-app-event-basic-details',
@@ -24,22 +25,28 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
   evntCategorysList = ['Webinar', 'Karmayogi Talks', 'Karmayogi Saptah']
   todayDate = new Date()
 
-  maxTimeToStart = '11:30 pm'
-  minTimeToEnd = '12:30 am'
+  maxTimeToStart = '11:45 pm'
+  minTimeToEnd = '12:15 am'
   timeGap = 15
 
   //#endregion
 
   constructor(
     private matSnackBar: MatLegacySnackBar,
-    private eventSvc: EventsService
+    private eventSvc: EventsService,
+    private loaderService: LoaderService
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.eventDetails) {
       const startTime = _.get(this.eventDetails, 'value.startTime')
       if (startTime) {
-        this.eventDetails.controls.startTime.patchValue(this.convertTo12HourFormat(startTime))
+        const convertedStartTime = this.convertTo12HourFormat(startTime)
+        this.eventDetails.controls.startTime.patchValue(convertedStartTime)
+        setTimeout(() => {
+          const resetEndTime = false
+          this.generatMinTimeToEnd(convertedStartTime, resetEndTime)
+        }, 100)
       }
 
       const endTime = _.get(this.eventDetails, 'value.endTime')
@@ -72,23 +79,21 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
         this.generatMinTimeToEnd(time)
       })
     }
-    if (this.eventDetails.controls.resourceUrl) {
-      this.eventDetails.controls.resourceUrl.valueChanges.subscribe((url) => {
+    if (this.eventDetails.controls.registrationLink) {
+      this.eventDetails.controls.registrationLink.valueChanges.subscribe((url) => {
         if (url && url !== '') {
-          this.eventDetails.controls.uploadUrl.patchValue('')
-          this.eventDetails.controls.uploadUrl.clearValidators()
-          this.eventDetails.controls.resourceUrl.setValidators([Validators.required])
-          this.eventDetails.controls.resourceUploadType.patchValue('url')
-          this.eventDetails.controls.uploadUrl.updateValueAndValidity()
-          this.eventDetails.controls.resourceUrl.updateValueAndValidity()
-          this.eventDetails.controls.resourceUploadType.updateValueAndValidity()
+          this.eventDetails.controls.recordedLinks.patchValue([])
+          this.eventDetails.controls.recordedLinks.clearValidators()
+          this.eventDetails.controls.registrationLink.setValidators([Validators.required])
+          this.eventDetails.controls.recordedLinks.updateValueAndValidity()
+          this.eventDetails.controls.registrationLink.updateValueAndValidity()
         }
       })
     }
   }
 
 
-  generatMinTimeToEnd(time: string) {
+  generatMinTimeToEnd(time: string, resetEndTime = true) {
     let [timePart, period] = time.split(' ')
     let [hours, minutes] = timePart.split(':').map(Number)
     minutes += this.timeGap
@@ -109,7 +114,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     }
     const formattedTime = `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${period}`
     this.minTimeToEnd = formattedTime
-    if (this.eventDetails.controls.startTime) {
+    if (this.eventDetails.controls.startTime && resetEndTime) {
       this.eventDetails.controls.endTime.patchValue('')
     }
   }
@@ -128,9 +133,9 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
 
   get uploadedVideoName(): string {
     let name = ''
-    const uploadedVideoUrl = _.get(this.eventDetails, 'value.uploadUrl', '')
-    if (uploadedVideoUrl) {
-      const urlSplit = uploadedVideoUrl.split('_')
+    const uploadedVideoUrl = _.get(this.eventDetails, 'value.recordedLinks', [])
+    if (uploadedVideoUrl.length > 0) {
+      const urlSplit = uploadedVideoUrl[0].split('_')
       if (urlSplit.length > 0) {
         name = urlSplit[urlSplit.length - 1]
       }
@@ -142,11 +147,11 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     if (item === 'appIcon' && this.eventDetails.controls.appIcon) {
       this.eventDetails.controls.appIcon.patchValue('')
       this.eventDetails.controls.appIcon.updateValueAndValidity()
-    } else if (item === 'uploadedVideo' && this.eventDetails.controls.uploadUrl) {
-      this.eventDetails.controls.uploadUrl.patchValue('')
-      this.eventDetails.controls.uploadUrl.updateValueAndValidity()
-      this.eventDetails.controls.resourceUrl.setValidators([Validators.required])
-      this.eventDetails.controls.resourceUrl.updateValueAndValidity()
+    } else if (item === 'uploadedVideo' && this.eventDetails.controls.recordedLinks) {
+      this.eventDetails.controls.recordedLinks.patchValue([])
+      this.eventDetails.controls.recordedLinks.updateValueAndValidity()
+      this.eventDetails.controls.registrationLink.setValidators([Validators.required])
+      this.eventDetails.controls.registrationLink.updateValueAndValidity()
     }
   }
 
@@ -156,8 +161,8 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
       return
     }
     const mimeType = files[0].type
-    if (!mimeType.startsWith('video/')) {
-      this.openSnackBar('Only video files are supported')
+    if (!mimeType.startsWith('image/')) {
+      this.openSnackBar('Only images are supported')
       return
     }
     const reader = new FileReader()
@@ -194,6 +199,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
           },
         },
       }
+      this.loaderService.changeLoaderState(true)
       this.eventSvc.createContent(request).pipe(mergeMap((res: any) => {
         const contentID = _.get(res, 'result.identifier')
         const formData: FormData = new FormData()
@@ -207,6 +213,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
         }
       })).subscribe({
         next: res => {
+          this.loaderService.changeLoaderState(false)
           if (res) {
             const createdUrl = res
             const urlToReplace = 'https://storage.googleapis.com/igot'//https://portal.dev.karmayogibharat.net
@@ -221,20 +228,19 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
                 this.eventDetails.controls.appIcon.updateValueAndValidity()
               }
             } else {
-              if (this.eventDetails.controls.uploadUrl) {
-                this.eventDetails.controls.uploadUrl.patchValue(appIcon)
-                this.eventDetails.controls.uploadUrl.setValidators([Validators.required])
-                this.eventDetails.controls.resourceUrl.patchValue('')
-                this.eventDetails.controls.resourceUrl.clearValidators()
-                this.eventDetails.controls.resourceUploadType.patchValue('upload')
-                this.eventDetails.controls.uploadUrl.updateValueAndValidity()
-                this.eventDetails.controls.resourceUrl.updateValueAndValidity()
-                this.eventDetails.controls.resourceUploadType.updateValueAndValidity()
+              if (this.eventDetails.controls.recordedLinks) {
+                this.eventDetails.controls.recordedLinks.patchValue([appIcon])
+                this.eventDetails.controls.recordedLinks.setValidators([Validators.required])
+                this.eventDetails.controls.registrationLink.patchValue('')
+                this.eventDetails.controls.registrationLink.clearValidators()
+                this.eventDetails.controls.recordedLinks.updateValueAndValidity()
+                this.eventDetails.controls.registrationLink.updateValueAndValidity()
               }
             }
           }
         },
         error: (error: HttpErrorResponse) => {
+          this.loaderService.changeLoaderState(false)
           const errorMessage = _.get(error, 'error.message', 'Something went wrong please try again')
           this.openSnackBar(errorMessage)
         }

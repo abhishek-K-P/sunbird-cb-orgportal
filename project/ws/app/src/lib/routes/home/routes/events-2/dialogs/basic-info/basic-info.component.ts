@@ -8,6 +8,7 @@ import { EventsService } from '../../services/events.service'
 import { map, mergeMap } from 'rxjs/operators'
 import { HttpErrorResponse } from '@angular/common/http'
 import { environment } from '../../../../../../../../../../../src/environments/environment'
+import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
 
 @Component({
   selector: 'ws-app-basic-info',
@@ -27,7 +28,8 @@ export class BasicInfoComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) data: any,
     private formBuilder: FormBuilder,
     private matSnackBar: MatSnackBar,
-    private eventSvc: EventsService
+    private eventSvc: EventsService,
+    private loaderService: LoaderService
   ) {
     this.userProfile = data.userProfile
     this.userEmail = data.userEmail
@@ -100,6 +102,7 @@ export class BasicInfoComponent implements OnInit {
           },
         },
       }
+      this.loaderService.changeLoaderState(true)
       this.eventSvc.createContent(request).pipe(mergeMap((res: any) => {
         const contentID = _.get(res, 'result.identifier')
         const formData: FormData = new FormData()
@@ -113,6 +116,7 @@ export class BasicInfoComponent implements OnInit {
         }
       })).subscribe({
         next: res => {
+          this.loaderService.changeLoaderState(false)
           if (res) {
             const createdUrl = res
             const urlToReplace = 'https://storage.googleapis.com/igot'//https://portal.dev.karmayogibharat.net
@@ -122,11 +126,13 @@ export class BasicInfoComponent implements OnInit {
               appIcon = `${environment.domainName}/assets/public/${urlSplice.slice(1).join('/')}`
             }
             this.createEvent(appIcon)
+          } else {
           }
         },
         error: (error: HttpErrorResponse) => {
           const errorMessage = _.get(error, 'error.message', 'Something went wrong please try again')
           this.openSnackBar(errorMessage)
+          this.loaderService.changeLoaderState(false)
         }
       })
     }
@@ -172,14 +178,17 @@ export class BasicInfoComponent implements OnInit {
           }
         }
       }
+      this.loaderService.changeLoaderState(true)
       this.eventSvc.createEvent(requestBody).subscribe({
         next: res => {
+          this.loaderService.changeLoaderState(false)
           if (res) {
             this.openSnackBar('Event created successfully')
             this.dialogRef.close(_.get(res, 'result.identifier', ''))
           }
         },
         error: (error: HttpErrorResponse) => {
+          this.loaderService.changeLoaderState(false)
           const errorMessage = _.get(error, 'error.message', 'Something went wrong while creating event, please try again')
           this.openSnackBar(errorMessage)
         }
