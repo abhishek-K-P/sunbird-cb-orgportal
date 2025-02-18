@@ -25,8 +25,8 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
   evntCategorysList = ['Webinar', 'Karmayogi Talks', 'Karmayogi Saptah']
   todayDate = new Date()
 
-  maxTimeToStart = '11:30 pm'
-  minTimeToEnd = '12:30 am'
+  maxTimeToStart = '11:45 pm'
+  minTimeToEnd = '12:15 am'
   timeGap = 15
 
   //#endregion
@@ -41,7 +41,12 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     if (changes.eventDetails) {
       const startTime = _.get(this.eventDetails, 'value.startTime')
       if (startTime) {
-        this.eventDetails.controls.startTime.patchValue(this.convertTo12HourFormat(startTime))
+        const convertedStartTime = this.convertTo12HourFormat(startTime)
+        this.eventDetails.controls.startTime.patchValue(convertedStartTime)
+        setTimeout(() => {
+          const resetEndTime = false
+          this.generatMinTimeToEnd(convertedStartTime, resetEndTime)
+        }, 100)
       }
 
       const endTime = _.get(this.eventDetails, 'value.endTime')
@@ -88,7 +93,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
   }
 
 
-  generatMinTimeToEnd(time: string) {
+  generatMinTimeToEnd(time: string, resetEndTime = true) {
     let [timePart, period] = time.split(' ')
     let [hours, minutes] = timePart.split(':').map(Number)
     minutes += this.timeGap
@@ -109,7 +114,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     }
     const formattedTime = `${hours}:${minutes < 10 ? '0' + minutes : minutes} ${period}`
     this.minTimeToEnd = formattedTime
-    if (this.eventDetails.controls.startTime) {
+    if (this.eventDetails.controls.startTime && resetEndTime) {
       this.eventDetails.controls.endTime.patchValue('')
     }
   }
