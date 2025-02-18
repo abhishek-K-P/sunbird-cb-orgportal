@@ -51,7 +51,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
       case 'upcoming':
         this.tableData = {
           columns: [
-            { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
+            { displayName: 'Event Name', key: 'name', cellType: 'textImage', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
             { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
             { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
             { displayName: 'Published On', key: 'publishedOn', cellType: 'date' }
@@ -81,7 +81,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
       case 'draft':
         this.tableData = {
           columns: [
-            { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
+            { displayName: 'Event Name', key: 'name', cellType: 'textImage', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
             { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
             { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
             { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
@@ -105,7 +105,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
       case 'pending-approval':
         this.tableData = {
           columns: [
-            { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
+            { displayName: 'Event Name', key: 'name', cellType: 'textImage', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
             { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
             { displayName: 'Created By', key: 'createrEmail', cellType: 'text' },
             { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
@@ -135,7 +135,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
       case 'past':
         this.tableData = {
           columns: [
-            { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
+            { displayName: 'Event Name', key: 'name', cellType: 'textImage', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
             { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
             { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
             { displayName: 'Published On', key: 'publishedOn', cellType: 'date' }
@@ -157,7 +157,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
       case 'canceled':
         this.tableData = {
           columns: [
-            { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
+            { displayName: 'Event Name', key: 'name', cellType: 'textImage', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
             { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
             { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
             { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
@@ -179,7 +179,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
       case 'rejected':
         this.tableData = {
           columns: [
-            { displayName: 'Event Name', key: 'name', cellType: 'text', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
+            { displayName: 'Event Name', key: 'name', cellType: 'textImage', imageKey: 'appIcon', cellClass: 'text-overflow-elipse' },
             { displayName: 'Start Date', key: 'startDate', cellType: 'date' },
             { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
             { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
