@@ -26,7 +26,7 @@
           </ng-container>
         </mat-autocomplete>
         <mat-error *ngIf="speakerForm?.controls?.email?.touched && speakerForm?.controls?.email?.hasError('required')">
-          email is mandatory
+          Email is mandatory
         </mat-error>
         <mat-error *ngIf="speakerForm?.controls?.email?.touched &&
                 speakerForm?.controls?.email?.hasError('pattern')" aria-label="Please enter a valid email">
@@ -42,7 +42,7 @@
         <input matInput placeholder="Enter name" formControlName="name">
       </mat-form-field>
       <mat-error *ngIf="speakerForm?.controls?.name?.touched && speakerForm?.controls?.name?.hasError('required')">
-        name is mandatory
+        Name is mandatory
       </mat-error>
     </div>
     <div class="flex flex-column gap-2">
