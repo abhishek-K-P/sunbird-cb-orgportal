@@ -44,6 +44,9 @@ const routes: Routes = [
           pageId: 'app/home/events/draft',
           module: 'events-2',
         },
+        resolve: {
+          configService: ConfigResolveService,
+        },
       },
       {
         path: 'pending-approval',
@@ -63,6 +66,9 @@ const routes: Routes = [
           pageId: 'app/home/events/past',
           module: 'events-2',
         },
+        resolve: {
+          configService: ConfigResolveService,
+        },
       },
       {
         path: 'canceled',
@@ -71,6 +77,9 @@ const routes: Routes = [
           pageId: 'app/home/events/canceled',
           module: 'events-2',
         },
+        resolve: {
+          configService: ConfigResolveService,
+        },
       },
       {
         path: 'rejected',
@@ -78,6 +87,9 @@ const routes: Routes = [
         data: {
           pageId: 'app/home/events/rejected',
           module: 'events-2',
+        },
+        resolve: {
+          configService: ConfigResolveService,
         },
       },
     ],

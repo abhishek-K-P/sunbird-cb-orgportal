@@ -9,6 +9,7 @@ import { MatStepper } from '@angular/material/stepper'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { HttpErrorResponse } from '@angular/common/http'
 import { DatePipe } from '@angular/common'
+import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
 
 @Component({
   selector: 'ws-app-create-event',
@@ -39,7 +40,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private matSnackBar: MatSnackBar,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private loaderService: LoaderService,
   ) { }
 
   //#region (onInit)
@@ -57,9 +59,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startDate: new FormControl('', [Validators.required]),
       startTime: new FormControl('', [Validators.required]),
       endTime: new FormControl('', [Validators.required]),
-      resourceUrl: new FormControl('', [Validators.required]),
-      uploadUrl: new FormControl(''),
-      resourceUploadType: new FormControl('url'),
+      registrationLink: new FormControl('', [Validators.required]),
+      recordedLinks: new FormControl(''),
       appIcon: new FormControl('', [Validators.required]),
     })
   }
@@ -82,12 +83,12 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   patchEventDetails() {
     this.eventId = _.get(this.eventDetails, 'identifier')
     const startDate = _.get(this.eventDetails, 'startDate', '')
-    const resourceUploadType = _.get(this.eventDetails, 'resourceUploadType', '')
-    if (resourceUploadType === 'upload') {
-      this.eventDetailsForm.controls.resourceUrl.clearAsyncValidators()
-      this.eventDetailsForm.controls.uploadUrl.setValidators([Validators.required])
-      this.eventDetailsForm.controls.uploadUrl.updateValueAndValidity()
-      this.eventDetailsForm.controls.resourceUrl.updateValueAndValidity()
+    const recordedLinks = _.get(this.eventDetails, 'recordedLinks', [])
+    if (recordedLinks.length > 0) {
+      this.eventDetailsForm.controls.registrationLink.clearValidators()
+      this.eventDetailsForm.controls.recordedLinks.setValidators([Validators.required])
+      this.eventDetailsForm.controls.recordedLinks.updateValueAndValidity()
+      this.eventDetailsForm.controls.registrationLink.updateValueAndValidity()
     }
     const eventBaseDetails = {
       eventName: _.get(this.eventDetails, 'name', ''),
@@ -95,11 +96,11 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       eventCategory: _.get(this.eventDetails, 'resourceType', ''),
       streamType: _.get(this.eventDetails, 'streamType', ''),//new key to add
       startDate: startDate ? new Date(startDate) : startDate,
+      endDate: startDate ? new Date(startDate) : startDate,
       startTime: _.get(this.eventDetails, 'startTime', ''),
       endTime: _.get(this.eventDetails, 'endTime', ''),
-      resourceUrl: resourceUploadType === 'url' ? _.get(this.eventDetails, 'registrationLink', '') : '',
-      uploadUrl: resourceUploadType === 'upload' ? _.get(this.eventDetails, 'registrationLink', '') : '',
-      resourceUploadType: resourceUploadType,
+      registrationLink: _.get(this.eventDetails, 'registrationLink', ''),
+      recordedLinks: _.get(this.eventDetails, 'recordedLinks', []),
       appIcon: _.get(this.eventDetails, 'appIcon', '')
     }
     this.eventDetailsForm.setValue(eventBaseDetails)
@@ -211,15 +212,22 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
         event: this.getFormBodyOfEvent(status)
       }
     }
+    this.loaderService.changeLoaderState(true)
     this.eventSvc.updateEvent(formBody, this.eventId).subscribe({
       next: res => {
         if (res) {
           const successMessage = status === 'Draft' ? 'Event details saved successfully' : 'Event details sent for approval successfully'
           this.openSnackBar(successMessage)
-          this.navigateBack()
+          setTimeout(() => {
+            this.navigateBack()
+            this.loaderService.changeLoaderState(false)
+          }, 1000)
+        } else {
+          this.loaderService.changeLoaderState(false)
         }
       },
       error: (error: HttpErrorResponse) => {
+        this.loaderService.changeLoaderState(false)
         const errorMessage = _.get(error, 'error.message', 'Something went wrong while updating event, please try again')
         this.openSnackBar(errorMessage)
       }
@@ -244,8 +252,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['startDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
     eventDetails['startTime'] = startTime
     eventDetails['endTime'] = endTime
-    eventDetails['registrationLink'] = eventBaseDetails.resourceUploadType === 'url' ? eventBaseDetails.resourceUrl : eventBaseDetails.uploadUrl
-    eventDetails['resourceUploadType'] = eventBaseDetails.resourceUploadType
+    eventDetails['registrationLink'] = eventBaseDetails.registrationLink
+    eventDetails['recordedLinks'] = eventBaseDetails.recordedLinks
     eventDetails['appIcon'] = eventBaseDetails.appIcon
 
     if (status === 'SentToPublish') {

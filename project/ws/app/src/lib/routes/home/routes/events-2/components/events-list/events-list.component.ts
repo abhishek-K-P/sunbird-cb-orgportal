@@ -225,6 +225,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
         filters: {
           status: ['Live'],
           contentType: 'Event',
+          createdFor: _.get(this.userProfile, 'rootOrgId', '')
+
         },
         sort_by: {
           lastUpdatedOn: 'desc',
