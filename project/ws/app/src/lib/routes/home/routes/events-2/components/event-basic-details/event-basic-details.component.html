@@ -36,7 +36,7 @@
     <mat-form-field appearance="outline" class="">
       <input matInput placeholder="Add your event name" formControlName="eventName" maxlength="70">
       <mat-error *ngIf="showValidationMsg('eventName','required')">
-        event name is mandatory
+        Event name is mandatory
       </mat-error>
     </mat-form-field>
   </div>
@@ -48,7 +48,7 @@
     <mat-form-field appearance="outline" class="">
       <textarea matInput placeholder="Add your description" formControlName="description" maxlength="250"> </textarea>
       <mat-error *ngIf="showValidationMsg('description','required')">
-        description is mandatory
+        Description is mandatory
       </mat-error>
     </mat-form-field>
     <span class="description-count flex justify-end">{{eventDetails?.value?.description?.length}}/250</span>
@@ -88,10 +88,10 @@
     <mat-form-field appearance="outline" class="">
       <input matInput placeholder="Enter url" formControlName="registrationLink">
       <mat-error *ngIf="showValidationMsg('registrationLink','required')">
-        resource is mandatory
+        Resource is mandatory
       </mat-error>
       <mat-error *ngIf="showValidationMsg('registrationLink','pattern')">
-        please give valid URL
+        Please give valid URL
       </mat-error>
     </mat-form-field>
   </div>
@@ -110,7 +110,7 @@
           </ng-container>
         </mat-select>
         <mat-error *ngIf="showValidationMsg('eventCategory','required')">
-          event category is mandatory
+          Event category is mandatory
         </mat-error>
       </mat-form-field>
     </div>
@@ -141,7 +141,7 @@
         <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
         <mat-datepicker #startDate></mat-datepicker>
         <mat-error *ngIf="showValidationMsg('startDate','required')">
-          date is mandatory
+          Date is mandatory
         </mat-error>
       </mat-form-field>
     </div>
@@ -156,7 +156,7 @@
         <ngx-material-timepicker #startTimepicker (change)="onStartTimeChange($event)" class="eventTimpicker"
           [enableKeyboardInput]="true"></ngx-material-timepicker>
         <mat-error *ngIf="showValidationMsg('startTime','required')">
-          start time is mandatory
+          Dtart time is mandatory
         </mat-error>
       </mat-form-field>
     </div>
@@ -171,7 +171,7 @@
         <ngx-material-timepicker #endTimepicker (change)="onEndTimeChange($event)"
           [enableKeyboardInput]="true"></ngx-material-timepicker>
         <mat-error *ngIf="showValidationMsg('endTime','required')">
-          start time is mandatory
+          Start time is mandatory
         </mat-error>
       </mat-form-field>
     </div>

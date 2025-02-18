@@ -40,10 +40,13 @@
                   </div>
                 </div>
               </div>
-              <div>
-                <mat-icon class="cursor-pointer" (click)="removeTheme(competency, theme)"
-                  *ngIf="competency?.themes?.length > 1">delete</mat-icon>
-              </div>
+
+              <ng-container *ngIf="openMode === 'edit'">
+                <div>
+                  <mat-icon class="cursor-pointer" (click)="removeTheme(competency, theme)"
+                    *ngIf="competency?.themes?.length > 1">delete</mat-icon>
+                </div>
+              </ng-container>
             </div>
             <ng-container *ngIf="theme?.subThems?.length">
               <div *ngFor="let subTheme of theme.subThems, let j=index">
@@ -57,10 +60,13 @@
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <mat-icon class="cursor-pointer" *ngIf="theme?.subThems?.length > 1"
-                      (click)="removeSubTheme(competency, theme, subTheme)">delete</mat-icon>
-                  </div>
+
+                  <ng-container *ngIf="openMode === 'edit'">
+                    <div>
+                      <mat-icon class="cursor-pointer" *ngIf="theme?.subThems?.length > 1"
+                        (click)="removeSubTheme(competency, theme, subTheme)">delete</mat-icon>
+                    </div>
+                  </ng-container>
                 </div>
               </div>
             </ng-container>
