@@ -87,6 +87,12 @@
     </div>
     <mat-form-field appearance="outline" class="">
       <input matInput placeholder="Enter url" formControlName="registrationLink">
+      <mat-error *ngIf="showValidationMsg('registrationLink','required')">
+        resource is mandatory
+      </mat-error>
+      <mat-error *ngIf="showValidationMsg('registrationLink','pattern')">
+        please give valid URL
+      </mat-error>
     </mat-form-field>
   </div>
 
