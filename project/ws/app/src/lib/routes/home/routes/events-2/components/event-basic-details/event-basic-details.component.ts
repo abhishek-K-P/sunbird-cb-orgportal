@@ -213,7 +213,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
             let appIcon = createdUrl
             if (createdUrl.startsWith(urlToReplace)) {
               const urlSplice = createdUrl.slice(urlToReplace.length).split('/')
-              appIcon = `${environment.domainName}/assets/public/${urlSplice.slice(1).join('/')}`
+              appIcon = `${environment.domainName}assets/public/${urlSplice.slice(1).join('/')}`
             }
             if (mediaType === 'image') {
               if (this.eventDetails.controls.appIcon) {

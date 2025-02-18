@@ -103,6 +103,11 @@
   }
 }
 
+.disable {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
 ::ng-deep ngx-material-timepicker-content{
   --button-color: #1B4CA1 !important;
   --dial-background-color: #1B4CA1 !important;

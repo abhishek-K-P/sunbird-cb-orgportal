@@ -97,8 +97,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startDate: startDate ? new Date(startDate) : startDate,
       startTime: _.get(this.eventDetails, 'startTime', ''),
       endTime: _.get(this.eventDetails, 'endTime', ''),
-      resourceUrl: resourceUploadType === 'url' ? _.get(this.eventDetails, 'resourceUrl', '') : '',
-      uploadUrl: resourceUploadType === 'upload' ? _.get(this.eventDetails, 'resourceUrl', '') : '',
+      resourceUrl: resourceUploadType === 'url' ? _.get(this.eventDetails, 'registrationLink', '') : '',
+      uploadUrl: resourceUploadType === 'upload' ? _.get(this.eventDetails, 'registrationLink', '') : '',
       resourceUploadType: resourceUploadType,
       appIcon: _.get(this.eventDetails, 'appIcon', '')
     }
@@ -109,7 +109,6 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     this.materialsList = _.get(this.eventDetails, 'eventHandouts', [])
     this.competencies = _.get(this.eventDetails, 'competencies_v6', [])
 
-    // this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status']) //need to remove
   }
 
   ngAfterViewInit() {
@@ -122,6 +121,9 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   //#region (ui interactions)
   onSelectionChange(event: StepperSelectionEvent) {
     this.currentStepperIndex = event.selectedIndex
+    if (this.currentStepperIndex === 4) {
+      this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status'])
+    }
   }
 
   navigateBack() {
@@ -137,11 +139,13 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   }
 
   preview() {
-    this.showPreview = true
-    this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status'])
-    setTimeout(() => {
-      this.currentStepperIndex = 4
-    }, 100)
+    if (this.eventDetails && this.eventDetails['status']) {
+      this.showPreview = true
+      this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status'])
+      setTimeout(() => {
+        this.currentStepperIndex = 4
+      }, 100)
+    }
   }
 
   publish() {
@@ -240,9 +244,13 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['startDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
     eventDetails['startTime'] = startTime
     eventDetails['endTime'] = endTime
-    eventDetails['resourceUrl'] = eventBaseDetails.resourceUploadType === 'url' ? eventBaseDetails.resourceUrl : eventBaseDetails.uploadUrl
+    eventDetails['registrationLink'] = eventBaseDetails.resourceUploadType === 'url' ? eventBaseDetails.resourceUrl : eventBaseDetails.uploadUrl
     eventDetails['resourceUploadType'] = eventBaseDetails.resourceUploadType
     eventDetails['appIcon'] = eventBaseDetails.appIcon
+
+    if (status === 'SentToPublish') {
+      eventDetails['submitedOn'] = this.datePipe.transform(new Date(), 'dd MMM, yyyy')
+    }
 
     if (this.speakersList) {
       eventDetails['speakers'] = this.speakersList

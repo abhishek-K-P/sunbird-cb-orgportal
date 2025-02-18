@@ -8,6 +8,7 @@ import { EventsService } from '../../services/events.service'
 import * as _ from 'lodash'
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { RejectionReasonComponent } from '../../dialogs/rejection-reason/rejection-reason.component'
+import { DatePipe } from '@angular/common'
 
 @Component({
   selector: 'ws-app-events-list',
@@ -24,6 +25,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
   showEventsLoader = false
   searchKey = ''
   pathUrl = ''
+  userProfile: any
   //#endregion
 
   //#region (constructor)
@@ -32,7 +34,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
     private matSnackBar: MatSnackBar,
     private activatedRoute: ActivatedRoute,
     private route: Router,
-    private dialog: MatLegacyDialog
+    private dialog: MatLegacyDialog,
+    private datePipe: DatePipe
   ) { }
   //#endregion
 
@@ -43,6 +46,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
 
   initialization() {
     this.pathUrl = _.get(this.activatedRoute, 'snapshot.url[0].path', 'pending-approval')
+    this.userProfile = _.get(this.activatedRoute, 'snapshot.data.configService.userProfile')
     switch (this.pathUrl) {
       case 'upcoming':
         this.tableData = {
@@ -117,10 +121,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
             btnText: 'View',
             action: 'view',
           },
-          {
-            btnText: 'Edit',
-            action: 'edit',
-          },
+          // {
+          //   btnText: 'Edit',
+          //   action: 'edit',
+          // },
           {
             btnText: 'Cancel',
             action: 'cancel',
@@ -158,7 +162,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
             { displayName: 'Created By', key: 'createdByName', cellType: 'text' },
             { displayName: 'Created On', key: 'createdOn', cellType: 'date' },
             { displayName: 'Cancelled On', key: 'cancelledOn', cellType: 'date' },
-            { displayName: 'Cancelled By', key: 'cancelledBy', cellType: 'text' },
+            { displayName: 'Cancelled By', key: 'cancelledByName', cellType: 'text' },
           ],
           showSearchBox: true,
           showPagination: true,
@@ -328,7 +332,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
         event: {
           identifier: rowData.identifier,
           versionKey: rowData.versionKey,
-          status: 'Cancelled'
+          status: 'Cancelled',
+          cancelledOn: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
+          cancelledByName: _.get(this.userProfile, 'userName', ''),
+          cancelledBy: _.get(this.userProfile, 'userId', '')
         }
       }
     }
