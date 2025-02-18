@@ -96,7 +96,6 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       eventCategory: _.get(this.eventDetails, 'resourceType', ''),
       streamType: _.get(this.eventDetails, 'streamType', ''),//new key to add
       startDate: startDate ? new Date(startDate) : startDate,
-      endDate: startDate ? new Date(startDate) : startDate,
       startTime: _.get(this.eventDetails, 'startTime', ''),
       endTime: _.get(this.eventDetails, 'endTime', ''),
       registrationLink: _.get(this.eventDetails, 'registrationLink', ''),
@@ -250,6 +249,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['resourceType'] = eventBaseDetails.eventCategory
     eventDetails['streamType'] = eventBaseDetails.streamType
     eventDetails['startDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
+    eventDetails['endDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
     eventDetails['startTime'] = startTime
     eventDetails['endTime'] = endTime
     eventDetails['registrationLink'] = eventBaseDetails.registrationLink

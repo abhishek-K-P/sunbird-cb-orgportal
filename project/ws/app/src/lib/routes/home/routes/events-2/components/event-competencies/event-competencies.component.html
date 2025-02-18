@@ -1,7 +1,9 @@
 <div class="competency-details flex-grow">
   <div class="mt-4 flex justify-between">
     <div class="title">Add Competency</div>
-    <div class="add-theme" (click)="showAddCompetencyDialog()">Add Competency</div>
+    <ng-container *ngIf="openMode === 'edit'">
+      <button mat-button class="add-theme" (click)="showAddCompetencyDialog()">Add Competency</button>
+    </ng-container>
   </div>
   <div class="add-theme-sec mt-4" *ngIf="competencies?.length">
     <div class="" *ngFor="let competency of competencies, let index=c">
@@ -16,9 +18,11 @@
               <div>{{competency.competencyAreaName}}</div>
             </div>
           </div>
-          <div>
-            <mat-icon class="cursor-pointer" (click)="removeNode(competency)">delete</mat-icon>
-          </div>
+          <ng-container *ngIf="openMode === 'edit'">
+            <div>
+              <mat-icon class="cursor-pointer" (click)="removeNode(competency)">delete</mat-icon>
+            </div>
+          </ng-container>
         </div>
         <ng-container *ngIf="competency?.themes?.length">
           <div class="themes-card" *ngFor="let theme of competency.themes, let i=index">

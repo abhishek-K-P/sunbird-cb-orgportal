@@ -45,6 +45,7 @@ import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker'
 import { RejectionReasonComponent } from './dialogs/rejection-reason/rejection-reason.component'
 import { CarouselModule } from 'ngx-owl-carousel-o'
 import { DragDropModule } from '@angular/cdk/drag-drop'
+import { MatSortModule } from '@angular/material/sort'
 
 
 @NgModule({
@@ -94,7 +95,8 @@ import { DragDropModule } from '@angular/cdk/drag-drop'
     WidgetResolverModule,
     NgxMaterialTimepickerModule,
     CarouselModule,
-    DragDropModule
+    DragDropModule,
+    MatSortModule
   ],
   providers: [
     DatePipe,

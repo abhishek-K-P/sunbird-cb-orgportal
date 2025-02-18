@@ -18,7 +18,7 @@
       <ng-container *ngIf="!showPreview && currentStepperIndex === 3">
         <button mat-raised-button class="flex items-center publish-btn" (click)="preview()">Preview</button>
       </ng-container>
-      <ng-container *ngIf="this.currentStepperIndex === 3 || this.currentStepperIndex === 4">
+      <ng-container *ngIf="currentStepperIndex >= 3 && openMode === 'edit'">
         <button mat-raised-button class="flex items-center publish-btn" (click)="publish()">Send to Publisher</button>
       </ng-container>
     </div>
