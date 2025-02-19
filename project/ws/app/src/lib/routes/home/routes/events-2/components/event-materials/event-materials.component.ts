@@ -22,7 +22,6 @@ export class EventMaterialsComponent implements OnInit {
 
   userProfile: any
   filePath: any
-  fileURL: any
   currentIndex = -1
   currentMaterialSaved = true
 
@@ -50,16 +49,10 @@ export class EventMaterialsComponent implements OnInit {
     }
     const reader = new FileReader()
     this.filePath = files[0]
-    // if (this.filePath && this.filePath.size > events.IMAGE_MAX_SIZE) {
-    //   this.openSnackBar('Selected image size is more')
-    //   this.filePath = ''
-    //   return
-    // }
     reader.readAsDataURL(files[0])
     this.loaderService.changeLoaderState(true)
     reader.onload = _event => {
       this.loaderService.changeLoaderState(false)
-      this.fileURL = reader.result
       this.saveFile()
     }
   }
@@ -130,10 +123,12 @@ export class EventMaterialsComponent implements OnInit {
     this.materialsList.unshift(fileDetails)
     this.currentIndex = 0
     this.currentMaterialSaved = false
+    this.filePath = ''
   }
 
   updateMaterial(materialDetails: material, index: number) {
     this.materialsList[index] = materialDetails
+    this.currentIndex = -1
     this.currentMaterialSaved = true
   }
 

@@ -35,6 +35,8 @@
     </div>
     <mat-form-field appearance="outline" class="">
       <input matInput placeholder="Add your event name" formControlName="eventName" maxlength="70">
+      <mat-hint>Only ( a-z/A-Z , 0-9 . - _ $ / : [ ]' ' !) characters are supported</mat-hint>
+      <mat-hint align="end" class="text-sm">{{eventDetails?.controls['eventName']?.value?.length}}/70</mat-hint>
       <mat-error *ngIf="showValidationMsg('eventName','required')">
         Event name is mandatory
       </mat-error>
@@ -43,7 +45,7 @@
       </mat-error>
       <mat-error *ngIf="!showValidationMsg('eventName','pattern')
         && showValidationMsg('eventName','minlength')">
-        Minimum characters left to create {{ 10 - eventDetails?.controls['eventName'].value.length}}
+        Minimum characters left to create {{ 10 - eventDetails?.controls['eventName']?.value?.length}}
       </mat-error>
     </mat-form-field>
   </div>
@@ -58,7 +60,7 @@
         Description is mandatory
       </mat-error>
       <mat-error *ngIf="showValidationMsg('description','minlength')">
-        Minimum characters left to create {{ 250 - eventDetails?.controls['description'].value.length}}
+        Minimum characters left to create {{ 250 - eventDetails?.controls['description']?.value?.length}}
       </mat-error>
     </mat-form-field>
     <span class="description-count flex justify-end">{{eventDetails?.value?.description?.length}}/500</span>
@@ -77,7 +79,7 @@
   </ng-container>
   <ng-template #uploadVideo>
     <div class="upload flex justify-center items-center cursor-pointer dashed-border"
-      [ngClass]="{'disable': openMode === 'view'}" cdkDropList [cdkDropListData]="videoData"
+      [ngClass]="{'disable': openMode === 'view' || disableUpload }" cdkDropList [cdkDropListData]="videoData"
       (cdkDropListDropped)="onVideoSelected($event)" (dragover)="preventDefaultCDK($event)"
       (dragenter)="preventDefaultCDK($event, 'enter')" (dragleave)="preventDefaultCDK($event, 'leave')"
       (drop)="onDrop($event)" onclick="document.getElementById('upload-video').click();">
@@ -91,11 +93,11 @@
       </div>
     </div>
   </ng-template>
-  <div class="flex flex-column gap-2 event-form w-full disable-round">
+  <div class="flex flex-column gap-2 event-form w-full " [ngClass]="{'disableForm': disableUrl}">
     <div class="form-url-lable required">
       or upload from URL
     </div>
-    <mat-form-field appearance="outline" class="">
+    <mat-form-field appearance="outline" class="disable-round">
       <input matInput placeholder="Enter url" formControlName="registrationLink">
       <mat-error *ngIf="showValidationMsg('registrationLink','required')">
         Resource is mandatory
@@ -166,7 +168,7 @@
         <ngx-material-timepicker #startTimepicker (change)="onStartTimeChange($event)" class="eventTimpicker"
           [enableKeyboardInput]="true"></ngx-material-timepicker>
         <mat-error *ngIf="showValidationMsg('startTime','required')">
-          Dtart time is mandatory
+          Start time is mandatory
         </mat-error>
       </mat-form-field>
     </div>
@@ -181,7 +183,7 @@
         <ngx-material-timepicker #endTimepicker (change)="onEndTimeChange($event)"
           [enableKeyboardInput]="true"></ngx-material-timepicker>
         <mat-error *ngIf="showValidationMsg('endTime','required')">
-          Start time is mandatory
+          End time is mandatory
         </mat-error>
       </mat-form-field>
     </div>

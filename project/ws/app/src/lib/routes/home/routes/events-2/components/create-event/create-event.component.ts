@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core'
 import { EventsService } from '../../services/events.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import * as _ from 'lodash'
@@ -32,6 +32,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   pathUrl = ''
   userProfile: any
   showPreview = false
+  selectedStepperLable = 'Basic Details'
   //#endregion
 
   constructor(
@@ -42,6 +43,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     private matSnackBar: MatSnackBar,
     private datePipe: DatePipe,
     private loaderService: LoaderService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   //#region (onInit)
@@ -61,7 +63,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startTime: new FormControl('', [Validators.required]),
       endTime: new FormControl('', [Validators.required]),
       registrationLink: new FormControl('', [Validators.required, Validators.pattern(URL_PATRON)]),
-      recordedLinks: new FormControl(''),
+      recoredEventUrl: new FormControl(''),
       appIcon: new FormControl('', [Validators.required]),
     })
   }
@@ -84,11 +86,12 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   patchEventDetails() {
     this.eventId = _.get(this.eventDetails, 'identifier')
     const startDate = _.get(this.eventDetails, 'startDate', '')
-    const recordedLinks = _.get(this.eventDetails, 'recordedLinks', [])
-    if (recordedLinks.length > 0) {
+    const registrationLink = _.get(this.eventDetails, 'registrationLink', '')
+    const isYoutubeVideo = registrationLink.toLowerCase().includes('youtube')
+    if (registrationLink && isYoutubeVideo === false) {
       this.eventDetailsForm.controls.registrationLink.clearValidators()
-      this.eventDetailsForm.controls.recordedLinks.setValidators([Validators.required])
-      this.eventDetailsForm.controls.recordedLinks.updateValueAndValidity()
+      this.eventDetailsForm.controls.recoredEventUrl.setValidators([Validators.required])
+      this.eventDetailsForm.controls.recoredEventUrl.updateValueAndValidity()
       this.eventDetailsForm.controls.registrationLink.updateValueAndValidity()
     }
     const eventBaseDetails = {
@@ -99,9 +102,16 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startDate: startDate ? new Date(startDate) : startDate,
       startTime: _.get(this.eventDetails, 'startTime', ''),
       endTime: _.get(this.eventDetails, 'endTime', ''),
-      registrationLink: _.get(this.eventDetails, 'registrationLink', ''),
-      recordedLinks: _.get(this.eventDetails, 'recordedLinks', []),
+      registrationLink: '',
+      recoredEventUrl: '',
       appIcon: _.get(this.eventDetails, 'appIcon', '')
+    }
+    if (registrationLink) {
+      if (isYoutubeVideo) {
+        eventBaseDetails.registrationLink = registrationLink
+      } else {
+        eventBaseDetails.recoredEventUrl = registrationLink
+      }
     }
     this.eventDetailsForm.setValue(eventBaseDetails)
     this.eventDetailsForm.updateValueAndValidity()
@@ -115,6 +125,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     if (this.stepper) {
       this.stepper._getIndicatorType = () => 'number'
+      this.cdr.detectChanges()
     }
   }
   //#endregion
@@ -122,7 +133,12 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   //#region (ui interactions)
   onSelectionChange(event: StepperSelectionEvent) {
     this.currentStepperIndex = event.selectedIndex
-    if (this.currentStepperIndex === 4) {
+    if (this.stepper) {
+      const selectedStep = this.stepper.steps.toArray()[this.currentStepperIndex]
+      this.selectedStepperLable = selectedStep.label
+      this.cdr.detectChanges()
+    }
+    if (this.selectedStepperLable === 'Preview') {
       this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status'])
     }
   }
@@ -144,7 +160,18 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       this.showPreview = true
       this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status'])
       setTimeout(() => {
-        this.currentStepperIndex = 4
+        let foundIndex = -1
+        if (this.stepper) {
+          const stepersList = this.stepper.steps.toArray()
+          if (stepersList) {
+            foundIndex = stepersList.findIndex((steper) => steper.label === 'Preview')
+          }
+
+          if (foundIndex !== -1) {
+            // this.stepper.selectedIndex = foundIndex
+            this.currentStepperIndex = foundIndex
+          }
+        }
       }, 100)
     }
   }
@@ -157,44 +184,52 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
   get canMoveToNext() {
     let currentFormIsValid = false
-    if (this.currentStepperIndex === 0) {
+    if (this.selectedStepperLable === 'Basic Details') {
       if (this.eventDetailsForm.valid) {
         currentFormIsValid = true
       } else {
         this.openSnackBar('Please fill mandatory fields')
       }
-    } else if (this.currentStepperIndex === 1) {
+    } else if (this.selectedStepperLable === 'Add Speaker') {
       if (this.speakersList && this.speakersList.length) {
         currentFormIsValid = true
       } else {
         this.openSnackBar('Please add atleast one speaker')
       }
-    } else if (this.currentStepperIndex === 2) {
-      if (this.materialsList && this.materialsList.length) {
+    } else if (this.selectedStepperLable === 'Add Material') {
+      if (this.isMaterialsValid) {
         currentFormIsValid = true
       } else {
-        this.openSnackBar('Please add atleast one material')
+        this.openSnackBar('Please provied valid name for matrial')
       }
     }
     return currentFormIsValid
   }
 
+  get isMaterialsValid(): boolean {
+    if (this.materialsList && this.materialsList.length > 0 &&
+      this.materialsList.findIndex((material) => !material.title || material.title === '') > -1) {
+      return false
+    }
+    return true
+  }
+
   get canPublish(): boolean {
-    if (this.currentStepperIndex >= 3) {
+    if (this.selectedStepperLable === 'Add Competency' || this.selectedStepperLable === 'Preview') {
       if (this.eventDetailsForm.invalid) {
-        this.openSnackBar('Please fill mandatory fields in basic details')
+        this.openSnackBar('Please fill mandatory fields in Basic Details')
         return false
       }
-      if (!(this.speakersList && this.speakersList.length)) {
-        this.openSnackBar('Please add atleast one speaker in add speakers')
-        return false
-      }
-      if (!(this.materialsList && this.materialsList.length)) {
-        this.openSnackBar('Please add atleast one material in add Material')
+      // if (!(this.speakersList && this.speakersList.length)) {
+      //   this.openSnackBar('Please add atleast one speaker in add speakers')
+      //   return false
+      // }
+      if (!this.isMaterialsValid) {
+        this.openSnackBar('Please provied valid name for matrial in Add Material')
         return false
       }
       if (!(this.competencies && this.competencies.length)) {
-        this.openSnackBar('Please add atleast one competency in add competency')
+        this.openSnackBar('Please add atleast one competency in Add Competency')
         return false
       }
       return true
@@ -253,8 +288,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['endDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
     eventDetails['startTime'] = startTime
     eventDetails['endTime'] = endTime
-    eventDetails['registrationLink'] = eventBaseDetails.registrationLink
-    eventDetails['recordedLinks'] = eventBaseDetails.recordedLinks
+    eventDetails['registrationLink'] = eventBaseDetails.registrationLink ? eventBaseDetails.registrationLink : eventBaseDetails.recoredEventUrl
     eventDetails['appIcon'] = eventBaseDetails.appIcon
 
     if (status === 'SentToPublish') {

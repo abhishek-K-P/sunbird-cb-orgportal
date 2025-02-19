@@ -106,6 +106,23 @@ export class EventsService {
     return competenciesObject
   }
 
+  convertToTabularView(competencies: any) {
+    const competenciesObject: any = []
+    competencies.forEach((competency: any) => {
+      competency.themes.forEach((theme: any) => {
+        theme.subThems.forEach((subTheme: any) => {
+          delete competency.themes
+          delete theme.subThems
+          const obj: any = {
+            ...competency, ...theme, ...subTheme,
+          }
+          competenciesObject.push(obj)
+        })
+      })
+    })
+    return competenciesObject
+  }
+
   generateThemeObj(_obj: any) {
     let themeObj: any = {
       competencyThemeDescription: _obj.competencyThemeDescription,

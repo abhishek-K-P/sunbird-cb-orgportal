@@ -28,6 +28,8 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
   maxTimeToStart = '11:45 pm'
   minTimeToEnd = '12:15 am'
   timeGap = 15
+  disableUpload = false
+  disableUrl = false
 
   //#endregion
 
@@ -52,6 +54,12 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
       const endTime = _.get(this.eventDetails, 'value.endTime')
       if (endTime) {
         this.eventDetails.controls.endTime.patchValue(this.convertTo12HourFormat(endTime))
+      }
+
+      if (_.get(this.eventDetails, 'value.registrationLink') && _.get(this.eventDetails, 'value.registrationLink') !== '') {
+        this.disableUpload = true
+      } else if (_.get(this.eventDetails, 'value.recoredEventUrl') && _.get(this.eventDetails, 'value.recoredEventUrl').length) {
+        this.disableUrl = true
       }
     }
   }
@@ -82,11 +90,16 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     if (this.eventDetails.controls.registrationLink) {
       this.eventDetails.controls.registrationLink.valueChanges.subscribe((url) => {
         if (url && url !== '') {
-          this.eventDetails.controls.recordedLinks.patchValue([])
-          this.eventDetails.controls.recordedLinks.clearValidators()
-          this.eventDetails.controls.registrationLink.setValidators([Validators.required, Validators.pattern(URL_PATRON)])
-          this.eventDetails.controls.recordedLinks.updateValueAndValidity()
-          this.eventDetails.controls.registrationLink.updateValueAndValidity()
+          if (this.disableUpload === false) {
+            this.disableUpload = true
+            this.eventDetails.controls.recoredEventUrl.patchValue('')
+            this.eventDetails.controls.recoredEventUrl.clearValidators()
+            this.eventDetails.controls.registrationLink.setValidators([Validators.required, Validators.pattern(URL_PATRON)])
+            this.eventDetails.controls.recoredEventUrl.updateValueAndValidity()
+            this.eventDetails.controls.registrationLink.updateValueAndValidity()
+          }
+        } else {
+          this.disableUpload = false
         }
       })
     }
@@ -133,9 +146,9 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
 
   get uploadedVideoName(): string {
     let name = ''
-    const uploadedVideoUrl = _.get(this.eventDetails, 'value.recordedLinks', [])
-    if (uploadedVideoUrl.length > 0) {
-      const urlSplit = uploadedVideoUrl[0].split('_')
+    const uploadedVideoUrl = _.get(this.eventDetails, 'value.recoredEventUrl', '')
+    if (uploadedVideoUrl !== '') {
+      const urlSplit = uploadedVideoUrl.split('_')
       if (urlSplit.length > 0) {
         name = urlSplit[urlSplit.length - 1]
       }
@@ -147,11 +160,13 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     if (item === 'appIcon' && this.eventDetails.controls.appIcon) {
       this.eventDetails.controls.appIcon.patchValue('')
       this.eventDetails.controls.appIcon.updateValueAndValidity()
-    } else if (item === 'uploadedVideo' && this.eventDetails.controls.recordedLinks) {
-      this.eventDetails.controls.recordedLinks.patchValue([])
-      this.eventDetails.controls.recordedLinks.updateValueAndValidity()
+    } else if (item === 'uploadedVideo' && this.eventDetails.controls.recoredEventUrl) {
+      this.eventDetails.controls.recoredEventUrl.patchValue('')
+      this.eventDetails.controls.recoredEventUrl.updateValueAndValidity()
       this.eventDetails.controls.registrationLink.setValidators([Validators.required, Validators.pattern(URL_PATRON)])
       this.eventDetails.controls.registrationLink.updateValueAndValidity()
+      this.eventDetails.controls.registrationLink.enable()
+      this.disableUrl = false
     }
   }
 
@@ -228,13 +243,15 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
                 this.eventDetails.controls.appIcon.updateValueAndValidity()
               }
             } else {
-              if (this.eventDetails.controls.recordedLinks) {
-                this.eventDetails.controls.recordedLinks.patchValue([appIcon])
-                this.eventDetails.controls.recordedLinks.setValidators([Validators.required])
+              if (this.eventDetails.controls.recoredEventUrl) {
+                this.eventDetails.controls.recoredEventUrl.patchValue(appIcon)
+                this.eventDetails.controls.recoredEventUrl.setValidators([Validators.required])
+                this.eventDetails.controls.registrationLink.disable()
                 this.eventDetails.controls.registrationLink.patchValue('')
                 this.eventDetails.controls.registrationLink.clearValidators()
-                this.eventDetails.controls.recordedLinks.updateValueAndValidity()
+                this.eventDetails.controls.recoredEventUrl.updateValueAndValidity()
                 this.eventDetails.controls.registrationLink.updateValueAndValidity()
+                this.disableUrl = true
               }
             }
           }
