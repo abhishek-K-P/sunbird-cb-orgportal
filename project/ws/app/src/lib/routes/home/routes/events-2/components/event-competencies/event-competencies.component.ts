@@ -116,7 +116,7 @@ export class EventCompetenciesComponent implements OnChanges {
         return { ...competency }
       }
     })
-    this.openSnackBar('Competency theme is removee successfully.')
+    this.openSnackBar('Competency theme is removed successfully.')
   }
 
   removeSubTheme(_competency: any, _theme: any, _subTheme: any) {

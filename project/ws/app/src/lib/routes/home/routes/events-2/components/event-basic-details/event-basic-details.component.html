@@ -38,6 +38,13 @@
       <mat-error *ngIf="showValidationMsg('eventName','required')">
         Event name is mandatory
       </mat-error>
+      <mat-error *ngIf="showValidationMsg('eventName','pattern')">
+        Only ( a-z/A-Z , 0-9 . _ - $ / : [ ]' ' !) characters are supported
+      </mat-error>
+      <mat-error *ngIf="!showValidationMsg('eventName','pattern')
+        && showValidationMsg('eventName','minlength')">
+        Minimum characters left to create {{ 10 - eventDetails?.controls['eventName'].value.length}}
+      </mat-error>
     </mat-form-field>
   </div>
 
@@ -46,12 +53,15 @@
       Description
     </div>
     <mat-form-field appearance="outline" class="">
-      <textarea matInput placeholder="Add your description" formControlName="description" maxlength="250"> </textarea>
+      <textarea matInput placeholder="Add your description" formControlName="description" maxlength="500"> </textarea>
       <mat-error *ngIf="showValidationMsg('description','required')">
         Description is mandatory
       </mat-error>
+      <mat-error *ngIf="showValidationMsg('description','minlength')">
+        Minimum characters left to create {{ 250 - eventDetails?.controls['description'].value.length}}
+      </mat-error>
     </mat-form-field>
-    <span class="description-count flex justify-end">{{eventDetails?.value?.description?.length}}/250</span>
+    <span class="description-count flex justify-end">{{eventDetails?.value?.description?.length}}/500</span>
   </div>
 
   <ng-container *ngIf="uploadedVideoName; else uploadVideo">

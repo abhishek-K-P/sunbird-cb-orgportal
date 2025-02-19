@@ -14,6 +14,11 @@
           <mat-form-field appearance="outline" class="w-full">
             <input matInput placeholder="Add your event name" formControlName="eventName" maxlength="70">
             <mat-hint>Only ( a-z/A-Z , 0-9 . - _ $ / : [ ]' ' !) characters are supported</mat-hint>
+            <mat-hint align="end" class="text-sm">{{eventForm.controls['eventName'].value.length}}/70</mat-hint>
+            <mat-error *ngIf="!eventForm.controls['eventName'].hasError('required') && !eventForm.controls['eventName'].errors?.pattern &&
+              eventForm.controls['eventName'].errors?.minlength">
+              Minimum characters left to create {{ 10 - eventForm?.controls['eventName'].value.length}}
+            </mat-error>
             <mat-error *ngIf="eventForm?.get('eventName') && eventForm.get('eventName').hasError('required')">
               Event name is mandatory
             </mat-error>
