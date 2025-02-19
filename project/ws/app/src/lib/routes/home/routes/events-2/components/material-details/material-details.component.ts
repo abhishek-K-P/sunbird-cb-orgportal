@@ -68,5 +68,6 @@ export class MaterialDetailsComponent implements OnChanges {
     if (this.eventForm.valid) {
       this.updatedMaterialDetails.emit(this.eventForm.value)
     }
+    this.eventForm.markAllAsTouched()
   }
 }

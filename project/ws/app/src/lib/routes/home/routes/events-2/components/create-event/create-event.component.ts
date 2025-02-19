@@ -197,13 +197,21 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
         this.openSnackBar('Please add atleast one speaker')
       }
     } else if (this.selectedStepperLable === 'Add Material') {
-      if (this.materialsList && this.materialsList.length) {
+      if (this.isMaterialsValid) {
         currentFormIsValid = true
       } else {
-        this.openSnackBar('Please add atleast one material')
+        this.openSnackBar('Please provied valid name for matrial')
       }
     }
     return currentFormIsValid
+  }
+
+  get isMaterialsValid(): boolean {
+    if (this.materialsList && this.materialsList.length > 0 &&
+      this.materialsList.findIndex((material) => !material.title || material.title === '') > -1) {
+      return false
+    }
+    return true
   }
 
   get canPublish(): boolean {
@@ -216,8 +224,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       //   this.openSnackBar('Please add atleast one speaker in add speakers')
       //   return false
       // }
-      if (!(this.materialsList && this.materialsList.length)) {
-        this.openSnackBar('Please add atleast one material in Add Material')
+      if (!this.isMaterialsValid) {
+        this.openSnackBar('Please provied valid name for matrial in Add Material')
         return false
       }
       if (!(this.competencies && this.competencies.length)) {
