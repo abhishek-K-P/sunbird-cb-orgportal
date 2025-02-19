@@ -5,7 +5,7 @@
         <div class=rsearch>
           <mat-icon class="search-icon">search</mat-icon>
           <input class="sinput" type="Standard" label="" [formControl]="searchControl"
-            placeholder="Type hear to search... ">
+            placeholder="Type here to search... ">
         </div>
       </div>
     </ng-container>
@@ -18,12 +18,25 @@
 
           <ng-container matColumnDef="{{col.key}}" *ngFor="let col of tableColumns">
             <ng-container [ngSwitch]="col.cellType">
+              <ng-container *ngSwitchCase="'textImage'">
+                <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text"> {{col.displayName}}
+                </mat-header-cell>
+                <mat-cell *matCellDef="let element" class="items-start flex flex-row gap-2">
+                  <ng-container *ngIf="col.imageKey">
+                    <img class="py-2 imageCell" [src]="element[col.imageKey]" alt="logo">
+                  </ng-container>
+                  <span [ngClass]="col.cellClass" class="cources-table-cell py-2">
+                    {{element[col.key]}}
+                  </span>
+                </mat-cell>
+              </ng-container>
+
               <ng-container *ngSwitchCase="'text'">
                 <mat-header-cell *matHeaderCellDef mat-sort-header class="table-header-text"> {{col.displayName}}
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" class="py-2 flex flex-row gap-2">
                   <ng-container *ngIf="col.imageKey">
-                    <img class="imageCell py-2" [src]="element[col.imageKey]" alt="logo">
+                    <img class="imageCell" [src]="element[col.imageKey]" alt="logo">
                   </ng-container>
                   <span [ngClass]="col.cellClass" class="cources-table-cell">
                     {{element[col.key]}}

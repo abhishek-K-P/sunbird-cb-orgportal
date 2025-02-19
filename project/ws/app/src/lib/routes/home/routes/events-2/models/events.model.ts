@@ -41,3 +41,5 @@ export interface material {
   title: string,
   content: string
 }
+
+export const URL_PATRON = /^(https?|http):\/\/[^\s/$.?#].[^\s]*$/

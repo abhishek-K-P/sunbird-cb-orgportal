@@ -15,7 +15,7 @@
             <input matInput placeholder="Add your event name" formControlName="eventName" maxlength="70">
             <mat-hint>Only ( a-z/A-Z , 0-9 . - _ $ / : [ ]' ' !) characters are supported</mat-hint>
             <mat-error *ngIf="eventForm?.get('eventName') && eventForm.get('eventName').hasError('required')">
-              event name is mandatory
+              Event name is mandatory
             </mat-error>
             <mat-error *ngIf="eventForm?.get('eventName') && eventForm.get('eventName').hasError('pattern')">
               Only ( a-z/A-Z , 0-9 . _ - $ / : [ ]' ' !) characters are supported

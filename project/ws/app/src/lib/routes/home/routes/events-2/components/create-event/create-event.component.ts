@@ -3,7 +3,7 @@ import { EventsService } from '../../services/events.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import * as _ from 'lodash'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
-import { material, speaker } from '../../models/events.model'
+import { URL_PATRON, material, speaker } from '../../models/events.model'
 import { StepperSelectionEvent } from '@angular/cdk/stepper'
 import { MatStepper } from '@angular/material/stepper'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
@@ -59,7 +59,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startDate: new FormControl('', [Validators.required]),
       startTime: new FormControl('', [Validators.required]),
       endTime: new FormControl('', [Validators.required]),
-      registrationLink: new FormControl('', [Validators.required]),
+      registrationLink: new FormControl('', [Validators.required, Validators.pattern(URL_PATRON)]),
       recordedLinks: new FormControl(''),
       appIcon: new FormControl('', [Validators.required]),
     })
@@ -179,7 +179,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   }
 
   get canPublish(): boolean {
-    if (this.currentStepperIndex === 3) {
+    if (this.currentStepperIndex >= 3) {
       if (this.eventDetailsForm.invalid) {
         this.openSnackBar('Please fill mandatory fields in basic details')
         return false

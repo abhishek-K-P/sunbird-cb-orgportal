@@ -62,7 +62,7 @@
                         <owl-carousel-o class="event-carousel" [options]="customOptions">
                           <ng-container *ngFor="let theme of selectedCompetecy?.themes">
                             <ng-template carouselSlide>
-                              <ws-widget-card-competency [theme]="theme"
+                              <ws-widget-card-competency [theme]="theme" class="mr-4"
                                 [competencyArea]="selectedCompetecy?.competencyAreaName"></ws-widget-card-competency>
                             </ng-template>
                           </ng-container>

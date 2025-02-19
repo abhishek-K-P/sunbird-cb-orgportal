@@ -2,7 +2,7 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { FormGroup, Validators } from '@angular/forms'
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import * as _ from 'lodash'
-import { events } from '../../models/events.model'
+import { URL_PATRON, events } from '../../models/events.model'
 import { EventsService } from '../../services/events.service'
 import { map, mergeMap } from 'rxjs/operators'
 import { environment } from '../../../../../../../../../../../src/environments/environment'
@@ -84,7 +84,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
         if (url && url !== '') {
           this.eventDetails.controls.recordedLinks.patchValue([])
           this.eventDetails.controls.recordedLinks.clearValidators()
-          this.eventDetails.controls.registrationLink.setValidators([Validators.required])
+          this.eventDetails.controls.registrationLink.setValidators([Validators.required, Validators.pattern(URL_PATRON)])
           this.eventDetails.controls.recordedLinks.updateValueAndValidity()
           this.eventDetails.controls.registrationLink.updateValueAndValidity()
         }
@@ -150,7 +150,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     } else if (item === 'uploadedVideo' && this.eventDetails.controls.recordedLinks) {
       this.eventDetails.controls.recordedLinks.patchValue([])
       this.eventDetails.controls.recordedLinks.updateValueAndValidity()
-      this.eventDetails.controls.registrationLink.setValidators([Validators.required])
+      this.eventDetails.controls.registrationLink.setValidators([Validators.required, Validators.pattern(URL_PATRON)])
       this.eventDetails.controls.registrationLink.updateValueAndValidity()
     }
   }
