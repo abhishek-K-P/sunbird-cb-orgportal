@@ -62,7 +62,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startTime: new FormControl('', [Validators.required]),
       endTime: new FormControl('', [Validators.required]),
       registrationLink: new FormControl('', [Validators.required, Validators.pattern(URL_PATRON)]),
-      recordedLinks: new FormControl(''),
+      recoredEventUrl: new FormControl(''),
       appIcon: new FormControl('', [Validators.required]),
     })
   }
@@ -85,11 +85,12 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   patchEventDetails() {
     this.eventId = _.get(this.eventDetails, 'identifier')
     const startDate = _.get(this.eventDetails, 'startDate', '')
-    const recordedLinks = _.get(this.eventDetails, 'recordedLinks', [])
-    if (recordedLinks.length > 0) {
+    const registrationLink = _.get(this.eventDetails, 'registrationLink', '')
+    const isYoutubeVideo = registrationLink.toLowerCase().includes('youtube')
+    if (registrationLink && isYoutubeVideo === false) {
       this.eventDetailsForm.controls.registrationLink.clearValidators()
-      this.eventDetailsForm.controls.recordedLinks.setValidators([Validators.required])
-      this.eventDetailsForm.controls.recordedLinks.updateValueAndValidity()
+      this.eventDetailsForm.controls.recoredEventUrl.setValidators([Validators.required])
+      this.eventDetailsForm.controls.recoredEventUrl.updateValueAndValidity()
       this.eventDetailsForm.controls.registrationLink.updateValueAndValidity()
     }
     const eventBaseDetails = {
@@ -100,9 +101,16 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       startDate: startDate ? new Date(startDate) : startDate,
       startTime: _.get(this.eventDetails, 'startTime', ''),
       endTime: _.get(this.eventDetails, 'endTime', ''),
-      registrationLink: _.get(this.eventDetails, 'registrationLink', ''),
-      recordedLinks: _.get(this.eventDetails, 'recordedLinks', []),
+      registrationLink: '',
+      recoredEventUrl: '',
       appIcon: _.get(this.eventDetails, 'appIcon', '')
+    }
+    if (registrationLink) {
+      if (isYoutubeVideo) {
+        eventBaseDetails.registrationLink = registrationLink
+      } else {
+        eventBaseDetails.recoredEventUrl = registrationLink
+      }
     }
     this.eventDetailsForm.setValue(eventBaseDetails)
     this.eventDetailsForm.updateValueAndValidity()
@@ -271,8 +279,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['endDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
     eventDetails['startTime'] = startTime
     eventDetails['endTime'] = endTime
-    eventDetails['registrationLink'] = eventBaseDetails.registrationLink
-    eventDetails['recordedLinks'] = eventBaseDetails.recordedLinks
+    eventDetails['registrationLink'] = eventBaseDetails.registrationLink ? eventBaseDetails.registrationLink : eventBaseDetails.recoredEventUrl
     eventDetails['appIcon'] = eventBaseDetails.appIcon
 
     if (status === 'SentToPublish') {
