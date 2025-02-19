@@ -30,66 +30,6 @@ export class EventCompetenciesComponent implements OnChanges {
   }
 
   ngOnInit(): void {
-
-    // this.eventId = this.route.snapshot.paramMap.get('eventId')
-
-    // this.eventsService.eventDetails.subscribe((res: any) => {
-    //   if (res) {
-    //     this.event = res
-    //     if (this.event?.competencies_v6) {
-    //       this.competencies = this.eventsService.convertToTreeView(this.event.competencies_v6)
-    //     }
-    //   }
-    // })
-    // let _competencies: any = [
-    //   {
-    //     "competencyAreaDescription": "Functional competencies are common among many domains, cutting across MDOs, as well as roles and activities.",
-    //     "competencyAreaIdentifier": "kcmfinal_fw_competencyarea_af8caa53-7f84-499e-86b2-e32e5b59908e",
-    //     "competencyAreaName": "Functional",
-    //     "competencyAreaRefId": "COMAREA-000003",
-    //     "competencySubThemeAdditionalProperties": {
-    //       "displayName": "Handling Allowances & Reimbursement",
-    //       "timeStamp": 1724675891609
-    //     },
-    //     "competencySubThemeDescription": "Handling Allowances & Reimbursement Competency Sub-Theme",
-    //     "competencySubThemeIdentifier": "kcmfinal_fw_subtheme_35bf9d51-7299-45a5-ad99-1f7c7db1e4ba",
-    //     "competencySubThemeName": "Handling Allowances & Reimbursement",
-    //     "competencySubThemeRefId": "COMSUBTHEME-000276",
-    //     "competencyThemeAdditionalProperties": {
-    //       "displayName": "Administration Matters",
-    //       "timeStamp": 1724675757333
-    //     },
-    //     "competencyThemeDescription": "Administration Matters competency Theme",
-    //     "competencyThemeIdentifier": "kcmfinal_fw_theme_92909bf6-2cea-47ea-b426-dc31803f2177",
-    //     "competencyThemeName": "Administration Matters",
-    //     "competencyThemeRefId": "COMTHEME-000205",
-    //     "competencyThemeType": "theme"
-    //   },
-    //   {
-    //     "competencyAreaDescription": "Behavioural competencies describe the key values and strengths that help an official perform effectively in a range of roles.",
-    //     "competencyAreaIdentifier": "kcmfinal_fw_competencyarea_5ed3587a-2a9b-4e3c-8852-8ffcff5c70b2",
-    //     "competencyAreaName": "Behavioural",
-    //     "competencyAreaRefId": "COMAREA-000001",
-    //     "competencySubThemeAdditionalProperties": {
-    //       "displayName": "Planning & Prioritization",
-    //       "timeStamp": 1724764179110
-    //     },
-    //     "competencySubThemeDescription": "Planning & Prioritization Competency Sub-Theme",
-    //     "competencySubThemeIdentifier": "kcmfinal_fw_subtheme_81ded4ed-55dc-4bd1-a21e-6fc5840ce30e",
-    //     "competencySubThemeName": "Planning & Prioritization",
-    //     "competencySubThemeRefId": "COMSUBTHEME-000025",
-    //     "competencyThemeAdditionalProperties": {
-    //       "displayName": "Operational Excellence",
-    //       "timeStamp": 1724764141855
-    //     },
-    //     "competencyThemeDescription": "Operational Excellence competency Theme",
-    //     "competencyThemeIdentifier": "kcmfinal_fw_theme_49a613f9-b825-4e16-a74a-0d413cf6c4eb",
-    //     "competencyThemeName": "Operational Excellence",
-    //     "competencyThemeRefId": "COMTHEME-000008",
-    //     "competencyThemeType": "theme"
-    //   }
-    // ]
-    // this.competencies = this.eventsService.convertToTreeView(_competencies)
   }
 
   hideAnfShow(row: any) {
@@ -103,6 +43,7 @@ export class EventCompetenciesComponent implements OnChanges {
   removeNode(_competency: any) {
     this.competencies = this.competencies.filter((competency: any) => _competency.competencyAreaName !== competency.competencyAreaName)
     this.openSnackBar('Competency area is removed successfully.')
+    this.updateCompetencies()
   }
 
   removeTheme(_competency: any, _theme: any) {
@@ -117,6 +58,7 @@ export class EventCompetenciesComponent implements OnChanges {
       }
     })
     this.openSnackBar('Competency theme is removee successfully.')
+    this.updateCompetencies()
   }
 
   removeSubTheme(_competency: any, _theme: any, _subTheme: any) {
@@ -140,7 +82,12 @@ export class EventCompetenciesComponent implements OnChanges {
       }
     })
     this.openSnackBar('Competency sub theme is removed successfully.')
+    this.updateCompetencies()
 
+  }
+
+  updateCompetencies() {
+    this.addCompetencies.emit(this.eventsService.convertToTabularView(this.competencies))
   }
 
   showAddCompetencyDialog() {

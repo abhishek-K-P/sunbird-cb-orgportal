@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core'
 import { EventsService } from '../../services/events.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import * as _ from 'lodash'
@@ -32,6 +32,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   pathUrl = ''
   userProfile: any
   showPreview = false
+  selectedStepperLable = 'Basic Details'
   //#endregion
 
   constructor(
@@ -42,6 +43,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     private matSnackBar: MatSnackBar,
     private datePipe: DatePipe,
     private loaderService: LoaderService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   //#region (onInit)
@@ -114,6 +116,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     if (this.stepper) {
       this.stepper._getIndicatorType = () => 'number'
+      this.cdr.detectChanges()
     }
   }
   //#endregion
@@ -121,7 +124,12 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   //#region (ui interactions)
   onSelectionChange(event: StepperSelectionEvent) {
     this.currentStepperIndex = event.selectedIndex
-    if (this.currentStepperIndex === 4) {
+    if (this.stepper) {
+      const selectedStep = this.stepper.steps.toArray()[this.currentStepperIndex]
+      this.selectedStepperLable = selectedStep.label
+      this.cdr.detectChanges()
+    }
+    if (this.selectedStepperLable === 'Preview') {
       this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status'])
     }
   }
@@ -143,7 +151,18 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       this.showPreview = true
       this.updatedEventDetails = this.getFormBodyOfEvent(this.eventDetails['status'])
       setTimeout(() => {
-        this.currentStepperIndex = 4
+        let foundIndex = -1
+        if (this.stepper) {
+          const stepersList = this.stepper.steps.toArray()
+          if (stepersList) {
+            foundIndex = stepersList.findIndex((steper) => steper.label === 'Preview')
+          }
+
+          if (foundIndex !== -1) {
+            // this.stepper.selectedIndex = foundIndex
+            this.currentStepperIndex = foundIndex
+          }
+        }
       }, 100)
     }
   }
@@ -156,19 +175,19 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
   get canMoveToNext() {
     let currentFormIsValid = false
-    if (this.currentStepperIndex === 0) {
+    if (this.selectedStepperLable === 'Basic Details') {
       if (this.eventDetailsForm.valid) {
         currentFormIsValid = true
       } else {
         this.openSnackBar('Please fill mandatory fields')
       }
-    } else if (this.currentStepperIndex === 1) {
+    } else if (this.selectedStepperLable === 'Add Speaker') {
       if (this.speakersList && this.speakersList.length) {
         currentFormIsValid = true
       } else {
         this.openSnackBar('Please add atleast one speaker')
       }
-    } else if (this.currentStepperIndex === 2) {
+    } else if (this.selectedStepperLable === 'Add Material') {
       if (this.materialsList && this.materialsList.length) {
         currentFormIsValid = true
       } else {
@@ -179,21 +198,21 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   }
 
   get canPublish(): boolean {
-    if (this.currentStepperIndex >= 3) {
+    if (this.selectedStepperLable === 'Add Competency' || this.selectedStepperLable === 'Preview') {
       if (this.eventDetailsForm.invalid) {
-        this.openSnackBar('Please fill mandatory fields in basic details')
+        this.openSnackBar('Please fill mandatory fields in Basic Details')
         return false
       }
-      if (!(this.speakersList && this.speakersList.length)) {
-        this.openSnackBar('Please add atleast one speaker in add speakers')
-        return false
-      }
+      // if (!(this.speakersList && this.speakersList.length)) {
+      //   this.openSnackBar('Please add atleast one speaker in add speakers')
+      //   return false
+      // }
       if (!(this.materialsList && this.materialsList.length)) {
-        this.openSnackBar('Please add atleast one material in add Material')
+        this.openSnackBar('Please add atleast one material in Add Material')
         return false
       }
       if (!(this.competencies && this.competencies.length)) {
-        this.openSnackBar('Please add atleast one competency in add competency')
+        this.openSnackBar('Please add atleast one competency in Add Competency')
         return false
       }
       return true
