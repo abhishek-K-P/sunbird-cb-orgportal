@@ -3,7 +3,7 @@ import { EventsService } from '../../services/events.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import * as _ from 'lodash'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
-import { URL_PATRON, material, speaker } from '../../models/events.model'
+import { URL_PATRON, material, noSpecialChar, speaker } from '../../models/events.model'
 import { StepperSelectionEvent } from '@angular/cdk/stepper'
 import { MatStepper } from '@angular/material/stepper'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
@@ -54,8 +54,9 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
   initializeFormAndParams() {
     this.eventDetailsForm = this.formBuilder.group({
-      eventName: new FormControl('', [Validators.required]),
-      description: new FormControl('', [Validators.required, Validators.maxLength(250)]),
+      eventName: new FormControl('', [Validators.required, Validators.minLength(10),
+      Validators.maxLength(70), Validators.pattern(noSpecialChar)]),
+      description: new FormControl('', [Validators.required, Validators.minLength(250), Validators.maxLength(500)]),
       eventCategory: new FormControl('', [Validators.required]),
       streamType: new FormControl(''),
       startDate: new FormControl('', [Validators.required]),
