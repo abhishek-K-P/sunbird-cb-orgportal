@@ -39,7 +39,9 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
   totalProfileVerificationRecords: any = 0
   tabChange = 0
   cacheOffset: any = 0
+  searchfilterValue = ''
 
+  resetPagination: any = {}
   constructor(
     private router: Router,
     private apprService: ApprovalsService,
@@ -97,7 +99,20 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
 
   filter(key: string | 'timestamp' | 'best' | 'saved') {
     this.tabChange = 1
-    if (key) {
+    if (key !== this.currentFilter) {
+      this.searchfilterValue = ''
+      this.currentFilter = key
+      this.pageIndex = 0
+      this.currentOffset = 0
+      this.limit = 20
+      if (key === 'profileverification') {
+        this.fetchApprovals('')
+      } else if (key === 'transfers') {
+        this.fetchTransfers(this.limit)
+      }
+    }
+    else if (key) {
+
       this.currentFilter = key
       this.pageIndex = 0
       this.currentOffset = 0
@@ -175,17 +190,23 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
       // sortedVal = { firstName: 'asc' }
     }
     if (this.departName) {
-      const req = {
+      let req: any = {
         serviceName: 'profile',
         applicationStatus: 'SEND_FOR_APPROVAL',
-        requestType: ['GROUP_CHANGE', 'DESIGNATION_CHANGE'],
+        // requestType: ['GROUP_CHANGE', 'DESIGNATION_CHANGE'],
         deptName: this.departName,
         offset: this.pageIndex,
         limit: this.limit,
+        query: this.searchfilterValue,
         sortBy: {
           createdOn: 'desc',
         },
         // sort_by: sortValue ? sortValue : sortedVal,
+      }
+      if (this.currentFilter === 'transfers') {
+        req['requestType'] = ['ORG_TRANSFER']
+      } else {
+        req['requestType'] = ['GROUP_CHANGE', 'DESIGNATION_CHANGE']
       }
 
       localStorage.setItem('profileverificationOffset', req.offset)
@@ -249,6 +270,7 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
         applicationStatus: 'SEND_FOR_APPROVAL',
         requestType: ['ORG_TRANSFER'],
         deptName: this.departName,
+        query: this.searchfilterValue,
         offset: this.pageIndex,
         limit: limit1 ? limit1 : this.limit,
       }
@@ -325,23 +347,35 @@ export class ApprovalPendingComponent implements OnInit, OnDestroy {
   }
 
   onSearch(enterValue: any) {
+    this.pageIndex = 0
+    this.currentOffset = 0
+    this.limit = 20
+    if (this.currentFilter === 'profileverification') {
+      this.resetPagination = { pageIndex: this.pageIndex, pageSize: this.limit, length: this.totalProfileVerificationRecords }
+    } else if (this.currentFilter === 'transfers') {
+      this.resetPagination = { pageIndex: this.pageIndex, pageSize: this.limit, length: this.totalTransfersRecords }
+    }
+
+    this.searchfilterValue = enterValue.searchText.toLowerCase() ? enterValue.searchText : ''
     this.getSortOrderValue = this.getSortOrder(enterValue.sortOrder)
-    if (this.getSortOrderValue) {
+    if (this.getSortOrderValue && this.currentFilter === 'profileverification') {
       this.fetchApprovals(this.getSortOrderValue)
+    } else if (this.currentFilter === 'transfers') {
+      this.fetchTransfers(this.limit)
     }
     // this.data.filter((user: any) => enterValue.includes(user.userInfo.first_name))
-    const filterValue = enterValue.searchText.toLowerCase() ? enterValue.searchText : ''
     if (this.currentFilter === 'profileverification') {
       this.profileVerificationData = this.profileVerificationData.filter((user: any) =>
-        user.fullname.toLowerCase().includes(filterValue))
+        user.fullname.toLowerCase().includes(this.searchfilterValue))
     } else {
-      this.transfersData = this.transfersData.filter((user: any) => user.fullname.toLowerCase().includes(filterValue))
+      this.transfersData = this.transfersData.filter((user: any) => user.fullname.toLowerCase().includes(this.searchfilterValue))
     }
   }
 
   onPaginateChange(event: PageEvent) {
     this.pageIndex = event.pageIndex
     this.limit = event.pageSize
+    this.resetPagination = {}
     // Clear the cache only for the current tab
     const cacheKey = `${this.currentFilter}DataCache`
     const cacheTimestampKey = `${this.currentFilter}CacheTimestamp`

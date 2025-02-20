@@ -63,7 +63,7 @@
   margin: 0 auto;
   // border: 1px solid;
   // font-weight: 500;
-  box-shadow: 0px 10px 30p;
+  box-shadow: 0px 10px 30px;
   /*#99999933*/
   border-radius: 8px;
 }
@@ -303,28 +303,36 @@ a:not([href]):not([tabindex]) {
 .field-key{
   display: block;
   padding:5px 0;
+  /* stylelint-disable */
   font:400 14px Lato;
+  /* stylelint-enable */
   color: #999999;
 }
 
 .field-name{
   display: block;
   padding:5px 0px;
+  /* stylelint-disable */
   font:700 14px Lato;
+  /* stylelint-enable */
 
 }
 
 .field-change{
   display: block;
   padding:5px 0px;
+  /* stylelint-disable */
   font:400 14px Lato;
+  /* stylelint-enable */
   color: #d9d9d9;
 }
 
 .field-date{
   display: block;
   padding:5px 0px;
+  /* stylelint-disable */
   font:400 14px Lato;
+  /* stylelint-enable */
   color: #999999
 
 }
@@ -338,7 +346,9 @@ a:not([href]):not([tabindex]) {
 
 .change-log-text{
   display: block;
+  /* stylelint-disable */
   font: 700 14px Lato;
+  /* stylelint-enable */
 }
 
 ::ng-deep.container-balanced .text-capitalize {

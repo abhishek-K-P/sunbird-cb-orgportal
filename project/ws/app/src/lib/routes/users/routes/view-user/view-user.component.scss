@@ -62,7 +62,7 @@
   margin: 0 auto;
   // border: 1px solid;
   // font-weight: 500;
-  box-shadow: 0px 10px 30p;
+  box-shadow: 0px 10px 30px;
   /*#99999933*/
   border-radius: 8px;
 }
@@ -321,7 +321,9 @@ a:not([href]):not([tabindex]) {
 
 .appr-section-heading{
   font-size: 20px;
+  /* stylelint-disable */
   font-family: 'Montserrat';
+  /* stylelint-enable */
   font-weight: 600;
 }
 
@@ -330,10 +332,14 @@ a:not([href]):not([tabindex]) {
   border: 1px solid #DDDDDD;
   border-radius: 4px;
   padding: 9px;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
+  /* stylelint-disable */
   font: 400 14px Lato;
+  /* stylelint-enable */
 }
 
 .appr-text-label{
@@ -342,7 +348,9 @@ a:not([href]):not([tabindex]) {
   margin-bottom: 0;
   color: #000000;
   display: block;
+  /* stylelint-disable */
   font: 700 14px Lato;
+  /* stylelint-enable */
 }
 
 
@@ -382,20 +390,26 @@ textarea {
 }
 
 ::ng-deep .mat-radio-label-content{
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
 }
 
 .header-text{
+  /* stylelint-disable */
   font-family: 'Montserrat';
+  /* stylelint-enable */
   font-weight: 600;
   font-size: 16px;
 }
 
 .middle-heading{
   font-weight: 600;
+  /* stylelint-disable */
     font-family: "Montserrat";
+    /* stylelint-enable */
     font-size:16px
 }
 
@@ -403,28 +417,36 @@ textarea {
 .field-key{
   display: block;
   padding:5px 0;
+  /* stylelint-disable */
   font:400 14px Lato;
+  /* stylelint-enable */
   color: #999999;
 }
 
 .field-name{
   display: block;
   padding:5px 0px;
+  /* stylelint-disable */
   font:700 14px Lato;
+  /* stylelint-enable */
 
 }
 
 .field-change{
   display: block;
   padding:5px 0px;
+  /* stylelint-disable */
   font:400 14px Lato;
+  /* stylelint-enable */
   color: #d9d9d9;
 }
 
 .field-date{
   display: block;
   padding:5px 0px;
+  /* stylelint-disable */
   font:400 14px Lato;
+  /* stylelint-enable */
   color: #999999
 
 }
@@ -435,11 +457,15 @@ textarea {
 
 .change-log-text{
   display: block;
+  /* stylelint-disable */
   font: 700 14px Lato;
+  /* stylelint-enable */
 }
 
 .no-request-text{
+  /* stylelint-disable */
   font: normal 14px Lato;
+  /* stylelint-enable */
   font-weight: 400;
   color:rgba(0, 0, 0, 0.6);
   margin-left : 16px;

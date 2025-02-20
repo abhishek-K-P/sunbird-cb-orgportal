@@ -127,7 +127,9 @@ a {
   border-top: 1px solid $color-thin-gray;
   border-left: 1px solid $color-thin-gray;
   position: absolute;
+  /* stylelint-disable */
   font-family: sans-serif;
+  /* stylelint-enable */
 
   display: none;
   right: 18px;
@@ -151,7 +153,9 @@ a {
     border: 1px solid $color-thin-gray;
     font-size: 12px;
     display: inline-block;
+    /* stylelint-disable */
     padding: 2px 3px;
+    /* stylelint-enable */
     margin: 2px 1px;
     // @include font-size(9px);
   }

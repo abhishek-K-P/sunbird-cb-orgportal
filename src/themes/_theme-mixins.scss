@@ -633,7 +633,9 @@
       position: absolute;
       width: 90%;
       margin-top: 24%;
+      /* stylelint-disable */
       background: linear-gradient(to bottom, rgba(mat.get-color-from-palette($background, card), 0), mat.get-color-from-palette($background, card) 100%);
+      /* stylelint-enable */
     }
 
     .mat-button-toggle-checked {

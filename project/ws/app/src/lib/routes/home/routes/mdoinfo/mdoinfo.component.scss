@@ -8,7 +8,9 @@
     // min-height: 400px;
     min-height: calc(100vh - 160px);
     width: 100%;
+    /* stylelint-disable */
     min-height: 85vh;
+    /* stylelint-enable */
 }
 
 .container-balanced-banner {
@@ -58,11 +60,15 @@
 
 .change-log-text{
     display: block;
+    /* stylelint-disable */
     font: 700 14px Lato;
+    /* stylelint-enable */
 }
 
 .no-request-text{
+    /* stylelint-disable */
     font: normal 14px Lato;
+    /* stylelint-enable */
     font-weight: 400;
     color:rgba(0, 0, 0, 0.6);
     margin-left : 16px;

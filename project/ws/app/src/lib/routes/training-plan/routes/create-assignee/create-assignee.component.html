@@ -18,7 +18,7 @@
 <ng-container *ngIf="(assigneeData?.category === 'Designation' && assigneeData?.data?.length === 0) ||
     (assigneeData?.category === 'CustomUser' && assigneeData?.data?.length === 0)">
     <div class="no-cbp-data margin-top-xl margin-bottom-xl">
-        <div><img src="/assets/images/no-content-data.svg"></div>
+        <div><img src="/assets/images/no-content-data.svg" alt="no-content-data"></div>
         <div class="mat-subheading-1 margin-remove">No assignee available.</div>
         <!-- <div>Create a content in CBP portal to get the contents.</div> -->
     </div>
@@ -26,7 +26,7 @@
 
 <ng-container *ngIf="tpdsSvc?.trainingPlanAssigneeData?.category === 'AllUser'">
     <div class="no-cbp-data margin-top-xl margin-bottom-xl">
-        <div><img src="/assets/images/no-content-data.svg"></div>
+        <div><img src="/assets/images/no-content-data.svg" alt="no-content-data"></div>
         <div class="mat-subheading-1 margin-remove">It will assign to all users</div>
         <div>By selecting all users, you've selected all the users from your Department of
             {{tpdsSvc.currentUserDepartment}}.</div>

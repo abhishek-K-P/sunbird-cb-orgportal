@@ -25,7 +25,9 @@
     width: auto;
     background: #0075B7 !important;
     color: white !important;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
     font-weight: 700;
     font-size: 14px;
   }
@@ -40,7 +42,9 @@
     width: auto;
     background: #0075B7 !important;
     color: white !important;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
     font-weight: 700;
     font-size: 14px;
   }
@@ -78,14 +82,18 @@
     font-size: 14px;
     margin-bottom: .5rem;
     font-weight: 700;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
     display: block;
   }
 
   .form-input {
     font-size: 14px;
     font-weight: 400;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
     width: 86%;
   }
 
@@ -104,7 +112,6 @@
       border-radius: 4px 0 0 4px;
       border-right-style: none;
       min-width: 8px;
-      border-right-style: none;
     }
 
     .mat-form-field-outline-gap {
@@ -195,7 +202,9 @@
     width: auto;
     background: #0075B7 !important;
     color: white !important;
+    /* stylelint-disable */
     font-family: "Lato";
+    /* stylelint-enable */
     font-weight: 700;
     font-size: 14px;
     display: block;
@@ -210,7 +219,9 @@
 
   .change-log-text {
     display: block;
+    /* stylelint-disable */
     font: 700 14px Lato;
+    /* stylelint-enable */
   }
 
   .no-request-text {

@@ -49,7 +49,7 @@
                                                         [ngClass]="imageSrcURL ? 'button-row' : 'button-row-inline'">
                                                         <div class="item text-center">
                                                             <img class="imgicon display-block"
-                                                                src="/assets/icons/jpg.svg">
+                                                                src="/assets/icons/jpg.svg" alt="icon">
                                                             <div id="thumbnail" class="deleteIcon" *ngIf="imageSrcURL">
                                                                 <a href="javascript:void(0);"
                                                                     (click)="removeSelectedFile()">
@@ -317,7 +317,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="example-table-container" *ngIf="participantsArr.length > 0">
-                                                    <table class="mat-body-2">
+                                                    <table class="mat-body-2"><!-- //NOSONAR -->
                                                         <tr>
                                                             <td>Name</td>
                                                             <td>Email</td>

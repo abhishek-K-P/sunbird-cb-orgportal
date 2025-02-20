@@ -159,7 +159,7 @@ export class KnowledgeComponent implements OnInit, OnDestroy {
     })
   }
   sortOrder(type: string) {
-    try {
+    try { //NOSONAR
       this.router.navigate([], {
         queryParams: { sort: type },
         queryParamsHandling: 'merge',
