@@ -48,7 +48,7 @@
           <span class="font-bold text-sm">Cancel</span>
         </button>
         <button mat-flat-button class="flex justify-center items-center save-button" type="submit"
-          [disabled]="(eventForm.invalid && !imgURL)">
+          [disabled]="(eventForm.invalid || !imgURL)">
           <span class="font-bold text-sm">Create</span>
         </button>
       </div>
