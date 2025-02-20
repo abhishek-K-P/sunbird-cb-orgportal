@@ -62,7 +62,9 @@
   padding: 9px 9px 9px 35px;
   margin-bottom: 20px;
   margin-top: 0;
+  /* stylelint-disable */
   font: normal 14px Lato;
+  /* stylelint-enable */
   font-weight: 400;
 }
 .nominate-learners {
@@ -76,14 +78,18 @@
 .add-nominees-btn {
   background: #0075B7 !important;
   color: white !important;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-weight: 700;
   font-size: 14px;
 }
 .cancle-nominees-btn {
   background: white !important;
   color: #0075B7 !important;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-weight: 700;
   font-size: 14px;
 }

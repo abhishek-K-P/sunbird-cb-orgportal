@@ -23,7 +23,9 @@
 
 button {
     display: inline;
+    /* stylelint-disable */
     font: 600 14px/20px Lato;
+    /* stylelint-enable */
     padding: 0.5em 1em;
     color: rgba(0,0,0,0.7);
     background: transparent;

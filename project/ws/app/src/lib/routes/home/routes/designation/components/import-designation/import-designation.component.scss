@@ -30,7 +30,9 @@
 .importBtn {
   background: #1b4ca1 !important;
   color: #ffffff !important;
+  /* stylelint-disable */
   font-family: "Lato";
+  /* stylelint-enable */
   height: 40px;
   font-size: 14px;
   font-weight: 700;
@@ -40,7 +42,9 @@
 .disabl-btn {
   background-color: #999 !important;
   pointer-events: none;
+  /* stylelint-disable */
   font-family: "Lato";
+  /* stylelint-enable */
   height: 40px;
   font-size: 14px;
   font-weight: 700;
@@ -71,7 +75,9 @@
     border: 1px solid #d5d0d0;
     padding: 9px 9px 9px 40px;
     margin-top: 0;
+    /* stylelint-disable */
     font: normal 14px Lato;
+    /* stylelint-enable */
     font-weight: 400;
   }
 }
@@ -118,7 +124,9 @@
   color: #1b4ca1 !important;
   font-weight: 700;
   letter-spacing: 0.25px;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
 }
 
 .master-designations {

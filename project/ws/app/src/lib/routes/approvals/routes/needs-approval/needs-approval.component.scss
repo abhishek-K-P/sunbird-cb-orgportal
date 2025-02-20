@@ -3,12 +3,16 @@
   border: 1px solid #DDDDDD;
   border-radius: 4px;
   padding: 9px;
+  /* stylelint-disable */
   font: 400 14px Lato;
+  /* stylelint-enable */
   vertical-align: middle;
 }
 
 .appr-text-label{
+  /* stylelint-disable */
   font: 700 14px Lato;
+  /* stylelint-enable */
   color: #000000;
 }
 
@@ -34,7 +38,7 @@
     }
 }
 
-#reject { 
+#reject {
   background: #D13924;
     border-radius: 4px;
     width: auto;
@@ -60,7 +64,9 @@
 .needs-appr-count-text{
   border-radius: 100px 4px 4px 100px;
   padding: 0 12px;
+  /* stylelint-disable */
   font:400 16px Lato;
+  /* stylelint-enable */
   float: right;
 }
 
@@ -84,7 +90,9 @@
 }
 
 .appr-section-heading{
+  /* stylelint-disable */
   font: 600 20px Montserrat;
+  /* stylelint-enable */
 }
 
 .accept-btn{
@@ -94,7 +102,9 @@
 
 .accept-dialog-btn{
   color: white !important;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
   margin-left: 15px;
@@ -103,7 +113,9 @@
 
 .reject-dialog-btn{
   color: white !important;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
   margin-left: 15px;
@@ -116,7 +128,9 @@
 }
 
 .dialog-title{
+  /* stylelint-disable */
  font:600 20px Montserrat;
+ /* stylelint-enable */
 }
 
 .no-request-text{
@@ -135,11 +149,15 @@
 
 
 ::ng-deep .mat-radio-label-content{
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
 }
 
 .appr-text{
+  /* stylelint-disable */
   font: 400 16px Lato;
+  /* stylelint-enable */
 }

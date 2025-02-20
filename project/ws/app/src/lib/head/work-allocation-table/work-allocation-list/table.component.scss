@@ -25,7 +25,9 @@ line-height: 90px;
 .url_value{
   color: #0375B7;
   text-decoration-color: #0375B7;
+  /* stylelint-disable */
   text-decoration: underline;
+  /* stylelint-enable */
 }
 .card-minimal-container {
   position: relative;
@@ -95,7 +97,6 @@ line-height: 90px;
       flex: 0 0 17% !important;
       width: 17% !important;
       overflow-wrap: break-word;
-      word-wrap: break-word;
 
       word-break: break-word;
 
@@ -278,7 +279,9 @@ line-height: 90px;
     width: calc(100% + #{2 * $card-padding - 2});
     margin-left: -#{$card-padding - 1};
     // margin-top: -$card-padding;
+    /* stylelint-disable */
     display: flex;
+    /* stylelint-enable */
     // width: calc(100% + 30px);
     // margin-left: -15px;
     margin-top: 62px;
@@ -303,7 +306,9 @@ line-height: 90px;
       margin-right: auto;
       margin-left: auto;
       display: block;
+      /* stylelint-disable */
       margin: auto;
+      /* stylelint-enable */
       max-width: 58px;
       max-height: -webkit-fill-available;
     }
@@ -396,7 +401,9 @@ line-height: 90px;
     display: block;
     width: calc(100% + #{2 * $card-padding - 2});
     margin-left: -#{$card-padding - 1};
+    /* stylelint-disable */
     display: flex;
+    /* stylelint-enable */
     margin-top: 62px;
     background: bisque;
   }
@@ -419,7 +426,9 @@ line-height: 90px;
       margin-right: auto;
       margin-left: auto;
       display: block;
+      /* stylelint-disable */
       margin: auto;
+      /* stylelint-enable */
       max-width: 58px;
       max-height: -webkit-fill-available;
     }

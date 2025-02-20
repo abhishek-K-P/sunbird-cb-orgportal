@@ -55,6 +55,7 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
   @Input() activeTab: any
   @Input() forMentor = false
   @Input() pendingApprovals?: any = []
+  @Input() resetPagination?: any = {}
   @Output() paginationData = new EventEmitter()
   @Output() searchByEnterKey = new EventEmitter()
   @Output() disableButton = new EventEmitter()
@@ -241,6 +242,12 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
 
       if (this.isApprovals) {
         this.getApprovalData()
+      }
+    }
+    if (Object.keys(this.resetPagination).length) {
+      if (this.paginator) {
+        this.paginator.pageIndex = 0
+        // this.onChangePage(this.resetPagination)
       }
     }
   }

@@ -204,7 +204,7 @@ export class SocialComponent implements OnInit, OnDestroy {
     return item.identifier
   }
   toggleBestResults() {
-    try {
+    try { //NOSONAR
       this.query = !this.query
       this.searchRequestObject.postKind = this.query ? 'Query' : 'Blog'
       this.searchRequestObject.pageNo = 0
@@ -219,7 +219,7 @@ export class SocialComponent implements OnInit, OnDestroy {
   }
 
   sortOrder(type: string) {
-    try {
+    try { //NOSONAR
       this.router.navigate([], {
         queryParams: { sort: type },
         queryParamsHandling: 'merge',

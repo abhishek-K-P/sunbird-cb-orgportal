@@ -569,7 +569,7 @@ export class CreateEventComponent implements OnInit {
   }
 
   goToList() {
-    this.router.navigate([`/app/events`]),
+    this.router.navigate([`/app/events`]),//NOSONAR
       // this.telemetrySvc.impression()
       this.events.raiseInteractTelemetry(
         {

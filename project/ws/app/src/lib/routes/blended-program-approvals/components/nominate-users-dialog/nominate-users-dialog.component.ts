@@ -37,10 +37,10 @@ export class NominateUsersDialogComponent implements OnInit {
   ]
 
   constructor(public dialogRef: MatDialogRef<NominateUsersDialogComponent>,
-              private usersService: UsersService,
-              private dialogue: MatDialog,
-              @Inject(MAT_DIALOG_DATA) public data: any, private bpService: BlendedApporvalService,
-              private snackBar: MatSnackBar) { }
+    private usersService: UsersService,
+    private dialogue: MatDialog,
+    @Inject(MAT_DIALOG_DATA) public data: any, private bpService: BlendedApporvalService,
+    private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     const filterObj = {
@@ -111,7 +111,7 @@ export class NominateUsersDialogComponent implements OnInit {
     if (this.selection.selected.length > 0) {
       const differenceCount = this.data.totalBatchCount - this.userscount.totalApplied
       if (this.selection.selected.length <= differenceCount) {
-        this.selection.selected.map((user: any) => {
+        this.selection.selected.forEach((user: any) => {
           const obj = {
             userId: user.userId,
             rootOrgId: this.data.orgId,
@@ -160,7 +160,7 @@ export class NominateUsersDialogComponent implements OnInit {
           //   }
           // }
           this.dialogRef.close('done')
-        },                                                        (_err: { error: any }) => {
+        }, (_err: { error: any }) => {
           this.openSnackbar('some thing went wrong, Please try after sometime.')
         })
       } else {

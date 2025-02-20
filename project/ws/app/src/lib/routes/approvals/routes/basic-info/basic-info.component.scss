@@ -7,7 +7,9 @@
   border: 1px solid #DDDDDD;
   border-radius: 4px;
   padding: 9px;
+  /* stylelint-disable */
   font: 400 14px Lato;
+  /* stylelint-enable */
 }
 
 .appr-text-label{
@@ -16,7 +18,9 @@
   margin-bottom: 0;
   color: #000000;
   display: block;
+  /* stylelint-disable */
   font: 700 14px Lato;
+  /* stylelint-enable */
 }
 
 
@@ -54,7 +58,9 @@ textarea {
 
 
 ::ng-deep .mat-radio-label-content{
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
 }

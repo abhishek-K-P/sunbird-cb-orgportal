@@ -76,7 +76,7 @@ export class UserCardComponent implements OnInit, OnChanges {
             sitem['selected'] = false
           }
         })
-        if (this.tpdsSvc.trainingPlanStepperData['assignmentTypeInfo'] && this.tpdsSvc.trainingPlanStepperData['assignmentTypeInfo']) {
+        if (this.tpdsSvc.trainingPlanStepperData['assignmentTypeInfo']) {
           this.tpdsSvc.trainingPlanStepperData['assignmentTypeInfo'].filter((identifier: any, index: any) => {
             if (identifier === item.name) {
               this.tpdsSvc.trainingPlanStepperData['assignmentTypeInfo'].splice(index, 1)
@@ -159,7 +159,7 @@ export class UserCardComponent implements OnInit, OnChanges {
             continue
           }
 
-          if (name.charAt(i) === name.charAt(i)) {
+          if (name.charAt(i)) {
             initials += name.charAt(i)
 
             if (initials.length === 2) {

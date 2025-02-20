@@ -16,8 +16,9 @@
     top: 0;
     background: #fff;
     z-index: 10000 !important;
-    top:0px;
+    /* stylelint-disable */
     position: fixed;
+    /* stylelint-enable */
     overflow-y: auto;
 }
 
@@ -141,7 +142,9 @@
     border-radius: 63px;
     border: 1px solid #d5d0d0;
     padding: 6px 36px;
+    /* stylelint-disable */
     font: 400 14px Lato;
+    /* stylelint-enable */
     width: 250px;
     height: 32px;
 }

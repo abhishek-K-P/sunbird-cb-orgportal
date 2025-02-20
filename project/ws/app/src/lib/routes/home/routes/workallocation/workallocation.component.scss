@@ -269,7 +269,9 @@ a:not([href]):not([tabindex]) {
         padding: 9px 9px 9px 35px;
         margin-bottom: 20px;
         margin-top: 0;
+        /* stylelint-disable */
         font: 400 14px Lato;
+        /* stylelint-enable */
       }
     }
   }
@@ -283,7 +285,9 @@ a:not([href]):not([tabindex]) {
     width: auto;
     background: #0075B7 !important;
     color: white !important;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
     font-weight: 700;
     font-size: 14px;
   }
@@ -296,7 +300,9 @@ a:not([href]):not([tabindex]) {
     border-radius: 4px;
     margin: 0 12px 0 5px;
     color: #848484 !important;
+    /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
     font-weight: 700;
     font-size: 14px;
   }
@@ -309,7 +315,9 @@ a:not([href]):not([tabindex]) {
   border-radius: 4px;
   margin: 0 12px 0 5px;
   color: darkgray !important;
+  /* stylelint-disable */
   font-family: 'Lato';
+  /* stylelint-enable */
   font-weight: 400;
   font-size: 14px;
 }

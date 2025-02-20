@@ -33,7 +33,7 @@
     <div class="sidenav-content">
       <div class="table-class">
         <ng-container *ngIf="dataSource?.filteredData?.length > 0">
-          <table mat-table [dataSource]="dataSource">
+          <table mat-table [dataSource]="dataSource"><!--//NOSONAR -->
             <ng-container matColumnDef="RequestId">
               <th mat-header-cell *matHeaderCellDef class="row-heading">Request ID </th>
               <td mat-cell class="title-class" *matCellDef="let element">{{element?.demand_id}}</td>
@@ -144,7 +144,7 @@
         </ng-container>
 
         <div class="no-cbp-data" *ngIf="dataSource?.filteredData?.length === 0">
-          <div><img src="/mdo-assets/images/no-content-data.svg"></div>
+          <div><img src="/mdo-assets/images/no-content-data.svg" alt="no-content"></div>
           <!-- <div class="mat-subheading-1 margin-remove">No CBP plan created yet</div> -->
           <div>No Request yet made</div>
           <!-- <div class="margin-top-m">

@@ -89,7 +89,7 @@ export class CreateAssigneeComponent implements OnInit {
       if (this.tpdsSvc.trainingPlanAssigneeData.category === 'Designation') {
         this.selectedAssigneeChips = this.tpdsSvc.trainingPlanAssigneeData.data
         if (this.selectedAssigneeChips) {
-          this.selectedAssigneeChips.map((sitem: any) => {
+          this.selectedAssigneeChips.forEach((sitem: any) => {
             if (sitem && sitem.selected) {
               this.selectAssigneeCount = this.selectAssigneeCount + 1
             }
@@ -98,7 +98,7 @@ export class CreateAssigneeComponent implements OnInit {
       } else if (this.tpdsSvc.trainingPlanAssigneeData.category === 'CustomUser') {
         this.selectedAssigneeChips = this.tpdsSvc.trainingPlanAssigneeData.data
         if (this.selectedAssigneeChips) {
-          this.selectedAssigneeChips.map((sitem: any) => {
+          this.selectedAssigneeChips.forEach((sitem: any) => {
             if (sitem && sitem.selected) {
               this.selectAssigneeCount = this.selectAssigneeCount + 1
             }

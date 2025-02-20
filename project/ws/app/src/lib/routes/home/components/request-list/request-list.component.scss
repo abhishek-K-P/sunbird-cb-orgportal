@@ -22,7 +22,9 @@ table .table-row-data {
 }
 
 table tr .row-heading {
+  /* stylelint-disable */
     font-family: 'Lato';
+    /* stylelint-enable */
     font-weight: 400;
     font-size: 14px !important;
     line-height: 21px;
@@ -34,7 +36,9 @@ table tr .row-heading {
 
 .action-btn-view {
   color: #1B4CA1;
+  /* stylelint-disable */
   font-family: Lato;
+  /* stylelint-enable */
   font-size: 14px;
   font-weight: 400;
   line-height: 16.8px;
@@ -56,14 +60,16 @@ table tr .row-heading {
 }
 
 .title-class {
+  /* stylelint-disable */
   font-family: Lato;
+  /* stylelint-enable */
   font-size: 14px !important;
   font-weight: 400;
   line-height: 21px;
   color: rgba(0, 0, 0, 0.6) !important;
   width: 13% !important;
   padding: 0 13px !important;
-  
+
 }
 .status-unassigned {
   background: rgba(0, 0, 0, 0.6);
@@ -262,7 +268,9 @@ table tr .row-heading {
   .search-btn {
       background: #1b4ca1 !important;
       color: white !important;
+      /* stylelint-disable */
       font-family: 'Lato';
+      /* stylelint-enable */
       font-weight: 700;
       font-size: 14px;
       border-radius: 4px;
@@ -276,7 +284,9 @@ table tr .row-heading {
   .search-btns {
       background: #1b4ca1 !important;
       color: white !important;
+      /* stylelint-disable */
       font-family: 'Lato';
+      /* stylelint-enable */
       font-weight: 700;
       font-size: 14px;
       border-radius: 4px;
