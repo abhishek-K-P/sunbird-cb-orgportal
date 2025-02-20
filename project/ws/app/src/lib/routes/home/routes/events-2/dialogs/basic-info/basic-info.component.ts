@@ -151,7 +151,7 @@ export class BasicInfoComponent implements OnInit {
             appIcon: appIcon,
             category: 'Event',
             createdBy: _.get(this.userProfile, 'userId', ''),
-            createdByName: _.get(this.userProfile, 'userName', ''),
+            createdByName: _.get(this.userProfile, 'givenName', _.get(this.userProfile, 'firstName', '')),
             createrEmail: this.userEmail ? this.userEmail : _.get(this.userProfile, 'email', ''),
             authoringDisabled: false,
             isContentEditingDisabled: false,
