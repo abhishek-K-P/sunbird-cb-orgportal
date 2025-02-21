@@ -73,7 +73,7 @@ export class BasicInfoComponent implements OnInit {
     if (this.eventForm.valid && this.imgURL) {
       this.saveImage()
     } else if (this.eventForm.valid && !this.imgURL) {
-      this.openSnackBar('please upload image')
+      this.openSnackBar('Please upload image')
     }
   }
 
