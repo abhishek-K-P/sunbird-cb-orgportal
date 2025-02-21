@@ -52,7 +52,7 @@ export class EventsTableComponent implements OnInit, OnChanges {
     }
 
     this.searchControl.valueChanges
-      .pipe(debounceTime(500)) // Adjust the debounce time as needed
+      .pipe(debounceTime(500))
       .subscribe(value => this.searchKey.emit(value))
   }
 

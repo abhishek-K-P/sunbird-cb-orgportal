@@ -12,6 +12,7 @@
 
   .pdfName {
     color: #000000;
+    min-width: fit-content;
     /* stylelint-disable */
     font: 600 14px Montserrat;
     /* stylelint-enable */
@@ -42,6 +43,7 @@
 
     .pdfName {
       color: #1B4CA1;
+      min-width: fit-content;
       /* stylelint-disable */
       font: 700 14px Lato;
       /* stylelint-enable */
@@ -100,4 +102,39 @@
   .mat-form-field-appearance-outline .mat-form-field-outline-start {
     display: none;
   }
+}
+
+.clearMaterial{
+  color: #00000099;
+  font-size: 18px;
+  cursor: pointer;
+  height: 18px;
+}
+
+.upload {
+  background: linear-gradient(0deg, #EDF7FF 0%, #EDF7FF 100%), #FFF;
+  height: 125px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 12px;
+
+
+  span:first-child {
+    color: #1B4CA1;
+  }
+
+  span:last-child {
+    line-height: 14.4px;
+    color: #666666;
+  }
+}
+
+.dashed-border {
+  border: 2px dashed #1B4CA1;
+
+}
+
+.disablebtn {
+  pointer-events: none;
+  opacity: 0.5;
 }

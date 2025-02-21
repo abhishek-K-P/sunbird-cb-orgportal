@@ -19,7 +19,8 @@
 
   <ng-container *ngFor="let material of materialsList; let i = index ">
     <ws-app-material-details [materialDetails]="material" [openMaterial]="currentIndex === i" [openMode]="openMode"
-      (updatedMaterialDetails)="updateMaterial($event, i)" (canCloseOrOpenMaterial)="closeOrOpenMaterial($event, i)"
+      [userProfile]="userProfile" (updatedMaterialDetails)="updateMaterial($event, i)"
+      (canCloseOrOpenMaterial)="closeOrOpenMaterial($event, i)"
       (currentMaterialSaved)="currentMaterialSaveUpdate($event)"
       (deleteMaterial)="deleteMaterialFromList($event, i)"></ws-app-material-details>
   </ng-container>
