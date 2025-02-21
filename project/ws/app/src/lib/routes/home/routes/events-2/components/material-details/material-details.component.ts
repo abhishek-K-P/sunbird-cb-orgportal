@@ -39,7 +39,7 @@ export class MaterialDetailsComponent implements OnChanges {
       } else {
         this.eventForm = this.formBuilder.group({
           title: new FormControl(_.get(this.materialDetails, 'title', ''), [Validators.required]),
-          content: new FormControl(_.get(this.materialDetails, 'content', '')),
+          content: new FormControl(_.get(this.materialDetails, 'content', ''), [Validators.required]),
         })
 
         this.eventForm.controls.title.valueChanges.subscribe((value: string) => {
@@ -54,6 +54,18 @@ export class MaterialDetailsComponent implements OnChanges {
         }
       }
     }
+  }
+
+  get materialName(): string {
+    let name = ''
+    const appiconurl = _.get(this.eventForm, 'value.content', '')
+    if (appiconurl) {
+      const urlSplit = appiconurl.split('_')
+      if (urlSplit.length > 0) {
+        name = urlSplit[urlSplit.length - 1]
+      }
+    }
+    return name
   }
 
   openStatus(status: boolean) {
