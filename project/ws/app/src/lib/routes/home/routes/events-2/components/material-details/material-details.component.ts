@@ -28,6 +28,9 @@ export class MaterialDetailsComponent implements OnChanges {
 
   eventForm!: FormGroup
   content = ''
+  uploadedDocTypeImg = '/assets/icons/pdf.svg'
+  materialName = ''
+  materialType = 'pdf'
 
   constructor(
     private formBuilder: FormBuilder,
@@ -51,6 +54,7 @@ export class MaterialDetailsComponent implements OnChanges {
           title: new FormControl(_.get(this.materialDetails, 'title', ''), [Validators.required]),
           content: new FormControl(_.get(this.materialDetails, 'content', ''), [Validators.required]),
         })
+        this.genrateMaterialName()
 
         this.eventForm.controls.title.valueChanges.subscribe((value: string) => {
           if (value && _.get(this.materialDetails, 'title') !== value && this.currentMaterialSaved) {
@@ -66,7 +70,7 @@ export class MaterialDetailsComponent implements OnChanges {
     }
   }
 
-  get materialName(): string {
+  genrateMaterialName() {
     let name = ''
     const appiconurl = _.get(this.eventForm, 'value.content', '')
     if (appiconurl) {
@@ -75,13 +79,29 @@ export class MaterialDetailsComponent implements OnChanges {
         name = urlSplit[urlSplit.length - 1]
       }
     }
-    return name
+    this.materialName = name
+    this.genrateUploadedDocTypeImg()
+  }
+
+  genrateUploadedDocTypeImg() {
+    const materialName = this.materialName
+    if (materialName.includes('.pdf')) {
+      this.uploadedDocTypeImg = '/assets/icons/pdf.svg'
+      this.materialType = '1 pdf'
+    } else if (materialName.includes('.ppt')) {
+      this.uploadedDocTypeImg = '/assets/icons/ppt.svg'
+      this.materialType = '1 ppt'
+    } else if (materialName.includes('.doc')) {
+      this.uploadedDocTypeImg = '/assets/icons/doc.svg'
+      this.materialType = '1 doc'
+    }
   }
 
   removeMaterial() {
     if (this.eventForm && this.eventForm.controls && this.eventForm.controls.content) {
       this.eventForm.controls.content.patchValue('')
       this.eventForm.controls.content.updateValueAndValidity()
+      this.materialName = ''
     }
   }
 
@@ -185,6 +205,7 @@ export class MaterialDetailsComponent implements OnChanges {
             if (this.eventForm && this.eventForm.controls && this.eventForm.controls.content) {
               this.eventForm.controls.content.patchValue(fileUrl)
               this.eventForm.controls.content.updateValueAndValidity()
+              this.genrateMaterialName()
             }
           }
         },

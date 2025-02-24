@@ -8,7 +8,6 @@ import { EventsService } from '../../services/events.service'
 import * as _ from 'lodash'
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { RejectionReasonComponent } from '../../dialogs/rejection-reason/rejection-reason.component'
-import { DatePipe } from '@angular/common'
 import { ConfirmDialogComponent } from '../../../../../workallocation-v2/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
@@ -35,8 +34,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
     private matSnackBar: MatSnackBar,
     private activatedRoute: ActivatedRoute,
     private route: Router,
-    private dialog: MatLegacyDialog,
-    private datePipe: DatePipe
+    private dialog: MatLegacyDialog
   ) { }
   //#endregion
 
@@ -69,6 +67,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
             btnText: 'View',
             action: 'view',
           },
+          // {
+          //   btnText: 'Edit',
+          //   action: 'edit',
+          // },
           // {
           //   btnText: 'Start Broadcast',
           //   action: 'broadcast',
@@ -171,7 +173,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
           ],
           showSearchBox: true,
           showPagination: true,
-          noDataMessage: 'There are no rejected events.'
+          noDataMessage: 'There are no cancelled events.'
         }
 
         this.menuItems = [
@@ -226,7 +228,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
       request: {
         query: this.searchKey,
         limit: _.get(this.paginationDetails, 'pageSize', 20),
-        offset: _.get(this.paginationDetails, 'pageIndex', 0),
+        offset: _.get(this.paginationDetails, 'pageSize', 20) * _.get(this.paginationDetails, 'pageIndex', 0),
         filters: {
           status: ['Live'],
           contentType: 'Event',
@@ -239,16 +241,11 @@ export class EventsListComponent implements OnInit, OnDestroy {
       },
     }
 
-    const today = new Date()
-    const year = today.getFullYear()
-    const month = (today.getMonth() + 1).toString().padStart(2, '0') // Months are 0-indexed
-    const day = today.getDate().toString().padStart(2, '0')
-
     switch (this.pathUrl) {
       case 'upcoming':
         requestObj.request.filters.status = ['Live']
-        requestObj.request.filters['endDate'] = {
-          '>=': `${year}-${month}-${day}`
+        requestObj.request.filters['endDateTime'] = {
+          '>=': this.getCurrentTimeInUTC
         }
         break
       case 'draft':
@@ -259,8 +256,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
         break
       case 'past':
         requestObj.request.filters.status = ['Live']
-        requestObj.request.filters['endDate'] = {
-          '<': `${year}-${month}-${day}`
+        requestObj.request.filters['endDateTime'] = {
+          '<': this.getCurrentTimeInUTC
         }
         break
       case 'canceled':
@@ -291,12 +288,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
     )
   }
 
-  get formattedCurrentTime(): string {
-    const now = new Date()
-    const hours = now.getHours().toString().padStart(2, '0')
-    const minutes = now.getMinutes().toString().padStart(2, '0')
-    const seconds = now.getSeconds().toString().padStart(2, '0')
-    return `${hours}:${minutes}:${seconds}+05:30`
+  get getCurrentTimeInUTC(): string {
+    const currentDate = new Date()
+    const isoString = currentDate.toISOString()
+    return isoString.replace('Z', '+0000')
   }
   //#endregion
 
@@ -378,18 +373,24 @@ export class EventsListComponent implements OnInit, OnDestroy {
   }
 
   cancelEvent(rowData: any) {
+
+    const currentDate = new Date()
+    let isoString = currentDate.toISOString()
+    isoString = isoString.replace('Z', '+0000')
+
     const requestBody = {
       request: {
         event: {
           identifier: rowData.identifier,
           versionKey: rowData.versionKey,
           status: 'Cancelled',
-          cancelledOn: this.datePipe.transform(new Date(), 'dd MMM,yyyy'),
+          cancelledOn: isoString,
           cancelledByName: _.get(this.userProfile, 'givenName', _.get(this.userProfile, 'firstName', '')),
           cancelledBy: _.get(this.userProfile, 'userId', '')
         }
       }
     }
+
     this.eventSvc.updateEvent(requestBody, rowData.identifier).subscribe({
       next: res => {
         if (res) {
@@ -408,9 +409,9 @@ export class EventsListComponent implements OnInit, OnDestroy {
     const remarks = _.get(rowData, 'rejectComment')
     if (remarks) {
       this.dialog.open(RejectionReasonComponent, {
-        minHeight: '200px',
         minWidth: '400px',
-        data: remarks
+        data: remarks,
+        autoFocus: false
       })
     }
   }

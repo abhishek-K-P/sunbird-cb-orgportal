@@ -23,7 +23,9 @@
                 </mat-header-cell>
                 <mat-cell *matCellDef="let element" class="items-start flex flex-row gap-2">
                   <ng-container *ngIf="col.imageKey">
-                    <img class="py-2 imageCell" [src]="element[col.imageKey]" alt="logo">
+                    <div class="imageDiv">
+                      <img class="py-2 imageCell" [src]="element[col.imageKey]" alt="logo">
+                    </div>
                   </ng-container>
                   <span [matTooltip]="element[col.key]" [ngClass]="col.cellClass" class="cources-table-cell py-2">
                     {{element[col.key]}}

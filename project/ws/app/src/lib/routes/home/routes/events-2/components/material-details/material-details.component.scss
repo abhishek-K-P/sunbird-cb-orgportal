@@ -4,7 +4,6 @@
 }
 
 .closedCard {
-  height: 20px;
   background-color: #0000000A;
   padding: 10px;
   border: 1px solid #00000029;
@@ -22,6 +21,13 @@
     color: #00000099;
     font-size: 15px;
     cursor: pointer;
+  }
+
+  .material-type {
+    color: #00000099;
+    /* stylelint-disable */
+    font: 400 12px Lato;
+    /* stylelint-enable */
   }
 }
 

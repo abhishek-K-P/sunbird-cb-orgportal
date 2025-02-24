@@ -9,6 +9,7 @@ import { environment } from '../../../../../../../../../../../src/environments/e
 import { HttpErrorResponse } from '@angular/common/http'
 import moment from 'moment'
 import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
+import { DatePipe } from '@angular/common'
 
 @Component({
   selector: 'ws-app-event-basic-details',
@@ -26,6 +27,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
   todayDate = new Date()
 
   maxTimeToStart = '11:45 pm'
+  minTimeToStart: string | null = '12:00 am'
   minTimeToEnd = '12:15 am'
   timeGap = 15
   disableUpload = false
@@ -36,7 +38,8 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
   constructor(
     private matSnackBar: MatLegacySnackBar,
     private eventSvc: EventsService,
-    private loaderService: LoaderService
+    private loaderService: LoaderService,
+    private datePipe: DatePipe,
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -45,15 +48,21 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
       if (startTime) {
         const convertedStartTime = this.convertTo12HourFormat(startTime)
         this.eventDetails.controls.startTime.patchValue(convertedStartTime)
-        setTimeout(() => {
-          const resetEndTime = false
-          this.generatMinTimeToEnd(convertedStartTime, resetEndTime)
-        }, 100)
+        if (this.openMode === 'edit') {
+          setTimeout(() => {
+            const resetEndTime = false
+            this.generatMinTimeToEnd(convertedStartTime, resetEndTime)
+          }, 100)
+        }
       }
 
       const endTime = _.get(this.eventDetails, 'value.endTime')
       if (endTime) {
         this.eventDetails.controls.endTime.patchValue(this.convertTo12HourFormat(endTime))
+      }
+
+      if (_.get(this.eventDetails, 'value.startDate') && this.openMode === 'edit') {
+        this.checkMinTimeToStart(_.get(this.eventDetails, 'value.startDate'))
       }
 
       if (_.get(this.eventDetails, 'value.registrationLink') && _.get(this.eventDetails, 'value.registrationLink') !== '') {
@@ -82,29 +91,77 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    if (this.eventDetails.controls.startTime) {
-      this.eventDetails.controls.startTime.valueChanges.subscribe((time) => {
-        this.generatMinTimeToEnd(time)
-      })
-    }
-    if (this.eventDetails.controls.registrationLink) {
-      this.eventDetails.controls.registrationLink.valueChanges.subscribe((url) => {
-        if (url && url !== '') {
-          if (this.disableUpload === false) {
-            this.disableUpload = true
-            this.eventDetails.controls.recoredEventUrl.patchValue('')
-            this.eventDetails.controls.recoredEventUrl.clearValidators()
-            this.eventDetails.controls.registrationLink.setValidators([Validators.required, Validators.pattern(URL_PATRON)])
-            this.eventDetails.controls.recoredEventUrl.updateValueAndValidity()
-            this.eventDetails.controls.registrationLink.updateValueAndValidity()
+    if (this.eventDetails && this.eventDetails.controls && this.openMode === 'edit') {
+      if (this.eventDetails.controls.startDate) {
+        this.eventDetails.controls.startDate.valueChanges.subscribe((date) => {
+          this.checkMinTimeToStart(date)
+        })
+      }
+      if (this.eventDetails.controls.startTime) {
+        this.eventDetails.controls.startTime.valueChanges.subscribe((time) => {
+          this.generatMinTimeToEnd(time)
+        })
+      }
+      if (this.eventDetails.controls.registrationLink) {
+        this.eventDetails.controls.registrationLink.valueChanges.subscribe((url) => {
+          if (url && url !== '') {
+            if (this.disableUpload === false) {
+              this.disableUpload = true
+              this.eventDetails.controls.recoredEventUrl.patchValue('')
+              this.eventDetails.controls.recoredEventUrl.clearValidators()
+              this.eventDetails.controls.registrationLink.setValidators([Validators.required, Validators.pattern(URL_PATRON)])
+              this.eventDetails.controls.recoredEventUrl.updateValueAndValidity()
+              this.eventDetails.controls.registrationLink.updateValueAndValidity()
+            }
+          } else {
+            this.disableUpload = false
           }
-        } else {
-          this.disableUpload = false
-        }
-      })
+        })
+      }
     }
   }
 
+  checkMinTimeToStart(selectedDate: any) {
+    const todayFormatted = this.datePipe.transform(new Date(), 'yyyy-MM-dd')
+    const inputDateFormatted = this.datePipe.transform(selectedDate, 'yyyy-MM-dd')
+    if (todayFormatted === inputDateFormatted) {
+      this.generatMinTimeToStart()
+    } else {
+      this.minTimeToStart = '12:00 am'
+    }
+  }
+
+  generatMinTimeToStart() {
+    const formattedTime = this.datePipe.transform(new Date(), 'h:mm a')
+    this.minTimeToStart = formattedTime
+    if (_.get(this.eventDetails, 'controls.startTime.value')) {
+      if (this.isTimeLessThanNow(_.get(this.eventDetails, 'controls.startTime.value'))) {
+        this.eventDetails.controls.startTime.patchValue('')
+        this.eventDetails.controls.endTime.patchValue('')
+      }
+    }
+  }
+
+  isTimeLessThanNow(givenTime: string): boolean {
+    const datePipe = new DatePipe('en-US')
+    const currentTime = datePipe.transform(new Date(), 'h:mm a') as string
+    const currentMinutes = this.timeToMinutes(currentTime)
+    const givenMinutes = this.timeToMinutes(givenTime)
+
+    return givenMinutes < currentMinutes
+  }
+
+  timeToMinutes(time: string): number {
+    const [timePart, period] = time.split(' ')
+    const [hours, minutes] = timePart.split(':').map(Number)
+
+    let totalMinutes = hours % 12 * 60 + minutes // Convert to 24-hour format
+    if (period === 'PM') {
+      totalMinutes += 12 * 60 // Add 12 hours if PM
+    }
+
+    return totalMinutes
+  }
 
   generatMinTimeToEnd(time: string, resetEndTime = true) {
     let [timePart, period] = time.split(' ')

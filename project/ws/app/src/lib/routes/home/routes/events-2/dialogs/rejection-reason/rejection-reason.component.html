@@ -1,10 +1,13 @@
-<div class="flex flex-col">
+<div class="flex flex-col pb-8 pt-6 gap-3">
   <div class="flex justify-between mt-3">
     <div class="remarks">Remarks</div>
-    <mat-icon class="closIcon" (click)="closeDialog()">clear</mat-icon>
   </div>
 
   <div class="flex items-center mt-2">
     <span class="rejectReason">{{rejectReason}}</span>
+  </div>
+
+  <div class="flex justify-end">
+    <button mat-raised-button class="ok-btn" (click)="closeDialog()">OK</button>
   </div>
 </div>

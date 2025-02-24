@@ -40,7 +40,14 @@
   }
 }
 
+.imageDiv {
+  // max-width: 75%;
+  width: 135px;
+  height: 76px;
+}
+
 .imageCell {
+  // max-width: 100%;
   width: 135px;
   height: 76px;
   object-fit: scale-down;

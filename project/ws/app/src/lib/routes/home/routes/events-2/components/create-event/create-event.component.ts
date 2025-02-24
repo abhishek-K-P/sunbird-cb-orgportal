@@ -10,6 +10,8 @@ import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack
 import { HttpErrorResponse } from '@angular/common/http'
 import { DatePipe } from '@angular/common'
 import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
+import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { ConfirmDialogComponent } from '../../../../../workallocation-v2/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
   selector: 'ws-app-create-event',
@@ -43,7 +45,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     private matSnackBar: MatSnackBar,
     private datePipe: DatePipe,
     private loaderService: LoaderService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatLegacyDialog
   ) { }
 
   //#region (onInit)
@@ -143,6 +146,46 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     }
   }
 
+  openConforamtionPopup() {
+    if (this.openMode === 'edit') {
+      const dialgData = {
+        dialogType: 'warning',
+        icon: {
+          iconName: 'error_outline',
+          iconClass: 'warning-icon'
+        },
+        message: 'Are you sure you want to exit without saving?',
+        buttonsList: [
+          {
+            btnAction: false,
+            displayText: 'No',
+            btnClass: 'btn-outline-primary'
+          },
+          {
+            btnAction: true,
+            displayText: 'Yes',
+            btnClass: 'successBtn'
+          },
+        ]
+      }
+
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        width: '500px',
+        height: '210px',
+        data: dialgData,
+        autoFocus: false
+      })
+
+      dialogRef.afterClosed().subscribe((btnAction: any) => {
+        if (btnAction) {
+          this.navigateBack()
+        }
+      })
+    } else {
+      this.navigateBack()
+    }
+  }
+
   navigateBack() {
     this.router.navigate([`/app/home/events/${this.pathUrl}`])
   }
@@ -200,7 +243,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       if (this.isMaterialsValid) {
         currentFormIsValid = true
       } else {
-        this.openSnackBar('Please provied valid name for matrial')
+        this.openSnackBar('Please provied valid name and matrial')
       }
     }
     return currentFormIsValid
@@ -208,7 +251,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
   get isMaterialsValid(): boolean {
     if (this.materialsList && this.materialsList.length > 0 &&
-      this.materialsList.findIndex((material) => !material.title || material.title === '') > -1) {
+      this.materialsList.findIndex((material) => !material.title || material.title === '') > -1 ||
+      this.materialsList.findIndex((material) => !material.content || material.content === '') > -1) {
       return false
     }
     return true
@@ -225,7 +269,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       //   return false
       // }
       if (!this.isMaterialsValid) {
-        this.openSnackBar('Please provied valid name for matrial in Add Material')
+        this.openSnackBar('Please provied valid name and matrial in Add Material')
         return false
       }
       if (!(this.competencies && this.competencies.length)) {
@@ -273,19 +317,30 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     const eventDetails: any = JSON.parse(JSON.stringify(this.eventDetails))
     const eventBaseDetails = this.eventDetailsForm.value
     let startTime = ''
+    let endTime = ''
+    let startDateTime = ''
+    let endDateTime = ''
+    let startDate = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
     if (eventBaseDetails.startTime) {
       startTime = this.getFormatedTime(eventBaseDetails.startTime)
     }
-    let endTime = ''
     if (eventBaseDetails.endTime) {
       endTime = this.getFormatedTime(eventBaseDetails.endTime)
+    }
+    if (startDate) {
+      if (startTime) {
+        startDateTime = this.combineDateAndTime(startDate, startTime)
+      }
+      if (endTime) {
+        endDateTime = this.combineDateAndTime(startDate, endTime)
+      }
     }
     eventDetails['name'] = eventBaseDetails.eventName
     eventDetails['description'] = eventBaseDetails.description
     eventDetails['resourceType'] = eventBaseDetails.eventCategory
     eventDetails['streamType'] = eventBaseDetails.streamType
-    eventDetails['startDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
-    eventDetails['endDate'] = eventBaseDetails.startDate ? this.datePipe.transform(eventBaseDetails.startDate, 'yyyy-MM-dd') : ''
+    eventDetails['startDate'] = startDate
+    eventDetails['endDate'] = startDate
     eventDetails['startTime'] = startTime
     eventDetails['endTime'] = endTime
     eventDetails['registrationLink'] = eventBaseDetails.registrationLink ? eventBaseDetails.registrationLink : eventBaseDetails.recoredEventUrl
@@ -303,6 +358,15 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     }
     if (this.competencies) {
       eventDetails['competencies_v6'] = this.competencies
+    }
+    if (startTime && endTime) {
+      eventDetails['duration'] = this.getTimeDifferenceInMinutes(startTime, endTime)
+    }
+    if (startDateTime) {
+      eventDetails['startDateTime'] = startDateTime
+    }
+    if (endDateTime) {
+      eventDetails['endDateTime'] = endDateTime
     }
 
     eventDetails['status'] = status
@@ -338,6 +402,22 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     const minutesFormatted = minutes.toString().padStart(2, '0')
     const seconds = '00'
     return `${hoursFormatted}:${minutesFormatted}:${seconds}`
+  }
+
+  getTimeDifferenceInMinutes(time1: string, time2: string): number {
+    const time1Date = new Date(`1970-01-01T${time1}`)
+    const time2Date = new Date(`1970-01-01T${time2}`)
+
+    const diffInMilliseconds = time2Date.getTime() - time1Date.getTime()
+
+    return diffInMilliseconds / (1000 * 60)
+  }
+
+  combineDateAndTime(date: string, time: string): string {
+    const combinedDateTime = `${date}T${time}`
+    const dateObj = new Date(combinedDateTime)
+    const isoString = dateObj.toISOString()
+    return isoString.replace('Z', '+0000')
   }
 
   //#endregion
