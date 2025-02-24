@@ -28,18 +28,43 @@
     <div class="form-lable required">
       Uploaded File
     </div>
-    <div class="file-card p-4">
-      <div class="flex gap-2">
-        <img src="/assets/icons/events_pdf.svg" alt="pdf">
-        <div class="pdfName">pdf.pdf</div>
+    <ng-container *ngIf="materialName; else uploadMaterial">
+      <div class="file-card p-4">
+        <div class="flex justify-between">
+          <div class="flex gap-2">
+            <img src="/assets/icons/events_pdf.svg" alt="pdf">
+            <div class="pdfName">{{materialName}}</div>
+          </div>
+          <ng-container *ngIf="openMode === 'edit'">
+            <mat-icon class="clearMaterial" (click)="removeMaterial()">clear</mat-icon>
+          </ng-container>
+        </div>
       </div>
-    </div>
+    </ng-container>
+    <ng-template #uploadMaterial>
+      <div class="upload flex justify-center items-center cursor-pointer dashed-border"
+        [ngClass]="{'disable': openMode === 'view' || disableUpload }" cdkDropList [cdkDropListData]="videoData"
+        (cdkDropListDropped)="onMaterialSelect($event)" (dragover)="preventDefaultCDK($event)"
+        (dragenter)="preventDefaultCDK($event, 'enter')" (dragleave)="preventDefaultCDK($event, 'leave')"
+        (drop)="onDrop($event)" onclick="document.getElementById('upload-material').click();">
+        <input #file type="file" name="upload-material" id="upload-material" class="hidden" accept=".pdf, .doc, .ppt"
+          (change)="onMaterialSelect(file.files);">
+        <div class="flex flex-column items-center gap-2">
+          <img src="/assets/icons/upload-upward-arrow.svg" alt="icon">
+          <span class="text-sm font-bold text-blue">Drag file to upload<strong class="text-red-700">*</strong></span>
+          <!-- <span class="text-xs font-normal">Max file size: 400 MB</span> -->
+          <span class="text-xs font-normal">Supported file types: pdf, doc, ppt</span>
+        </div>
+      </div>
+    </ng-template>
   </div>
 
   <div class="flex justify-center gap-4 mb-2">
     <button mat-button class="cancel-btn" (click)="openStatus(false)">Cancel</button>
     <ng-container *ngIf="openMode === 'edit'">
-      <button mat-button class="save-btn" (click)="saveDetails()">{{materialDetails?.title ? 'Update' :
+      <button mat-button class="save-btn" (click)="saveDetails()" [ngClass]="{'disablebtn': eventForm?.invalid}"
+        [disabled]="materialDetails?.invalid">{{materialDetails?.title
+        ? 'Update' :
         'Save'}}</button>
     </ng-container>
   </div>

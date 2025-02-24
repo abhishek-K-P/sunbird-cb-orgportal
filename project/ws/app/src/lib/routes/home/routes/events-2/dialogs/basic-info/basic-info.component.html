@@ -48,7 +48,7 @@
           <span class="font-bold text-sm">Cancel</span>
         </button>
         <button mat-flat-button class="flex justify-center items-center save-button" type="submit"
-          [disabled]="(eventForm.invalid && !imgURL)">
+          [disabled]="(eventForm.invalid || !imgURL)">
           <span class="font-bold text-sm">Create</span>
         </button>
       </div>
@@ -89,8 +89,8 @@
             </div>
             <div class="input-event mb-4">
               <ng-container *ngIf="eventForm?.get('eventName') && eventForm.get('eventName').value">
-                <label class="custome-title" #tooltip="matTooltip" [matTooltip]="courseName"
-                  matTooltipClass="new-toolTip">{{eventForm.get('eventName').value}}</label>
+                <label class="custome-title" #tooltip="matTooltip" [matTooltip]="eventForm.get('eventName').value"
+                  matTooltipClass="new-toolTip" matTooltipPosition="above">{{eventForm.get('eventName').value}}</label>
               </ng-container>
               <ng-container *ngIf="!(eventForm?.get('eventName') && eventForm.get('eventName').value)">
                 <label class="custome-title">Event Name</label>

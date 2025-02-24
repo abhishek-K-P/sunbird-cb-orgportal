@@ -23,7 +23,7 @@ const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'pending-approval',
+        redirectTo: 'upcoming',
         pathMatch: 'full',
       },
       {

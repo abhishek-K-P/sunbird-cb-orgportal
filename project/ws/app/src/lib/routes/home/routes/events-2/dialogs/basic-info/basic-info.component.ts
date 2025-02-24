@@ -2,7 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { events } from '../../models/events.model'
+import { events, noSpecialChar } from '../../models/events.model'
 import * as _ from 'lodash'
 import { EventsService } from '../../services/events.service'
 import { map, mergeMap } from 'rxjs/operators'
@@ -40,9 +40,6 @@ export class BasicInfoComponent implements OnInit {
   }
 
   createForm() {
-    const noSpecialChar = new RegExp(
-      /^[\u0900-\u097F\u0980-\u09FF\u0C00-\u0C7F\u0B80-\u0BFF\u0C80-\u0CFF\u0D00-\u0D7F\u0A80-\u0AFF\u0B00-\u0B7F\u0A00-\u0A7Fa-zA-Z0-9\(\)\$\[\]\.\-,:!' _\/]*$/ // NOSONAR
-    )
     this.eventForm = this.formBuilder.group({
       eventName: new FormControl('', [Validators.required, Validators.minLength(10),
       Validators.maxLength(70), Validators.pattern(noSpecialChar)]),
@@ -76,7 +73,7 @@ export class BasicInfoComponent implements OnInit {
     if (this.eventForm.valid && this.imgURL) {
       this.saveImage()
     } else if (this.eventForm.valid && !this.imgURL) {
-      this.openSnackBar('please upload image')
+      this.openSnackBar('Please upload image')
     }
   }
 
@@ -154,7 +151,7 @@ export class BasicInfoComponent implements OnInit {
             appIcon: appIcon,
             category: 'Event',
             createdBy: _.get(this.userProfile, 'userId', ''),
-            createdByName: _.get(this.userProfile, 'userName', ''),
+            createdByName: _.get(this.userProfile, 'givenName', _.get(this.userProfile, 'firstName', '')),
             createrEmail: this.userEmail ? this.userEmail : _.get(this.userProfile, 'email', ''),
             authoringDisabled: false,
             isContentEditingDisabled: false,

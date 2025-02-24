@@ -27,6 +27,7 @@ import { InitialAvatarComponent } from './initial-avatar/initial-avatar.componen
 import { PublishPopupComponent } from './publish-popup/publish-popup.component'
 // import { PdfViewerModule } from 'ng2-pdf-viewer'
 import { PlayerDialogComponent } from './player-dialog/player-dialog.component'
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component'
 
 @NgModule({
     declarations: [
@@ -34,6 +35,7 @@ import { PlayerDialogComponent } from './player-dialog/player-dialog.component'
         InitialAvatarComponent,
         PublishPopupComponent,
         PlayerDialogComponent,
+        ConfirmDialogComponent,
     ],
     // PdfViewerModule
     imports: [
@@ -50,6 +52,7 @@ import { PlayerDialogComponent } from './player-dialog/player-dialog.component'
         InitialAvatarComponent,
         PublishPopupComponent,
         PlayerDialogComponent,
+        ConfirmDialogComponent,
     ]
 })
 export class ComponentSharedModule { }

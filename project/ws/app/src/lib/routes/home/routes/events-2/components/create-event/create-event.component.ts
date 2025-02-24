@@ -150,7 +150,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   moveToNextForm() {
     this.eventDetailsForm.markAllAsTouched()
     this.eventDetailsForm.updateValueAndValidity()
-    if (this.canMoveToNext || this.openMode === 'view') {
+    if (this.openMode === 'view' || this.canMoveToNext) {
       this.currentStepperIndex = this.currentStepperIndex + 1
     }
   }
