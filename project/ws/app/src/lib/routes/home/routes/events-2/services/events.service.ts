@@ -35,6 +35,7 @@ export class EventsService {
       formatedData.Event.forEach((event: any) => {
         event['startDate'] = event['startDate'] ? this.datePipe.transform(event['startDate'], 'dd MMM, yyyy') : ''
         event['createdOn'] = event['createdOn'] ? this.datePipe.transform(event['createdOn'], 'dd MMM, yyyy') : ''
+        event['cancelledOn'] = event['cancelledOn'] ? this.datePipe.transform(event['cancelledOn'], 'dd MMM, yyyy') : ''
       })
       return formatedData
     }))
