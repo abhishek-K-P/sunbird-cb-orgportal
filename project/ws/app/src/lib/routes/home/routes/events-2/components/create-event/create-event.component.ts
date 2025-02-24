@@ -305,6 +305,10 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       eventDetails['competencies_v6'] = this.competencies
     }
 
+    if (startTime && endTime) {
+      eventDetails['duration'] = this.getTimeDifferenceInMinutes(startTime, endTime)
+    }
+
     eventDetails['status'] = status
 
     return eventDetails
@@ -338,6 +342,15 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     const minutesFormatted = minutes.toString().padStart(2, '0')
     const seconds = '00'
     return `${hoursFormatted}:${minutesFormatted}:${seconds}`
+  }
+
+  getTimeDifferenceInMinutes(time1: string, time2: string): number {
+    const time1Date = new Date(`1970-01-01T${time1}`)
+    const time2Date = new Date(`1970-01-01T${time2}`)
+
+    const diffInMilliseconds = time2Date.getTime() - time1Date.getTime()
+
+    return diffInMilliseconds / (1000 * 60)
   }
 
   //#endregion
