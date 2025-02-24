@@ -48,10 +48,12 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
       if (startTime) {
         const convertedStartTime = this.convertTo12HourFormat(startTime)
         this.eventDetails.controls.startTime.patchValue(convertedStartTime)
-        setTimeout(() => {
-          const resetEndTime = false
-          this.generatMinTimeToEnd(convertedStartTime, resetEndTime)
-        }, 100)
+        if (this.openMode === 'edit') {
+          setTimeout(() => {
+            const resetEndTime = false
+            this.generatMinTimeToEnd(convertedStartTime, resetEndTime)
+          }, 100)
+        }
       }
 
       const endTime = _.get(this.eventDetails, 'value.endTime')
@@ -59,7 +61,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
         this.eventDetails.controls.endTime.patchValue(this.convertTo12HourFormat(endTime))
       }
 
-      if (_.get(this.eventDetails, 'value.startDate')) {
+      if (_.get(this.eventDetails, 'value.startDate') && this.openMode === 'edit') {
         this.checkMinTimeToStart(_.get(this.eventDetails, 'value.startDate'))
       }
 
@@ -89,7 +91,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    if (this.eventDetails && this.eventDetails.controls) {
+    if (this.eventDetails && this.eventDetails.controls && this.openMode === 'edit') {
       if (this.eventDetails.controls.startDate) {
         this.eventDetails.controls.startDate.valueChanges.subscribe((date) => {
           this.checkMinTimeToStart(date)

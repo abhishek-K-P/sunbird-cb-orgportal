@@ -1,12 +1,18 @@
 <div [ngClass]="{'hideElement': openMaterial}" class="closedCard">
   <div class="flex justify-between">
-    <div class="pdfName">{{materialDetails?.title}}</div>
+    <div class="pdfName flex items-center">{{materialDetails?.title}}</div>
     <div class="flex gap-1">
       <mat-icon class="edit-icon flex items-center" (click)="openStatus(true)">edit</mat-icon>
       <ng-container *ngIf="openMode === 'edit'">
         <mat-icon class="edit-icon flex items-center" (click)="deleteMaterialFromList()">delete</mat-icon>
       </ng-container>
     </div>
+  </div>
+  <div class="flex items-center">
+    <ng-container *ngIf="materialName">
+      <img [src]="uploadedDocTypeImg" alt="material type">
+      <span class="ml-1 material-type">{{materialType}}</span>
+    </ng-container>
   </div>
 </div>
 
@@ -32,8 +38,8 @@
       <div class="file-card p-4">
         <div class="flex justify-between">
           <div class="flex gap-2">
-            <img src="/assets/icons/events_pdf.svg" alt="pdf">
-            <div class="pdfName">{{materialName}}</div>
+            <img [src]="uploadedDocTypeImg" alt="material type">
+            <div class="pdfName flex items-center">{{materialName}}</div>
           </div>
           <ng-container *ngIf="openMode === 'edit'">
             <mat-icon class="clearMaterial" (click)="removeMaterial()">clear</mat-icon>
