@@ -9,6 +9,7 @@ import * as _ from 'lodash'
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { RejectionReasonComponent } from '../../dialogs/rejection-reason/rejection-reason.component'
 import { DatePipe } from '@angular/common'
+import { ConfirmDialogComponent } from '../../../../../workallocation-v2/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
   selector: 'ws-app-events-list',
@@ -99,7 +100,11 @@ export class EventsListComponent implements OnInit, OnDestroy {
           {
             btnText: 'Edit',
             action: 'edit',
-          }
+          },
+          {
+            btnText: 'Cancel',
+            action: 'cancel',
+          },
         ]
         break
       case 'pending-approval':
@@ -242,8 +247,11 @@ export class EventsListComponent implements OnInit, OnDestroy {
     switch (this.pathUrl) {
       case 'upcoming':
         requestObj.request.filters.status = ['Live']
-        requestObj.request.filters['endDate'] = {
+        requestObj.request.filters['startDate'] = {
           '>=': `${year}-${month}-${day}`
+        }
+        requestObj.request.filters['endTime'] = {
+          '>=': this.formattedCurrentTime
         }
         break
       case 'draft':
@@ -255,7 +263,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
       case 'past':
         requestObj.request.filters.status = ['Live']
         requestObj.request.filters['endDate'] = {
-          '<': `${year}-${month}-${day}`
+          '<=': `${year}-${month}-${day}`
+        }
+        requestObj.request.filters['endTime'] = {
+          '<': this.formattedCurrentTime
         }
         break
       case 'canceled':
@@ -285,6 +296,14 @@ export class EventsListComponent implements OnInit, OnDestroy {
       }
     )
   }
+
+  get formattedCurrentTime(): string {
+    const now = new Date()
+    const hours = now.getHours().toString().padStart(2, '0')
+    const minutes = now.getMinutes().toString().padStart(2, '0')
+    const seconds = now.getSeconds().toString().padStart(2, '0')
+    return `${hours}:${minutes}:${seconds}+05:30`
+  }
   //#endregion
 
   //#region (ui interactions like click)
@@ -308,7 +327,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
           this.navigateToEditEvent(_.get(events, 'rows.identifier'), 'edit')
           break
         case 'cancel':
-          this.cancelEvent(events.rows)
+          this.openConforamtionPopup(events.rows)
           break
         case 'remarks':
           this.openRejectionPopup(events.rows)
@@ -328,6 +347,42 @@ export class EventsListComponent implements OnInit, OnDestroy {
     })
   }
 
+  openConforamtionPopup(rowData: any) {
+    const dialgData = {
+      dialogType: 'warning',
+      icon: {
+        iconName: 'error_outline',
+        iconClass: 'warning-icon'
+      },
+      message: 'Are you sure that you want to cancel this event?',
+      buttonsList: [
+        {
+          btnAction: false,
+          displayText: 'No',
+          btnClass: 'btn-outline-primary'
+        },
+        {
+          btnAction: true,
+          displayText: 'Yes',
+          btnClass: 'successBtn'
+        },
+      ]
+    }
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '500px',
+      height: '210px',
+      data: dialgData,
+      autoFocus: false
+    })
+
+    dialogRef.afterClosed().subscribe((btnAction: any) => {
+      if (btnAction) {
+        this.cancelEvent(rowData)
+      }
+    })
+  }
+
   cancelEvent(rowData: any) {
     const requestBody = {
       request: {
@@ -335,8 +390,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
           identifier: rowData.identifier,
           versionKey: rowData.versionKey,
           status: 'Cancelled',
-          cancelledOn: this.datePipe.transform(new Date(), 'yyyy-MM-dd'),
-          cancelledByName: _.get(this.userProfile, 'userName', ''),
+          cancelledOn: this.datePipe.transform(new Date(), 'dd MMM,yyyy'),
+          cancelledByName: _.get(this.userProfile, 'givenName', _.get(this.userProfile, 'firstName', '')),
           cancelledBy: _.get(this.userProfile, 'userId', '')
         }
       }

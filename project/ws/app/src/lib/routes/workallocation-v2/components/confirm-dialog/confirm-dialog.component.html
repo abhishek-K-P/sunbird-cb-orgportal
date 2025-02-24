@@ -1,0 +1,20 @@
+<div class="margin-m">
+  <div mat-dialog-content>
+    <h3 class="margin-remove margin-bottom-m" [ngClass]="data && dialgData?.message?.length ? '' : 'text-center'">
+      <div class="text-center">
+        <ng-container i18n *ngIf="dialgData?.icon">
+          <mat-icon [ngClass]="dialgData?.icon?.iconClass" class="custome-icon">{{dialgData?.icon?.iconName}}</mat-icon>
+        </ng-container>
+        <ng-container i18n *ngIf="dialgData?.message">
+          <span class="primary-text display-block">{{dialgData?.message}}</span>
+        </ng-container>
+      </div>
+    </h3>
+    <div class="flex flex-center padding-xs gap-3">
+      <ng-container *ngFor="let btnDetails of dialgData?.buttonsList">
+        <button mat-button [ngClass]='btnDetails?.btnClass'
+          (click)="closeDialog(btnDetails?.btnAction)">{{btnDetails?.displayText}} </button>
+      </ng-container>
+    </div>
+  </div>
+</div>
