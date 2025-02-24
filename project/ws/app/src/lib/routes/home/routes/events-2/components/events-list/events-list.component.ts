@@ -247,11 +247,8 @@ export class EventsListComponent implements OnInit, OnDestroy {
     switch (this.pathUrl) {
       case 'upcoming':
         requestObj.request.filters.status = ['Live']
-        requestObj.request.filters['startDate'] = {
+        requestObj.request.filters['endDate'] = {
           '>=': `${year}-${month}-${day}`
-        }
-        requestObj.request.filters['endTime'] = {
-          '>=': this.formattedCurrentTime
         }
         break
       case 'draft':
@@ -263,10 +260,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
       case 'past':
         requestObj.request.filters.status = ['Live']
         requestObj.request.filters['endDate'] = {
-          '<=': `${year}-${month}-${day}`
-        }
-        requestObj.request.filters['endTime'] = {
-          '<': this.formattedCurrentTime
+          '<': `${year}-${month}-${day}`
         }
         break
       case 'canceled':
