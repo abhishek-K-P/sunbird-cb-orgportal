@@ -149,7 +149,7 @@
       </div>
       <mat-form-field appearance="outline" class="">
         <input matInput [matDatepicker]="startDate" [min]="todayDate" placeholder="Enter Start Date"
-          formControlName="startDate">
+          formControlName="startDate" readonly>
         <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
         <mat-datepicker #startDate></mat-datepicker>
         <mat-error *ngIf="showValidationMsg('startDate','required')">
@@ -163,7 +163,7 @@
       </div>
       <mat-form-field appearance="outline">
         <input matInput placeholder="Enter Start Time" formControlName="startTime" [ngxTimepicker]="startTimepicker"
-          [max]="maxTimeToStart" readonly>
+          [max]="maxTimeToStart" [min]="minTimeToStart" readonly>
         <ngx-material-timepicker-toggle [for]="startTimepicker" matSuffix></ngx-material-timepicker-toggle>
         <ngx-material-timepicker #startTimepicker (change)="onStartTimeChange($event)" class="eventTimpicker"
           [enableKeyboardInput]="true"></ngx-material-timepicker>

@@ -171,7 +171,7 @@ export class EventsListComponent implements OnInit, OnDestroy {
           ],
           showSearchBox: true,
           showPagination: true,
-          noDataMessage: 'There are no rejected events.'
+          noDataMessage: 'There are no cancelled events.'
         }
 
         this.menuItems = [
