@@ -16,3 +16,9 @@ Object.defineProperty(window, 'env', {
   },
   writable: true,
 })
+jest.mock('src/environments/environment', () => ({
+  environment: {
+    production: false,
+    sitePath: ''
+  }
+}))
