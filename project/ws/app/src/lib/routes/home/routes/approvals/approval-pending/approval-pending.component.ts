@@ -7,7 +7,7 @@ import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack
 import { EventService } from '@sunbird-cb/utils'
 
 /* tslint:disable */
-import _ from 'lodash'
+import * as _ from 'lodash'
 /* tslint:enable */
 import { TelemetryEvents } from '../../../../../head/_services/telemetry.event.model'
 import { ReportsVideoComponent } from '../../reports-video/reports-video.component'
