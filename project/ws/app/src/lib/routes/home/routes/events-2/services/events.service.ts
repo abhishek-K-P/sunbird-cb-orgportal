@@ -37,8 +37,8 @@ export class EventsService {
         event['createdOn'] = event['createdOn'] ? this.datePipe.transform(event['createdOn'], 'dd MMM, yyyy') : ''
         event['cancelledOn'] = event['cancelledOn'] ? this.datePipe.transform(event['cancelledOn'], 'dd MMM, yyyy') : ''
         event['submitedOn'] = event['submitedOn'] ? this.datePipe.transform(event['submitedOn'], 'dd MMM, yyyy') : ''
-        event['submitedOn'] = event['publishedOn'] ? this.datePipe.transform(event['publishedOn'], 'dd MMM, yyyy') : ''
-        event['submitedOn'] = event['rejectedOn'] ? this.datePipe.transform(event['rejectedOn'], 'dd MMM, yyyy') : ''
+        event['publishedOn'] = event['publishedOn'] ? this.datePipe.transform(event['publishedOn'], 'dd MMM, yyyy') : ''
+        event['rejectedOn'] = event['rejectedOn'] ? this.datePipe.transform(event['rejectedOn'], 'dd MMM, yyyy') : ''
       })
       return formatedData
     }))
