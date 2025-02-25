@@ -43,7 +43,7 @@ export class BasicInfoComponent implements OnInit {
     this.eventForm = this.formBuilder.group({
       eventName: new FormControl('', [Validators.required, Validators.minLength(10),
       Validators.maxLength(70), Validators.pattern(noSpecialChar)]),
-      eventType: new FormControl('recorded', [Validators.required]),
+      eventType: new FormControl('record', [Validators.required]),
     })
   }
 
@@ -170,6 +170,7 @@ export class BasicInfoComponent implements OnInit {
             endTime: '',
             code: '', // what is this
             eventType: 'Online',
+            typeofEvent: _.get(this.eventForm, 'controls.eventType.value', ''),
             registrationEndDate: '',
             owner: _.get(this.userProfile, 'departmentName', ''),
             createdFor: createdforarray

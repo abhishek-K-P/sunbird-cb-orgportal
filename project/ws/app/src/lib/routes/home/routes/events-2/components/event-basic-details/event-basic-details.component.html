@@ -66,6 +66,22 @@
     <span class="description-count flex justify-end">{{eventDetails?.value?.description?.length}}/500</span>
   </div>
 
+  <div>
+    <div class="label flex items-center mt-2">
+      <div class="form-lable required">
+        Event Type
+      </div>
+    </div>
+    <mat-radio-group aria-label="Select an option" class="flex" formControlName="typeofEvent">
+      <!-- <mat-radio-button class="mr-5 p-4" value="live">
+              Live Event
+            </mat-radio-button> -->
+      <mat-radio-button class="mr-5 p-4" value="record">
+        Recorded Event
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
+
   <ng-container *ngIf="uploadedVideoName; else uploadVideo">
     <div class="appIconCard flex justify-between px-2 items-center">
       <div class="flex gap-2 items-center">

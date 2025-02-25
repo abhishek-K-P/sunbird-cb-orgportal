@@ -68,6 +68,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       registrationLink: new FormControl('', [Validators.required, Validators.pattern(URL_PATRON)]),
       recoredEventUrl: new FormControl(''),
       appIcon: new FormControl('', [Validators.required]),
+      typeofEvent: new FormControl('', [Validators.required]),
     })
   }
 
@@ -107,7 +108,8 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       endTime: _.get(this.eventDetails, 'endTime', ''),
       registrationLink: '',
       recoredEventUrl: '',
-      appIcon: _.get(this.eventDetails, 'appIcon', '')
+      appIcon: _.get(this.eventDetails, 'appIcon', ''),
+      typeofEvent: _.get(this.eventDetails, 'typeofEvent', '')
     }
     if (registrationLink) {
       if (isYoutubeVideo) {
@@ -345,6 +347,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['endTime'] = endTime
     eventDetails['registrationLink'] = eventBaseDetails.registrationLink ? eventBaseDetails.registrationLink : eventBaseDetails.recoredEventUrl
     eventDetails['appIcon'] = eventBaseDetails.appIcon
+    eventDetails['typeofEvent'] = eventBaseDetails.typeofEvent
 
     if (status === 'SentToPublish') {
       eventDetails['submitedOn'] = this.datePipe.transform(new Date(), 'dd MMM, yyyy')
