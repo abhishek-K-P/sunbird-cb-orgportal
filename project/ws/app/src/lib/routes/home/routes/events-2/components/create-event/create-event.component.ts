@@ -35,6 +35,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   userProfile: any
   showPreview = false
   selectedStepperLable = 'Basic Details'
+  eventStatus = 'draft'
   //#endregion
 
   constructor(
@@ -89,6 +90,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
   patchEventDetails() {
     this.eventId = _.get(this.eventDetails, 'identifier')
+    this.eventStatus = _.get(this.eventDetails, 'status', 'draft').toLowerCase()
     const startDate = _.get(this.eventDetails, 'startDate', '')
     const registrationLink = _.get(this.eventDetails, 'registrationLink', '')
     const isYoutubeVideo = registrationLink.toLowerCase().includes('youtube')
@@ -119,6 +121,15 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       }
     }
     this.eventDetailsForm.setValue(eventBaseDetails)
+    if (this.eventStatus === 'live') {
+      this.eventDetailsForm.controls.typeofEvent.disable()
+      this.eventDetailsForm.controls.registrationLink.disable()
+      this.eventDetailsForm.controls.endTime.disable()
+      this.eventDetailsForm.controls.startTime.disable()
+      this.eventDetailsForm.controls.startDate.disable()
+      this.eventDetailsForm.controls.streamType.disable()
+      this.eventDetailsForm.controls.eventCategory.disable()
+    }
     this.eventDetailsForm.updateValueAndValidity()
 
     this.speakersList = _.get(this.eventDetails, 'speakers', [])
@@ -350,7 +361,10 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['typeofEvent'] = eventBaseDetails.typeofEvent
 
     if (status === 'SentToPublish') {
-      eventDetails['submitedOn'] = this.datePipe.transform(new Date(), 'dd MMM, yyyy')
+      const currentDate = new Date()
+      let isoString = currentDate.toISOString()
+      isoString = isoString.replace('Z', '+0000')
+      eventDetails['submitedOn'] = isoString
     }
 
     if (this.speakersList) {

@@ -10,7 +10,7 @@
         <img src="/assets/icons/image.svg" alt="app icon">
         <span class="iconName">{{appIconName}}</span>
       </div>
-      <ng-container *ngIf="openMode === 'edit'">
+      <ng-container *ngIf="openMode === 'edit' && eventStatus !== 'live'">
         <mat-icon class="remove-app-icon" (click)="removeFile('appIcon')">close</mat-icon>
       </ng-container>
     </div>
@@ -66,7 +66,7 @@
     <span class="description-count flex justify-end">{{eventDetails?.value?.description?.length}}/500</span>
   </div>
 
-  <div>
+  <div [ngClass]="{'disableForm': openMode === 'view' || eventStatus === 'live'}">
     <div class="label flex items-center mt-2">
       <div class="form-lable required">
         Event Type
@@ -88,17 +88,18 @@
         <img src="/assets/icons/image.svg" alt="app icon">
         <span class="iconName">{{uploadedVideoName}}</span>
       </div>
-      <ng-container *ngIf="openMode === 'edit'">
+      <ng-container *ngIf="openMode === 'edit' && eventStatus !== 'live'">
         <mat-icon class="remove-app-icon" (click)="removeFile('uploadedVideo')">close</mat-icon>
       </ng-container>
     </div>
   </ng-container>
   <ng-template #uploadVideo>
     <div class="upload flex justify-center items-center cursor-pointer dashed-border"
-      [ngClass]="{'disable': openMode === 'view' || disableUpload }" cdkDropList [cdkDropListData]="videoData"
-      (cdkDropListDropped)="onVideoSelected($event)" (dragover)="preventDefaultCDK($event)"
-      (dragenter)="preventDefaultCDK($event, 'enter')" (dragleave)="preventDefaultCDK($event, 'leave')"
-      (drop)="onDrop($event)" onclick="document.getElementById('upload-video').click();">
+      [ngClass]="{'disable': (openMode === 'view' || disableUpload) && eventStatus !== 'live' }" cdkDropList
+      [cdkDropListData]="videoData" (cdkDropListDropped)="onVideoSelected($event)"
+      (dragover)="preventDefaultCDK($event)" (dragenter)="preventDefaultCDK($event, 'enter')"
+      (dragleave)="preventDefaultCDK($event, 'leave')" (drop)="onDrop($event)"
+      onclick="document.getElementById('upload-video').click();">
       <input #file type="file" name="upload-video" id="upload-video" class="hidden"
         accept="video/mp4, video/mov, video/avi" (change)="onVideoSelected(file.files);">
       <div class="flex flex-column items-center gap-2">
@@ -125,11 +126,11 @@
   </div>
 
   <div class="flex flex-row gap-4">
-    <div class="flex flex-column gap-2 event-form w-full disable-round">
+    <div class="flex flex-column gap-2 event-form w-full" [ngClass]="{'disableForm': eventStatus === 'live'}">
       <div class="form-lable required">
         Event Category
       </div>
-      <mat-form-field appearance="outline" class="">
+      <mat-form-field appearance="outline" class="disable-round">
         <mat-select placeholder="select Event Category" formControlName="eventCategory">
           <ng-container *ngFor="let category of evntCategorysList">
             <mat-option [value]="category">
@@ -159,11 +160,12 @@
   </div>
 
   <div class="flex flex-row gap-4">
-    <div class="flex flex-column gap-2 event-form w-full disable-round eventTimpicker">
+    <div class="flex flex-column gap-2 event-form w-full eventTimpicker"
+      [ngClass]="{'disableForm': eventStatus === 'live'}">
       <div class="form-lable required">
         Date
       </div>
-      <mat-form-field appearance="outline" class="">
+      <mat-form-field appearance="outline" class="disable-round">
         <input matInput [matDatepicker]="startDate" [min]="todayDate" placeholder="Enter Start Date"
           formControlName="startDate" readonly>
         <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
@@ -173,11 +175,11 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div class="flex flex-column gap-2 event-form w-full disable-round">
+    <div class="flex flex-column gap-2 event-form w-full" [ngClass]="{'disableForm': eventStatus === 'live'}">
       <div class="form-lable required">
         Start Time
       </div>
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="disable-round">
         <input matInput placeholder="Enter Start Time" formControlName="startTime" [ngxTimepicker]="startTimepicker"
           [max]="maxTimeToStart" [min]="minTimeToStart" readonly>
         <ngx-material-timepicker-toggle [for]="startTimepicker" matSuffix></ngx-material-timepicker-toggle>
@@ -188,11 +190,11 @@
         </mat-error>
       </mat-form-field>
     </div>
-    <div class="flex flex-column gap-2 event-form w-full disable-round">
+    <div class="flex flex-column gap-2 event-form w-full" [ngClass]="{'disableForm': eventStatus === 'live'}">
       <div class="form-lable required">
         End Time
       </div>
-      <mat-form-field appearance="outline" class="">
+      <mat-form-field appearance="outline" class="disable-round">
         <input matInput placeholder="Enter End Time" formControlName="endTime" [ngxTimepicker]="endTimepicker"
           [min]="minTimeToEnd" readonly>
         <ngx-material-timepicker-toggle [for]="endTimepicker" matSuffix></ngx-material-timepicker-toggle>
