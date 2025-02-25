@@ -30,6 +30,11 @@ node('build-slave') {
                 }
                 }
 
+        	if(params.enable_code_analysis){
+            	stage('Code analysis'){
+               	build job: "Build/CodeReview/${JOB_BASE_NAME}", wait: true
+	     	}
+       	    }
 		stage('Build') {
                 env.NODE_ENV = "build"
                 print "Environment will be : ${env.NODE_ENV}"
