@@ -40,15 +40,19 @@
   }
 }
 
+.imageCell {
+  min-width: 230px;
+}
+
 .imageDiv {
   // max-width: 75%;
-  width: 135px;
+  width: 120px;
   height: 76px;
 }
 
-.imageCell {
+.cellImage {
   // max-width: 100%;
-  width: 135px;
+  width: 120px;
   height: 76px;
   object-fit: scale-down;
   border-radius: 5px;
@@ -187,11 +191,11 @@
 }
 
 .table-date-header {
-  flex: 0 0 125px;
+  flex: 0 0 115px;
 }
 
 .table-date-column {
-  flex: 0 0 125px;
+  flex: 0 0 115px;
 }
 
 .table-number-cell {
@@ -199,11 +203,11 @@
 }
 
 .table-menu-header {
-  flex: 0 0 200px;
+  flex: 0 0 100px;
 }
 
 .table-menu-column {
-  flex: 0 0 200px;
+  flex: 0 0 100px;
   .disableMenu {
     opacity: 0.5;
   }
@@ -243,4 +247,12 @@
 
 :host ::ng-deep .mat-paginator-container {
   justify-content: center !important;
+}
+
+:host ::ng-deep mat-cell:first-of-type, mat-header-cell:first-of-type, mat-footer-cell:first-of-type {
+  padding-left: 16px !important;
+}
+
+:host ::ng-deep mat-cell:last-of-type, mat-header-cell:last-of-type, mat-footer-cell:last-of-type {
+  padding-right: 16px !important;
 }
