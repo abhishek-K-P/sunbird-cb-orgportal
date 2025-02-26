@@ -67,10 +67,10 @@ export class EventsListComponent implements OnInit, OnDestroy {
             btnText: 'View',
             action: 'view',
           },
-          {
-            btnText: 'Edit',
-            action: 'edit',
-          },
+          // {
+          //   btnText: 'Edit',
+          //   action: 'edit',
+          // },
           // {
           //   btnText: 'Start Broadcast',
           //   action: 'broadcast',

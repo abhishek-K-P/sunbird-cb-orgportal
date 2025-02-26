@@ -79,6 +79,20 @@ export class EventsTableComponent implements OnInit, OnChanges {
     this.columnsList = _.map(columns, c => c.key)
   }
 
+  getButtonsToShow(rowData: any): events.menuItems[] {
+    if (rowData['buttonsToHide']) {
+      // const buttonsToShow: events.menuItems[] = this.menuItems.filter((menuItem: events.menuItems) => { !(rowData['buttonsToHide'].includes(menuItem.action)) })
+      const buttonsToShow: events.menuItems[] = []
+      this.menuItems.forEach((menuItem) => {
+        if (!(rowData['buttonsToHide'].includes(menuItem.action))) {
+          buttonsToShow.push(menuItem)
+        }
+      })
+      return buttonsToShow
+    }
+    return this.menuItems
+  }
+
   buttonClick(action: string, rows: any) {
     if (this.tableData) {
       this.actionsClick.emit({ action, rows })
