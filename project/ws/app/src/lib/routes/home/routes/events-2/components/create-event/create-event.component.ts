@@ -303,11 +303,15 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     const selectedDate = _.get(this.eventDetailsForm, 'value.startDate')
     const todayFormatted = this.datePipe.transform(new Date(), 'yyyy-MM-dd') as string
     const inputDateFormatted = this.datePipe.transform(selectedDate, 'yyyy-MM-dd') as string
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const inputDate = new Date(selectedDate)
+    inputDate.setHours(0, 0, 0, 0)
     if (todayFormatted === inputDateFormatted) {
       if (this.isTimeLessThanNow(_.get(this.eventDetailsForm, 'value.startTime'))) {
         return false
       }
-    } else if (todayFormatted <= inputDateFormatted) {
+    } else if (inputDate < today) {
       return false
     }
     return true
