@@ -5,6 +5,7 @@ import { environment } from '../../../../../../../../../../../src/environments/e
 import { OwlOptions } from 'ngx-owl-carousel-o'
 import { EventsService } from '../../services/events.service'
 import { YoutubePlayerComponent } from '../../dialogs/youtube-player/youtube-player.component'
+import * as _ from 'lodash'
 
 @Component({
   selector: 'ws-app-events-preview',
@@ -177,5 +178,21 @@ export class EventsPreviewComponent implements OnInit, OnChanges {
       disableClose: false,
       data: { event: this.event }
     })
+  }
+
+  fileImage(name: string) {
+    return name.includes('.ppt') ? '/assets/icons/ppt.svg' :
+      (name.includes('.doc') ? '/assets/icons/doc.svg' : '/assets/icons/pdf.svg')
+  }
+
+  getMaterialName(content: string) {
+    let name = ''
+    if (content) {
+      const urlSplit = content.split('_')
+      if (urlSplit.length > 0) {
+        name = urlSplit[urlSplit.length - 1]
+      }
+    }
+    return name
   }
 }

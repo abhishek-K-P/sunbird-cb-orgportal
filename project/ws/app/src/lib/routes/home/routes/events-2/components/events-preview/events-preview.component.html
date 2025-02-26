@@ -84,9 +84,8 @@
                             <div class="flex flex-col my-4 px-4">
                               <div class="r-name text-truncate">{{handout?.title}}</div>
                               <div class="r-type flex items-center gap-2">
-                                <img src="/assets/icons/event_pdf.svg" alt="pdf" />
-                                <a href="{{handout?.content1 || handout?.content}}"
-                                  target="_blank">{{handout?.title}}</a>
+                                <img class="img-size" src="{{fileImage(handout?.content)}}" />
+                                <a href="{{handout?.content}}" target="_blank">{{getMaterialName(handout?.content)}}</a>
                               </div>
                             </div>
                           </div>

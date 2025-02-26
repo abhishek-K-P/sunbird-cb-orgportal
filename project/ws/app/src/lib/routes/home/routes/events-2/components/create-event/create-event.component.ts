@@ -289,9 +289,48 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
         this.openSnackBar('Please add atleast one competency in Add Competency')
         return false
       }
+
+      if (!this.isValidTimeToStart) {
+        this.openSnackBar('Please select a future date and time to start the event.')
+        return false
+      }
       return true
     }
     return false
+  }
+
+  get isValidTimeToStart(): boolean {
+    const selectedDate = _.get(this.eventDetailsForm, 'value.startDate')
+    const todayFormatted = this.datePipe.transform(new Date(), 'yyyy-MM-dd') as string
+    const inputDateFormatted = this.datePipe.transform(selectedDate, 'yyyy-MM-dd') as string
+    if (todayFormatted === inputDateFormatted) {
+      if (this.isTimeLessThanNow(_.get(this.eventDetailsForm, 'value.startTime'))) {
+        return false
+      }
+    } else if (todayFormatted <= inputDateFormatted) {
+      return false
+    }
+    return true
+  }
+
+  isTimeLessThanNow(givenTime: string): boolean {
+    const datePipe = new DatePipe('en-US')
+    const currentTime = datePipe.transform(new Date(), 'h:mm a') as string
+    const currentMinutes = this.timeToMinutes(currentTime)
+    const givenMinutes = this.timeToMinutes(givenTime)
+
+    return givenMinutes <= currentMinutes
+  }
+
+  timeToMinutes(time: string): number {
+    const [timePart, period] = time.split(' ')
+    const [hours, minutes] = timePart.split(':').map(Number)
+
+    let totalMinutes = hours % 12 * 60 + minutes
+    if (period === 'PM') {
+      totalMinutes += 12 * 60
+    }
+    return totalMinutes
   }
 
   addCompetencies(competencies: any) {
