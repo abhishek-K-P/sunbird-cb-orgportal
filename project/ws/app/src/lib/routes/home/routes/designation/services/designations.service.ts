@@ -4,7 +4,7 @@ import { mergeMap, tap, map } from 'rxjs/operators'
 import { Observable, of } from 'rxjs'
 import { v4 as uuidv4 } from 'uuid'
 // tslint:disable
-import _ from 'lodash'
+import * as _ from 'lodash'
 import { environment } from '../../../../../../../../../../src/environments/environment'
 import { ConfigurationsService } from '@sunbird-cb/utils'
 /* tslint:enable */

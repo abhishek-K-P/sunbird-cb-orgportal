@@ -9,6 +9,7 @@ module.exports = {
     'worker-loader!.*': '<rootDir>/test/mocks/workerMock.js',
     'pdfjs-dist/build/pdf.worker': '<rootDir>/test/mocks/workerMock.js',
     "^src/environments/environment$": "<rootDir>/src/environments/environment.ts",
+    "uuid": require.resolve('uuid'),
   },
   coverageReporters: ["clover", "json", "lcov", "text", "text-summary"],
   collectCoverage: true,

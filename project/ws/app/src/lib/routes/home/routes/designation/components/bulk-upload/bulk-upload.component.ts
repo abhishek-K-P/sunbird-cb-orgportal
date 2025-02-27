@@ -3,7 +3,7 @@ import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute } from '@angular/router'
 // tslint:disable-next-line
-import _ from 'lodash'
+import * as _ from 'lodash'
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 import { FileService } from '../../../../../users/services/upload.service'
