@@ -5,9 +5,9 @@ import { Subject } from 'rxjs'
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators'
 import { OrgProfileService } from '../../services/org-profile.service'
 /* tslint:disable*/
-import _ from 'lodash'
+import * as _ from 'lodash'
 import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 
 @Component({
     selector: 'ws-app-infrastructure',

@@ -5,7 +5,7 @@ import { ConfigurationsService, EventService, ValueService } from '@sunbird-cb/u
 import { map } from 'rxjs/operators'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 /* tslint:disable */
-import _ from 'lodash'
+import * as _ from 'lodash'
 import { ILeftMenu, LeftMenuService } from '@sunbird-cb/collection'
 
 import { Subscription } from 'rxjs'
