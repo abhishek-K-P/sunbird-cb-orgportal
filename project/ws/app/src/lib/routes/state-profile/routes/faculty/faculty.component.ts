@@ -5,8 +5,8 @@ import { OrgProfileService } from '../../services/org-profile.service'
 import { Subject } from 'rxjs'
 import { ConfigurationsService } from '@sunbird-cb/utils'
 /* tslint:disable*/
-import _ from 'lodash'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog';
+import * as _ from 'lodash'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.component'
 
 

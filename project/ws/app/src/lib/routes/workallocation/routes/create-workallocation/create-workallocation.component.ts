@@ -5,11 +5,11 @@ import { Router } from '@angular/router'
 import { ExportAsService, ExportAsConfig } from 'ngx-export-as'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { DialogConfirmComponent } from 'src/app/component/dialog-confirm/dialog-confirm.component'
 import { AllocationActionsComponent } from '../../components/allocation-actions/allocation-actions.component'
 import { ConfigurationsService, EventService } from '@sunbird-cb/utils'
 import { TelemetryEvents } from '../../../../head/_services/telemetry.event.model'
 import * as _ from 'lodash'
+import { DialogConfirmComponent } from '../../../../../../../../../src/app/component/dialog-confirm/dialog-confirm.component'
 @Component({
   selector: 'ws-app-create-workallocation',
   templateUrl: './create-workallocation.component.html',
