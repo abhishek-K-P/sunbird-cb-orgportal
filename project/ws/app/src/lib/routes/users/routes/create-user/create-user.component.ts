@@ -7,7 +7,7 @@ import { ILeftMenu } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ValueService } from '@sunbird-cb/utils'
 /* tslint:disable */
-import _ from 'lodash'
+import * as _ from 'lodash'
 import { Subscription } from 'rxjs'
 /* tslint:enable */
 @Component({
