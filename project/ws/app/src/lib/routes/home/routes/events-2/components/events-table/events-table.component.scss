@@ -86,7 +86,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  height: 28px;
+  max-height: 38px;
 }
 
 .header-info-icon {
@@ -243,6 +243,13 @@
     font: 400 14px Lato
     /* stylelint-enable */
   }
+}
+
+::ng-deep .mat-tooltip {
+  margin: 5px !important;
+  transform: translateY(-5px);
+  line-height: 1rem;
+  font-size: 12px !important;
 }
 
 :host ::ng-deep .mat-paginator-container {
