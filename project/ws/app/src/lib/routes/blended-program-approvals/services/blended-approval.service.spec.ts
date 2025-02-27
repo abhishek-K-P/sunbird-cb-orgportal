@@ -1,141 +1,292 @@
-import { BlendedApporvalService } from './blended-approval.service' // Import the service
-import { HttpClient } from '@angular/common/http' // Import HttpClient
-import { of } from 'rxjs' // Import of for creating observable responses
-
-// Mock the HttpClient
-jest.mock('@angular/common/http', () => ({
-    HttpClient: jest.fn().mockImplementation(() => ({
-        get: jest.fn(),
-        post: jest.fn(),
-    })),
-}))
+import { BlendedApporvalService } from './blended-approval.service'
+import { of } from 'rxjs'
+import _ from 'lodash'
 
 describe('BlendedApporvalService', () => {
     let service: BlendedApporvalService
-    let httpClient: HttpClient
+    let httpClientSpy: { get: jest.Mock; post: jest.Mock }
 
     beforeEach(() => {
-        // Create instance of BlendedApporvalService with mocked HttpClient
-        httpClient = new HttpClient(null as any) as HttpClient // Type casting the HttpClient to HttpClient
-        service = new BlendedApporvalService(httpClient)
-    })
+        httpClientSpy = {
+            get: jest.fn(),
+            post: jest.fn()
+        }
 
-    afterEach(() => {
-        jest.clearAllMocks() // Clean up mocks after each test
+        service = new BlendedApporvalService(httpClientSpy as any)
     })
 
     it('should be created', () => {
         expect(service).toBeTruthy()
     })
 
-    it('should call getBlendedProgramsDetails with correct URL', () => {
-        const programID = '123'
-        const mockResponse = { data: 'some data' };
-        (httpClient.get as jest.Mock).mockReturnValue(of(mockResponse)) // Casting to jest.Mock
+    describe('getBlendedProgramsDetails', () => {
+        it('should call GET with the correct URL', () => {
+            const programId = 'test-program-id'
+            const mockResponse = { result: { data: 'test data' } }
 
-        service.getBlendedProgramsDetails(programID).subscribe(response => {
+            httpClientSpy.get.mockReturnValue(of(mockResponse))
+
+            service.getBlendedProgramsDetails(programId).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.get).toHaveBeenCalledWith('/apis/proxies/v8/action/content/v3/read/test-program-id')
+        })
+    })
+
+    describe('getLearners', () => {
+        it('should call GET with the correct URL including orgName', () => {
+            const batchId = 'batch-123'
+            const orgName = 'test-org'
+            const mockResponse = { learners: [] }
+
+            httpClientSpy.get.mockReturnValue(of(mockResponse))
+
+            service.getLearners(batchId, orgName).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.get).toHaveBeenCalledWith('/apis/protected/v8/cohorts/course/getUsersForBatch/batch-123/test-org')
+        })
+    })
+
+    describe('getLearnersWithoutOrg', () => {
+        it('should call GET with the correct URL without orgName', () => {
+            const batchId = 'batch-123'
+            const mockResponse = { learners: [] }
+
+            httpClientSpy.get.mockReturnValue(of(mockResponse))
+
+            service.getLearnersWithoutOrg(batchId).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.get).toHaveBeenCalledWith('/apis/protected/v8/cohorts/course/getUsersForBatch/batch-123')
+        })
+    })
+
+    describe('getRequests', () => {
+        it('should call POST with the correct URL and request body', () => {
+            const reqBody = { key: 'value' }
+            const mockResponse = { requests: [] }
+
+            httpClientSpy.post.mockReturnValue(of(mockResponse))
+
+            service.getRequests(reqBody).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.post).toHaveBeenCalledWith('/apis/proxies/v8/workflow/blendedprogram/search', reqBody)
+        })
+    })
+
+    describe('getSerchRequests', () => {
+        it('should call POST with the correct URL and request body', () => {
+            const reqBody = { search: 'term' }
+            const mockResponse = { results: [] }
+
+            httpClientSpy.post.mockReturnValue(of(mockResponse))
+
+            service.getSerchRequests(reqBody).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.post).toHaveBeenCalledWith('/apis/proxies/v8/workflow/blendedprogram/searchV2/mdo', reqBody)
+        })
+    })
+
+    describe('updateBlendedRequests', () => {
+        it('should call POST with the correct URL and request body', () => {
+            const reqBody = { id: '123', status: 'approved' }
+            const mockResponse = { updated: true }
+
+            httpClientSpy.post.mockReturnValue(of(mockResponse))
+
+            service.updateBlendedRequests(reqBody).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.post).toHaveBeenCalledWith('/apis/proxies/v8/workflow/blendedprogram/update/mdo', reqBody)
+        })
+    })
+
+    describe('getUserById', () => {
+        it('should call GET with the correct URL when userId is provided', () => {
+            const userId = 'user-123'
+            const mockResponse = { result: { response: { name: 'Test User' } } }
+
+            httpClientSpy.get.mockReturnValue(of(mockResponse))
+
+            service.getUserById(userId).subscribe(response => {
+                expect(response).toEqual(mockResponse.result.response)
+            })
+
+            expect(httpClientSpy.get).toHaveBeenCalledWith('/apis/proxies/v8/api/user/v2/read/user-123')
+        })
+
+        it('should call GET without userId when not provided', () => {
+            const mockResponse = { result: { response: { name: 'Current User' } } }
+
+            httpClientSpy.get.mockReturnValue(of(mockResponse))
+
+            service.getUserById('').subscribe(response => {
+                expect(response).toEqual(mockResponse.result.response)
+            })
+
+            expect(httpClientSpy.get).toHaveBeenCalledWith('/apis/proxies/v8/api/user/v2/read')
+        })
+    })
+
+    describe('downloadCert', () => {
+        it('should call GET with the correct URL', () => {
+            const certId = 'cert-123'
+            const mockResponse = { url: 'certificate-url' }
+
+            httpClientSpy.get.mockReturnValue(of(mockResponse))
+
+            service.downloadCert(certId).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.get).toHaveBeenCalledWith('/apis/protected/v8/cohorts/course/batch/cert/download/cert-123')
+        })
+    })
+
+    describe('getSurveyByUserID', () => {
+        it('should call POST with the correct URL and request body', () => {
+            const reqBody = { userId: 'user-123' }
+            const mockResponse = { surveys: [] }
+
+            httpClientSpy.post.mockReturnValue(of(mockResponse))
+
+            service.getSurveyByUserID(reqBody).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.post).toHaveBeenCalledWith('apis/proxies/v8/forms/searchForms', reqBody)
+        })
+    })
+
+    describe('nominateLearners', () => {
+        it('should call POST with the correct URL and request body', () => {
+            const reqBody = { programId: 'prog-123', learners: ['user1', 'user2'] }
+            const mockResponse = { success: true }
+
+            httpClientSpy.post.mockReturnValue(of(mockResponse))
+
+            service.nominateLearners(reqBody).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.post).toHaveBeenCalledWith('/apis/proxies/v8/workflow/blendedprogram/admin/enrol', reqBody)
+        })
+    })
+
+    describe('removeLearner', () => {
+        it('should call POST with the correct URL and request body', () => {
+            const reqBody = { programId: 'prog-123', userId: 'user-123' }
+            const mockResponse = { success: true }
+
+            httpClientSpy.post.mockReturnValue(of(mockResponse))
+
+            service.removeLearner(reqBody).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.post).toHaveBeenCalledWith('/apis/proxies/v8/workflow/blendedprogram/remove/mdo', reqBody)
+        })
+    })
+
+    describe('fetchBlendedUserCount', () => {
+        it('should call POST with the correct URL and request body', async () => {
+            const reqBody = { programId: 'prog-123' }
+            const mockResponse = { count: 10 }
+
+            httpClientSpy.post.mockReturnValue(of(mockResponse))
+            const response = await service.fetchBlendedUserCount(reqBody)
+
             expect(response).toEqual(mockResponse)
+            expect(httpClientSpy.post).toHaveBeenCalledWith('apis/proxies/v8/workflow/blendedprogram/enrol/status/count', reqBody)
         })
-
-        expect(httpClient.get).toHaveBeenCalledWith('/apis/proxies/v8/action/content/v3/read/123')
     })
 
-    it('should call getLearners with correct URL', () => {
-        const batchId = 'batch123'
-        const orgName = 'org123'
-        const mockResponse = { learners: [] };
-        (httpClient.get as jest.Mock).mockReturnValue(of(mockResponse))
+    describe('getBpReportStatusApi', () => {
+        it('should call POST with the correct URL and request body', () => {
+            const reqBody = { reportId: 'report-123' }
+            const mockResponse = null
 
-        service.getLearners(batchId, orgName).subscribe(response => {
-            expect(response).toEqual(mockResponse)
+            httpClientSpy.post.mockReturnValue(of(mockResponse))
+
+            service.getBpReportStatusApi(reqBody).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.post).toHaveBeenCalledWith('apis/proxies/v8/bp/v1/bpreport/status', reqBody)
         })
-
-        expect(httpClient.get).toHaveBeenCalledWith('/apis/proxies/v8/cohorts/course/getUsersForBatch/batch123/org123')
     })
 
-    it('should call getLearnersWithoutOrg with correct URL', () => {
-        const batchId = 'batch123'
-        const mockResponse = { learners: [] };
-        (httpClient.get as jest.Mock).mockReturnValue(of(mockResponse))
+    describe('generateBpReport', () => {
+        it('should call POST with the correct URL and request body', () => {
+            const reqBody = { programId: 'prog-123' }
+            const mockResponse = null
 
-        service.getLearnersWithoutOrg(batchId).subscribe(response => {
-            expect(response).toEqual(mockResponse)
+            httpClientSpy.post.mockReturnValue(of(mockResponse))
+
+            service.generateBpReport(reqBody).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.post).toHaveBeenCalledWith('apis/proxies/v8/bp/v1/generate/report', reqBody)
         })
-
-        expect(httpClient.get).toHaveBeenCalledWith('/apis/proxies/v8/cohorts/course/getUsersForBatch/batch123')
     })
 
-    it('should call getRequests with correct URL and data', () => {
-        const req = { someData: 'value' }
-        const mockResponse = { status: 'success' };
-        (httpClient.post as jest.Mock).mockReturnValue(of(mockResponse))
+    describe('downloadReport', () => {
+        it('should call GET with the correct URL and create a download link', () => {
+            // Create mock DOM elements and functions
+            const mockBlob = new Blob(['test data'], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+            const mockUrl = 'blob:test-url'
+            const mockLink = {
+                href: '',
+                download: '',
+                click: jest.fn()
+            }
 
-        service.getRequests(req).subscribe(response => {
-            expect(response).toEqual(mockResponse)
+            // Mock document.createElement and URL methods
+            document.createElement = jest.fn().mockReturnValue(mockLink)
+            window.URL.createObjectURL = jest.fn().mockReturnValue(mockUrl)
+            window.URL.revokeObjectURL = jest.fn()
+
+            // Setup spy response
+            httpClientSpy.get.mockReturnValue(of(mockBlob))
+
+            // Call the method
+            service.downloadReport('report-file-url', 'report.xlsx')
+
+            // Verify HTTP call
+            expect(httpClientSpy.get).toHaveBeenCalledWith('apis/proxies/v8/bp/v1/bpreport/download/report-file-url', { responseType: 'blob' })
+
+            // Verify DOM manipulation
+            expect(document.createElement).toHaveBeenCalledWith('a')
+            expect(window.URL.createObjectURL).toHaveBeenCalledWith(expect.any(Blob))
+            expect(mockLink.href).toBe(mockUrl)
+            expect(mockLink.download).toBe('report.xlsx')
+            expect(mockLink.click).toHaveBeenCalled()
+            expect(window.URL.revokeObjectURL).toHaveBeenCalledWith(mockUrl)
         })
-
-        expect(httpClient.post).toHaveBeenCalledWith('/apis/proxies/v8/workflow/blendedprogram/search', req)
     })
 
-    it('should call getUserById with correct URL', () => {
-        const userId = 'user123'
-        const mockResponse = { result: { response: { name: 'John Doe' } } };
-        (httpClient.get as jest.Mock).mockReturnValue(of(mockResponse))
+    describe('getSurveyByFormId', () => {
+        it('should call GET with the correct URL', () => {
+            const formId = 'form-123'
+            const mockResponse = { form: { questions: [] } }
 
-        service.getUserById(userId).subscribe(response => {
-            expect(response).toEqual(mockResponse.result.response)
+            httpClientSpy.get.mockReturnValue(of(mockResponse))
+
+            service.getSurveyByFormId(formId).subscribe(response => {
+                expect(response).toEqual(mockResponse)
+            })
+
+            expect(httpClientSpy.get).toHaveBeenCalledWith('/apis/proxies/v8/forms/getFormById?id=form-123')
         })
-
-        expect(httpClient.get).toHaveBeenCalledWith('/apis/proxies/v8/api/user/v2/read/user123')
-    })
-
-    it('should call getUserById without userId and return default response', () => {
-        const mockResponse = { result: { response: { name: 'John Doe' } } };
-        (httpClient.get as jest.Mock).mockReturnValue(of(mockResponse))
-
-        service.getUserById('').subscribe(response => {
-            expect(response).toEqual(mockResponse.result.response)
-        })
-
-        expect(httpClient.get).toHaveBeenCalledWith('/apis/proxies/v8/api/user/v2/read/')
-    })
-
-    it('should call downloadCert with correct URL', () => {
-        const certId = 'cert123'
-        const mockResponse = new Blob()
-        const mockLink = { click: jest.fn() }
-
-        document.createElement = jest.fn().mockReturnValue(mockLink); // Mock the 'a' element
-
-        (httpClient.get as jest.Mock).mockReturnValue(of(mockResponse))
-
-        service.downloadCert(certId)
-
-        expect(httpClient.get).toHaveBeenCalledWith('/apis/protected/v8/cohorts/course/batch/cert/download/cert123')
-        expect(mockLink.click).toHaveBeenCalled()
-    })
-
-    it('should call nominateLearners with correct URL and data', () => {
-        const req = { learner: 'learner123' }
-        const mockResponse = { status: 'success' };
-        (httpClient.post as jest.Mock).mockReturnValue(of(mockResponse))
-
-        service.nominateLearners(req).subscribe(response => {
-            expect(response).toEqual(mockResponse)
-        })
-
-        expect(httpClient.post).toHaveBeenCalledWith('/apis/proxies/v8/workflow/blendedprogram/admin/enrol', req)
-    })
-
-    it('should call removeLearner with correct URL and data', () => {
-        const req = { learner: 'learner123' }
-        const mockResponse = { status: 'removed' };
-        (httpClient.post as jest.Mock).mockReturnValue(of(mockResponse))
-
-        service.removeLearner(req).subscribe(response => {
-            expect(response).toEqual(mockResponse)
-        })
-
-        expect(httpClient.post).toHaveBeenCalledWith('/apis/proxies/v8/workflow/blendedprogram/remove/mdo', req)
     })
 })
