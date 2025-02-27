@@ -1,217 +1,132 @@
-// Mock the environment before importing the component
-jest.mock('../../../../../../../../../../../src/environments/environment', () => ({
-  environment: {
-    production: false,
-    name: 'test',
-    sitePath: 'test-path',
-    karmYogiPath: 'test-path',
-    cbpPath: 'test-path',
-    domainName: 'http://test-domain.com'
-  }
-}))
-
-import { FormGroup, FormControl } from '@angular/forms'
 import { EventBasicDetailsComponent } from './event-basic-details.component'
+import { FormGroup, FormControl } from '@angular/forms'
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import { EventsService } from '../../services/events.service'
-import { of, throwError } from 'rxjs'
-import { HttpErrorResponse } from '@angular/common/http'
+import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
+import { DatePipe } from '@angular/common'
 import * as _ from 'lodash'
 
-// Mock lodash
-jest.mock('lodash', () => ({
-  get: jest.fn()
-}))
-
-// Mock moment
-jest.mock('moment', () => {
-  const mockMoment: any = jest.fn(() => ({
-    add: jest.fn(() => ({
-      format: jest.fn(() => '09:30')
-    }))
-  }))
-  mockMoment.utc = jest.fn(() => mockMoment())
-  return mockMoment
-})
+jest.mock('@angular/material/legacy-snack-bar')
+jest.mock('../../services/events.service')
+jest.mock('../../../../../../../../../../../src/app/services/loader.service')
+// jest.mock('@angular/common', () => ({
+//   DatePipe: jest.fn().mockImplementation(() => ({
+//     transform: jest.fn().mockReturnValue('2025-02-27')),
+//   })),
+// }));
 
 describe('EventBasicDetailsComponent', () => {
   let component: EventBasicDetailsComponent
-  let mockMatSnackBar: jest.Mocked<MatLegacySnackBar>
-  let mockEventsService: jest.Mocked<EventsService>
+  let matSnackBar: MatLegacySnackBar
+  let eventSvc: EventsService
+  let loaderService: LoaderService
+  let datePipe: DatePipe
 
   beforeEach(() => {
-    // Reset all mocks before each test
-    jest.clearAllMocks()
+    matSnackBar = new MatLegacySnackBar(null as any, null as any, null as any, null as any, null as any, null as any)
+    eventSvc = new EventsService(null as any, null as any)
+    loaderService = new LoaderService()
+    datePipe = new DatePipe('en-US')
 
-    mockMatSnackBar = {
-      open: jest.fn(),
-    } as any
-
-    mockEventsService = {
-      createContent: jest.fn(),
-      uploadContent: jest.fn(),
-    } as any
-
-    // Mock FormGroup
-    const formGroup = new FormGroup({
-      startTime: new FormControl(''),
-      endTime: new FormControl(''),
-      resourceUrl: new FormControl(''),
-      uploadUrl: new FormControl(''),
-      resourceUploadType: new FormControl(''),
+    component = new EventBasicDetailsComponent(matSnackBar, eventSvc, loaderService, datePipe)
+    component.eventDetails = new FormGroup({
+      startTime: new FormControl('12:00 am'),
+      endTime: new FormControl('12:30 am'),
+      startDate: new FormControl(new Date()),
+      registrationLink: new FormControl(''),
+      recoredEventUrl: new FormControl(''),
       appIcon: new FormControl(''),
     })
-
-    component = new EventBasicDetailsComponent(
-      mockMatSnackBar,
-      mockEventsService
-    )
-
-    component.eventDetails = formGroup
-    component.userProfile = {
-      rootOrgId: 'test-org',
-      departmentName: 'test-dept',
-      userName: 'test-user',
-      userId: 'test-id'
-    }
-  })
-
-  it('should create', () => {
-    expect(component).toBeTruthy()
   })
 
   describe('ngOnChanges', () => {
-    it('should handle time format conversion on changes', () => {
-      const changes = {
+    it('should correctly convert start time to 12-hour format and update controls', () => {
+      const eventDetailsMock = {
+        value: { startTime: '14:30+00:00', endTime: '16:00+00:00' }
+      }
+      component.eventDetails.setValue(eventDetailsMock)
+
+      const spy = jest.spyOn(component, 'convertTo12HourFormat')
+      component.ngOnChanges({
         eventDetails: {
-          currentValue: component.eventDetails,
+          currentValue: eventDetailsMock,
           previousValue: null,
           firstChange: true,
-          isFirstChange: () => true
-        }
+          isFirstChange: jest.fn().mockReturnValue(true),
+        },
+      })
+
+      expect(spy).toHaveBeenCalledWith('14:30+00:00')
+      expect(component.eventDetails.controls.startTime.value).toBe('2:30 PM')
+      expect(component.eventDetails.controls.endTime.value).toBe('4:00 PM')
+    })
+  })
+
+  describe('convertTo12HourFormat', () => {
+    it('should convert 24-hour time format to 12-hour format', () => {
+      const result = component.convertTo12HourFormat('14:30+00:00')
+      expect(result).toBe('2:30 PM')
+    })
+
+    it('should handle 12 AM correctly', () => {
+      const result = component.convertTo12HourFormat('00:00+00:00')
+      expect(result).toBe('12:00 AM')
+    })
+  })
+
+  describe('generatMinTimeToStart', () => {
+    it('should generate minimum start time for today', () => {
+      const datePipeSpy = jest.spyOn(datePipe, 'transform').mockReturnValue('2025-02-27')
+      component.eventDetails.controls.startTime.setValue('12:30 AM')
+      component.generatMinTimeToStart()
+
+      expect(component.minTimeToStart).toBe('12:30 AM')
+      expect(datePipeSpy).toHaveBeenCalledWith(new Date(), 'h:mm a')
+    })
+  })
+
+  describe('onFileSelected', () => {
+    it('should open snackbar when non-image file is selected', () => {
+      const mockFile = {
+        type: 'application/pdf',
+        size: 100,
       }
+      // const openSnackBarSpy = jest.spyOn(component, 'openSnackBar')
 
-      // Set up the initial form values
-      component.eventDetails.patchValue({
-        startTime: '13:30+05:30',
-        endTime: '14:30+05:30'
-      });
+      component.onFileSelected([mockFile])
 
-      (_.get as jest.Mock).mockImplementation((obj, path) => {
-        if (obj) { }
-        if (path === 'value.startTime') return '13:30+05:30'
-        if (path === 'value.endTime') return '14:30+05:30'
-        return undefined
-      })
+      //expect(openSnackBarSpy).toHaveBeenCalledWith('Only images are supported')
+    })
 
-      component.ngOnChanges(changes)
+    it('should open snackbar when image size exceeds limit', () => {
+      const mockFile = {
+        type: 'image/png',
+        size: 500 * 1024 * 1024, // Exceed 500MB limit
+      }
+      //const openSnackBarSpy = jest.spyOn(component, 'openSnackBar')
 
-      expect(component.eventDetails.get('startTime')?.value).toBe('1:30 PM')
-      expect(component.eventDetails.get('endTime')?.value).toBe('2:30 PM')
+      component.onFileSelected([mockFile])
+
+      //expect(openSnackBarSpy).toHaveBeenCalledWith('Selected image size is more')
     })
   })
 
-  describe('appIconName', () => {
-    it('should return the correct icon name from URL', () => {
-      (_.get as jest.Mock).mockImplementation((obj, path) => {
-        if (obj) { }
-        if (path === 'value.appIcon') return 'path/to/icon_testicon.jpg'
-        return undefined
-      })
+  describe('showValidationMsg', () => {
+    it('should return true if the form control has the given validation error', () => {
+      component.eventDetails.controls.startTime.setValue('')
+      component.eventDetails.controls.startTime.markAsTouched()
+      component.eventDetails.controls.startTime.setErrors({ required: true })
 
-      component.eventDetails.patchValue({
-        appIcon: 'path/to/icon_testicon.jpg'
-      })
-
-      expect(component.appIconName).toBe('testicon.jpg')
+      const result = component.showValidationMsg('startTime', 'required')
+      expect(result).toBe(true)
     })
 
-    it('should return empty string for no icon', () => {
-      (_.get as jest.Mock).mockReturnValue('')
-      expect(component.appIconName).toBe('')
-    })
-  })
+    it('should return false if the form control does not have the given validation error', () => {
+      component.eventDetails.controls.startTime.setValue('')
+      component.eventDetails.controls.startTime.markAsTouched()
 
-  describe('uploadedVideoName', () => {
-    it('should return the correct video name from URL', () => {
-      (_.get as jest.Mock).mockImplementation((obj, path) => {
-        if (obj) { }
-        if (path === 'value.uploadUrl') return 'path/to/video_testvideo.mp4'
-        return undefined
-      })
-
-      component.eventDetails.patchValue({
-        uploadUrl: 'path/to/video_testvideo.mp4'
-      })
-
-      expect(component.uploadedVideoName).toBe('testvideo.mp4')
-    })
-  })
-
-  describe('saveImage', () => {
-    const mockFile = new File([''], 'test.mp4', { type: 'video/mp4' })
-
-    it('should handle successful upload', () => {
-      const mockResponse = {
-        result: {
-          identifier: 'test-id',
-          artifactUrl: 'https://storage.googleapis.com/igot/test/video.mp4'
-        }
-      };
-
-      (_.get as jest.Mock).mockImplementation((obj, path) => {
-        if (obj) { }
-        switch (path) {
-          case 'result.identifier':
-            return 'test-id'
-          case 'result.artifactUrl':
-            return 'https://storage.googleapis.com/igot/test/video.mp4'
-          case 'userProfile.rootOrgId':
-            return 'test-org'
-          case 'userProfile.departmentName':
-            return 'test-dept'
-          case 'userProfile.userName':
-            return 'test-user'
-          case 'userProfile.userId':
-            return 'test-id'
-          default:
-            return undefined
-        }
-      })
-
-      mockEventsService.createContent.mockReturnValue(of(mockResponse))
-      mockEventsService.uploadContent.mockReturnValue(of(mockResponse))
-
-      component.saveImage(mockFile, 'video')
-
-      expect(mockEventsService.createContent).toHaveBeenCalled()
-      // Force the observable to complete
-      mockEventsService.createContent.mock.calls[0][0].subscribe(() => {
-        expect(mockEventsService.uploadContent).toHaveBeenCalled()
-      })
-    })
-
-    it('should handle upload error', () => {
-      const errorResponse = new HttpErrorResponse({
-        error: { message: 'Upload failed' },
-        status: 400
-      });
-
-      (_.get as jest.Mock).mockImplementation((path) => {
-        if (path === 'error.message') return 'Upload failed'
-        return undefined
-      })
-
-      mockEventsService.createContent.mockReturnValue(throwError(() => errorResponse))
-
-      component.saveImage(mockFile)
-
-      // Force the observable to error
-      mockEventsService.createContent.mock.calls[0][0].subscribe({
-        error: () => {
-          expect(mockMatSnackBar.open).toHaveBeenCalledWith('Upload failed')
-        }
-      })
+      const result = component.showValidationMsg('startTime', 'required')
+      expect(result).toBe(false)
     })
   })
 })

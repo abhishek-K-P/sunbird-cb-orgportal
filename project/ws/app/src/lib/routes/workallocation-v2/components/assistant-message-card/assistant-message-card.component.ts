@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { IWarnError } from '../../models/warn-error.model'
 // tslint:disable
-import _ from 'lodash'
+import * as  _ from 'lodash'
 import { WatStoreService } from '../../services/wat.store.service'
 // tslint:enable
 
