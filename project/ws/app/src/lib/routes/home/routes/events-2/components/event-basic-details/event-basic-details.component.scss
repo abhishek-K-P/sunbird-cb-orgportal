@@ -85,6 +85,14 @@
       border-radius: 23px;
     }
   }
+
+  .mat-radio-button .mat-radio-container .mat-radio-outer-circle {
+    border-color: #dfdfdf !important;
+  }
+
+  .mat-radio-button .mat-radio-container .mat-radio-inner-circle {
+    background-color: #dfdfdf !important;
+  }
 }
 
 

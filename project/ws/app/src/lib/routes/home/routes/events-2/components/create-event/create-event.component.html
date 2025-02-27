@@ -29,7 +29,7 @@
     (selectionChange)="onSelectionChange($event)" class="mx-10" #stepper>
     <mat-step label="Basic Details">
       <ng-template matStepLabel>Basic Details</ng-template>
-      <ws-app-event-basic-details [eventDetails]="eventDetailsForm" [openMode]="openMode"
+      <ws-app-event-basic-details [eventStatus]="eventStatus" [eventDetails]="eventDetailsForm" [openMode]="openMode"
         [userProfile]="userProfile"></ws-app-event-basic-details>
     </mat-step>
 

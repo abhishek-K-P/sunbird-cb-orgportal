@@ -32,10 +32,20 @@ export class EventsService {
         Event: _.get(res, 'result.Event', []),
         count: _.get(res, 'result.count', 0)
       }
+      const currentDate = new Date()
       formatedData.Event.forEach((event: any) => {
         event['startDate'] = event['startDate'] ? this.datePipe.transform(event['startDate'], 'dd MMM, yyyy') : ''
         event['createdOn'] = event['createdOn'] ? this.datePipe.transform(event['createdOn'], 'dd MMM, yyyy') : ''
         event['cancelledOn'] = event['cancelledOn'] ? this.datePipe.transform(event['cancelledOn'], 'dd MMM, yyyy') : ''
+        event['submitedOn'] = event['submitedOn'] ? this.datePipe.transform(event['submitedOn'], 'dd MMM, yyyy') : ''
+        event['publishedOn'] = event['publishedOn'] ? this.datePipe.transform(event['publishedOn'], 'dd MMM, yyyy') : ''
+        event['rejectedOn'] = event['rejectedOn'] ? this.datePipe.transform(event['rejectedOn'], 'dd MMM, yyyy') : ''
+        if (_.get(req, 'request.filters.status').includes('Live') && event['startDateTime']) {
+          const dateTime = new Date(event['startDateTime'])
+          if (dateTime < currentDate) {
+            event['buttonsToHide'] = ['edit', 'cancel']
+          }
+        }
       })
       return formatedData
     }))

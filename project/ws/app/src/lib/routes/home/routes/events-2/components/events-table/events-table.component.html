@@ -80,7 +80,7 @@
                   </mat-icon>
                   <mat-menu #cardMenu="matMenu">
                     <ng-template matMenuContent>
-                      <ng-container *ngFor="let item of menuItems">
+                      <ng-container *ngFor="let item of getButtonsToShow(element)">
                         <div mat-menu-item [ngClass]="{'disableMenu': element['disableMenu']}"
                           [disabled]="element['disableMenu'] === true" (click)="buttonClick(item.action, element)">
                           <button class="flex item-btn items-center" mat-icon-button i18n-aria-label

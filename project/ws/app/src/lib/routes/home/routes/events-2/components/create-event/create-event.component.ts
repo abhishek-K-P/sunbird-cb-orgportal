@@ -35,6 +35,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
   userProfile: any
   showPreview = false
   selectedStepperLable = 'Basic Details'
+  eventStatus = 'draft'
   //#endregion
 
   constructor(
@@ -89,6 +90,7 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
 
   patchEventDetails() {
     this.eventId = _.get(this.eventDetails, 'identifier')
+    this.eventStatus = _.get(this.eventDetails, 'status', 'draft').toLowerCase()
     const startDate = _.get(this.eventDetails, 'startDate', '')
     const registrationLink = _.get(this.eventDetails, 'registrationLink', '')
     const isYoutubeVideo = registrationLink.toLowerCase().includes('youtube')
@@ -119,6 +121,15 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
       }
     }
     this.eventDetailsForm.setValue(eventBaseDetails)
+    if (this.eventStatus === 'live') {
+      this.eventDetailsForm.controls.typeofEvent.disable()
+      this.eventDetailsForm.controls.registrationLink.disable()
+      this.eventDetailsForm.controls.endTime.disable()
+      this.eventDetailsForm.controls.startTime.disable()
+      this.eventDetailsForm.controls.startDate.disable()
+      this.eventDetailsForm.controls.streamType.disable()
+      this.eventDetailsForm.controls.eventCategory.disable()
+    }
     this.eventDetailsForm.updateValueAndValidity()
 
     this.speakersList = _.get(this.eventDetails, 'speakers', [])
@@ -278,9 +289,52 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
         this.openSnackBar('Please add atleast one competency in Add Competency')
         return false
       }
+
+      if (!this.isValidTimeToStart) {
+        this.openSnackBar('Please select a future date and time to start the event.')
+        return false
+      }
       return true
     }
     return false
+  }
+
+  get isValidTimeToStart(): boolean {
+    const selectedDate = _.get(this.eventDetailsForm, 'value.startDate')
+    const todayFormatted = this.datePipe.transform(new Date(), 'yyyy-MM-dd') as string
+    const inputDateFormatted = this.datePipe.transform(selectedDate, 'yyyy-MM-dd') as string
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const inputDate = new Date(selectedDate)
+    inputDate.setHours(0, 0, 0, 0)
+    if (todayFormatted === inputDateFormatted) {
+      if (this.isTimeLessThanNow(_.get(this.eventDetailsForm, 'value.startTime'))) {
+        return false
+      }
+    } else if (inputDate < today) {
+      return false
+    }
+    return true
+  }
+
+  isTimeLessThanNow(givenTime: string): boolean {
+    const datePipe = new DatePipe('en-US')
+    const currentTime = datePipe.transform(new Date(), 'h:mm a') as string
+    const currentMinutes = this.timeToMinutes(currentTime)
+    const givenMinutes = this.timeToMinutes(givenTime)
+
+    return givenMinutes <= currentMinutes
+  }
+
+  timeToMinutes(time: string): number {
+    const [timePart, period] = time.split(' ')
+    const [hours, minutes] = timePart.split(':').map(Number)
+
+    let totalMinutes = hours % 12 * 60 + minutes
+    if (period === 'PM') {
+      totalMinutes += 12 * 60
+    }
+    return totalMinutes
   }
 
   addCompetencies(competencies: any) {
@@ -350,7 +404,10 @@ export class CreateEventComponent implements OnInit, AfterViewInit {
     eventDetails['typeofEvent'] = eventBaseDetails.typeofEvent
 
     if (status === 'SentToPublish') {
-      eventDetails['submitedOn'] = this.datePipe.transform(new Date(), 'dd MMM, yyyy')
+      const currentDate = new Date()
+      let isoString = currentDate.toISOString()
+      isoString = isoString.replace('Z', '+0000')
+      eventDetails['submitedOn'] = isoString
     }
 
     if (this.speakersList) {
