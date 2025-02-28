@@ -174,11 +174,7 @@ export class EventBasicDetailsComponent implements OnInit, OnChanges {
     }
     if (hours > 12) {
       hours -= 12
-      if (period === 'AM') {
-        period = 'PM'
-      } else {
-        period = 'AM'
-      }
+      period = 'PM'
     }
     if (hours === 12 && minutes === 0) {
       period = period === 'AM' ? 'PM' : 'AM'
