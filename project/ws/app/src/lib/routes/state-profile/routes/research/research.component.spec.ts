@@ -1,39 +1,78 @@
-
+import { ResearchComponent } from './research.component'
 import { OrgProfileService } from '../../services/org-profile.service'
-import { MatDialog } from '@angular/material/dialog'
-import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 import { ConfigurationsService } from '@sunbird-cb/utils'
 import { Router } from '@angular/router'
-import { ResearchComponent } from './research.component'
+import * as _ from 'lodash'
 
+jest.mock('../../services/org-profile.service')
+jest.mock('@angular/material/legacy-snack-bar')
+jest.mock('@angular/material/legacy-dialog')
+jest.mock('@sunbird-cb/utils')
+jest.mock('@angular/router')
 
 describe('ResearchComponent', () => {
     let component: ResearchComponent
-
-    const orgSvc: Partial<OrgProfileService> = {
-        updateFormStatus: jest.fn()
-    }
-    const snackBar: Partial<MatSnackBar> = {}
-    const configSvc: Partial<ConfigurationsService> = {}
-    const router: Partial<Router> = {}
-    const dialog: Partial<MatDialog> = {}
-
-    beforeAll(() => {
-        component = new ResearchComponent(
-            orgSvc as OrgProfileService,
-            snackBar as MatSnackBar,
-            configSvc as ConfigurationsService,
-            router as Router,
-            dialog as MatDialog
-        )
-    })
+    let orgProfileServiceMock: jest.Mocked<OrgProfileService>
+    let snackBarMock: jest.Mocked<MatSnackBar>
+    let dialogMock: jest.Mocked<MatDialog>
+    let configServiceMock: jest.Mocked<ConfigurationsService>
+    let routerMock: jest.Mocked<Router>
 
     beforeEach(() => {
-        jest.clearAllMocks()
-        jest.resetAllMocks()
+        orgProfileServiceMock = new OrgProfileService(null as any) as jest.Mocked<OrgProfileService>
+        snackBarMock = new MatSnackBar(null as any, null as any, null as any, null as any, null as any, null as any) as jest.Mocked<MatSnackBar>
+        dialogMock = new MatDialog(null as any, null as any, null as any, null as any, null as any, null as any, null as any) as jest.Mocked<MatDialog>
+        configServiceMock = new ConfigurationsService() as jest.Mocked<ConfigurationsService>
+        routerMock = new Router() as jest.Mocked<Router>
+
+        // Mocking OrgProfileService's formValues and rolesAndFunctions
+        orgProfileServiceMock.formValues = {
+            rolesAndFunctions: {
+                research: true, // Set this to true or whatever is required for your test case
+            },
+        }
+
+        // Mock functions
+        orgProfileServiceMock.updateFormStatus = jest.fn()
+        orgProfileServiceMock.updateLocalFormValue = jest.fn()
+        configServiceMock.unMappedUser = {
+            orgProfile: {
+                profileDetails: {
+                    research: {
+                        researchPrograms: [],
+                        researchPapers: [],
+                    },
+                },
+            },
+        }
+
+        component = new ResearchComponent(
+            orgProfileServiceMock,
+            snackBarMock,
+            configServiceMock,
+            routerMock,
+            dialogMock
+        )
+
+        // Call ngOnInit manually
+        component.ngOnInit()
     })
 
-    it('should create a instance of component', () => {
+    it('should create the component', () => {
         expect(component).toBeTruthy()
     })
-})
+
+    it('should initialize addedPapers and addedPrograms with data from configSvc', () => {
+        expect(component.addedPapers).toEqual([])
+        expect(component.addedPrograms).toEqual([])
+    })
+
+    it('should call updateFormStatus with "research" and true during initialization', () => {
+        expect(orgProfileServiceMock.updateFormStatus).toHaveBeenCalledWith('research', true)
+    })
+
+    // Your other test cases go here...
+});
+

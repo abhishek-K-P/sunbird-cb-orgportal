@@ -4,7 +4,7 @@ import { OrgProfileService } from '../../services/org-profile.service'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
 /* tslint:disable*/
-import _ from 'lodash'
+import * as _ from 'lodash'
 import { ConfigurationsService } from '@sunbird-cb/utils'
 import { Router } from '@angular/router'
 import { DialogConfirmComponent } from '../../../../../../../../../src/app/component/dialog-confirm/dialog-confirm.component'
