@@ -369,7 +369,7 @@ export class SearchServService {
   }
 
   raiseSearchEvent(query: string, filters: any, locale: any) {
-    this.events.dispatchEvent<WsEvents.IWsEventTelemetryInteract>({
+    this.events.dispatchEvent<any>({
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Warn,
       data: {
