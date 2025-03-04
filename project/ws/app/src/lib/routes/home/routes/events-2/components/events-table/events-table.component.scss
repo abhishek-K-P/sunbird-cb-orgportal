@@ -86,7 +86,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 38px;
+  height: fit-content;
+  max-height: 32px;
 }
 
 .header-info-icon {
