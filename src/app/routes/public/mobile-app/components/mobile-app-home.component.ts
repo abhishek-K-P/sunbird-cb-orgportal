@@ -4,7 +4,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, Data } from '@angular/router'
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils'
 import { Subscription } from 'rxjs'
-import { MobileAppsService } from 'src/app/services/mobile-apps.service'
+import { MobileAppsService } from '../../../../services/mobile-apps.service'
 
 interface IMobileAppLink {
   appsAndroid: string

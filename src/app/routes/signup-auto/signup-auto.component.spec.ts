@@ -1,30 +1,81 @@
-
-import { MatSnackBar } from '@angular/material/snack-bar'
-import { SignupAutoService } from './signup-auto.service'
-import { ActivatedRoute } from '@angular/router'
 import { SignupAutoComponent } from './signup-auto.component'
+import { of, throwError } from 'rxjs'
+
+// Mocking MatSnackBar, SignupAutoService, and ActivatedRoute
+const mockSnackBar = {
+    open: jest.fn()
+}
+
+const mockSignupAutoService = {
+    signup: jest.fn()
+}
+
+const mockActivatedRoute = {
+    paramMap: of({
+        get: jest.fn().mockReturnValue('1234')
+    })
+}
 
 describe('SignupAutoComponent', () => {
     let component: SignupAutoComponent
 
-    const snackBar: Partial<MatSnackBar> = {}
-    const signupAutoService: Partial<SignupAutoService> = {}
-    const route: Partial<ActivatedRoute> = {}
-
-    beforeAll(() => {
+    beforeEach(() => {
         component = new SignupAutoComponent(
-            snackBar as MatSnackBar,
-            signupAutoService as SignupAutoService,
-            route as ActivatedRoute
+            mockSnackBar as any,
+            mockSignupAutoService as any,
+            mockActivatedRoute as any
         )
     })
 
-    beforeEach(() => {
-        jest.clearAllMocks()
-        jest.resetAllMocks()
+    it('should create the component', () => {
+        expect(component).toBeTruthy()
     })
 
-    it('should create a instance of component', () => {
-        expect(component).toBeTruthy()
+    it('should call signup method on ngOnInit with the correct id', () => {
+        const spySignup = jest.spyOn(component, 'signup')
+        component.ngOnInit()
+        expect(spySignup).toHaveBeenCalledWith('1234')
+    })
+
+    it('should set fetching to true when calling signup', () => {
+        mockSignupAutoService.signup.mockReturnValue(of({ msg: '1005:success', email: 'test@example.com' }))
+        component.signup('1234')
+        expect(component.fetching).toBe(true)
+    })
+
+    it('should handle successful signup response', () => {
+        const mockResponse = { msg: '1005:success', email: 'test@example.com' }
+        mockSignupAutoService.signup.mockReturnValue(of(mockResponse))
+
+        component.signup('1234')
+
+        expect(component.fetching).toBe(false)
+        expect(component.msg).toBe('You have been registered successfully on the platform with email test@example.com. Please check your email')
+        expect(component.showResonse).toBe(true)
+        expect(mockSnackBar.open).toHaveBeenCalledWith(component.msg, 'X', { duration: 5000 })
+    })
+
+    it('should handle error response in signup method', () => {
+        const mockError = { error: { msg: 'Some error occurred' } }
+        mockSignupAutoService.signup.mockReturnValue(throwError(mockError))
+
+        component.signup('1234')
+
+        expect(component.fetching).toBe(false)
+        expect(component.showResonse).toBe(true)
+        expect(component.msg).toBe('Something went wrong please try again later!!')
+        expect(mockSnackBar.open).toHaveBeenCalledWith('Some error occurred', 'X', { duration: 5000 })
+    })
+
+    it('should handle invalid response code', () => {
+        const mockResponse = { msg: '9999:unknown error', email: 'test@example.com' }
+        mockSignupAutoService.signup.mockReturnValue(of(mockResponse))
+
+        component.signup('1234')
+
+        expect(component.fetching).toBe(false)
+        expect(component.msg).toBe('Something went wrong, please contact administrator')
+        expect(component.showResonse).toBe(true)
+        expect(mockSnackBar.open).toHaveBeenCalledWith(component.msg, 'X', { duration: 5000 })
     })
 })
