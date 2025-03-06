@@ -5,7 +5,7 @@ import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-pag
 import { Router, ActivatedRoute } from '@angular/router'
 import { ExportAsService, ExportAsConfig } from 'ngx-export-as'
 /* tslint:disable */
-import _ from 'lodash'
+import * as _ from 'lodash'
 import { WorkallocationService } from '../../services/workallocation.service'
 import { WorkAllocationPopUpComponent } from '../../../../head/work-allocation-table/work-order-popup/pop-up.component'
 import { EventService } from '@sunbird-cb/utils'
