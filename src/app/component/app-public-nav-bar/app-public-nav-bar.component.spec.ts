@@ -1,27 +1,55 @@
-
+import { AppPublicNavBarComponent } from './app-public-nav-bar.component'
 import { DomSanitizer } from '@angular/platform-browser'
 import { ConfigurationsService } from '@sunbird-cb/utils'
-import { AppPublicNavBarComponent } from './app-public-nav-bar.component'
 
 describe('AppPublicNavBarComponent', () => {
     let component: AppPublicNavBarComponent
+    let mockDomSanitizer: Partial<DomSanitizer>
+    let mockConfigSvc: Partial<ConfigurationsService>
 
-    const domSanitizer: Partial<DomSanitizer> = {}
-    const configSvc: Partial<ConfigurationsService> = {}
+    beforeEach(() => {
+        // Mock the DomSanitizer's bypassSecurityTrustResourceUrl method
+        mockDomSanitizer = {
+            bypassSecurityTrustResourceUrl: jest.fn().mockReturnValue('safeUrl'),
+        }
 
-    beforeAll(() => {
+        // Mock the ConfigurationsService instanceConfig and primaryNavBar
+        mockConfigSvc = {
+            // instanceConfig: {
+            //     logos: {
+            //         appTransparent: 'some-logo-url',
+            //     },
+            //     details: {
+            //         appName: 'Test App',
+            //     },
+            // },
+            // primaryNavBar: { background: 'blue' },
+        }
+
+        // Create an instance of the component with the mocked services
         component = new AppPublicNavBarComponent(
-            domSanitizer as DomSanitizer,
-            configSvc as ConfigurationsService
+            mockDomSanitizer as DomSanitizer,
+            mockConfigSvc as ConfigurationsService
         )
     })
 
-    beforeEach(() => {
-        jest.clearAllMocks()
-        jest.resetAllMocks()
+    it('should create the component', () => {
+        expect(component).toBeTruthy()
     })
 
-    it('should create a instance of component', () => {
-        expect(component).toBeTruthy()
+    it('should set appIcon, appName, and navBar on ngOnInit', () => {
+        component.ngOnInit()
+
+        // Check if ngOnInit correctly sets the properties
+        expect(component.appIcon).toBe('safeUrl')
+        expect(component.appName).toBe('Test App')
+        expect(component.navBar).toEqual({ background: 'blue' })
+
+        // Ensure bypassSecurityTrustResourceUrl was called with the correct argument
+        expect(mockDomSanitizer.bypassSecurityTrustResourceUrl).toHaveBeenCalledWith('some-logo-url')
+    })
+
+    it('should return true for showPublicNavbar', () => {
+        expect(component.showPublicNavbar).toBe(true)
     })
 })
