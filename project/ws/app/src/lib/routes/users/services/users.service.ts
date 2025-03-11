@@ -46,6 +46,7 @@ export class UsersService {
   getFilterDataObject = new Subject()
 
   mentorList$ = new Subject()
+  readonly TOTAL_USERS_LIMIT = 10000
   constructor(private http: HttpClient) { }
 
   getAllUsers(filter: object): Observable<any> {

@@ -49,9 +49,13 @@ export class UsersViewComponent implements OnInit, OnDestroy {
   notmyuserUsersData!: any[]
 
   activeUsersDataCount?: number | 0
+  activeUsersDataCountInner?: number | 0
   verifiedUsersDataCount?: number | 0
+  verifiedUsersDataCountInner?: number | 0
   nonverifiedUsersDataCount?: number | 0
+  nonverifiedUsersDataCountInner?: number | 0
   notmyuserUsersDataCount?: number | 0
+  notmyuserUsersDataCountInner?: number | 0
   content: NsContent.IContent = {} as NsContent.IContent
   isMdoAdmin = false
   userList: any = []
@@ -73,6 +77,8 @@ export class UsersViewComponent implements OnInit, OnDestroy {
   filterFacets = []
   departName = ''
   pendingApprovals: any = []
+  totalUserLimit: any
+  isMoreThanLimit = false
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
@@ -89,6 +95,7 @@ export class UsersViewComponent implements OnInit, OnDestroy {
     this.currentUser = this.configSvc.userProfile && this.configSvc.userProfile.userId
     this.currentUserStatus = this.configSvc.unMappedUser.profileDetails.profileStatus
     this.departName = _.get(this.route, 'parent.snapshot.data.configService.unMappedUser.channel')
+    this.totalUserLimit = this.usersService.TOTAL_USERS_LIMIT
     // this.usersData = _.get(this.route, 'snapshot.data.usersList.data') || {}
     // this.filterData()
   }
@@ -246,6 +253,7 @@ export class UsersViewComponent implements OnInit, OnDestroy {
       // this.activeUsersDataCount = allusersData.count
       const allusersData = data && data.result && data.result.response
       const userContent = allusersData.content
+      const apiUserCount = data?.result?.response?.count
       const searchText = this.getSearchText(query).toLowerCase()
       if (searchText && searchText.length && searchText.length > 0) {
         const userData: any = []
@@ -291,30 +299,49 @@ export class UsersViewComponent implements OnInit, OnDestroy {
 
               const phoneMatch = (userTelePhone && userTelePhone.includes(searchText)) ||
                 (userMob && userMob.toString().includes(searchText)) || (userPhone && userPhone.includes(searchText))
-
               if (emailMatch || firstNameMatch || phoneMatch) {
                 userData.push(element)
                 this.activeUsersData = userData
-                this.activeUsersDataCount = userData.length
+                this.activeUsersDataCount = apiUserCount
+                this.updateUserCounts(userData, apiUserCount, 'all_user')
               } else {
-                // this.activeUsersData = []
-                // this.activeUsersDataCount = 0
                 this.activeUsersData = userData
-                this.activeUsersDataCount = userData.length
+                this.activeUsersDataCount = apiUserCount
+                this.updateUserCounts(allusersData, apiUserCount, 'all_user')
               }
             }
           }
         } else {
-          this.activeUsersData = allusersData.content
-          this.activeUsersDataCount = allusersData.count
+          const userCount = allusersData?.count
+          this.updateUserCounts(allusersData, userCount, 'all_user')
         }
 
       } else {
-        this.activeUsersData = allusersData.content
-        this.activeUsersDataCount = allusersData.count
+        const userCount = allusersData?.count
+        this.updateUserCounts(allusersData, userCount, 'all_user')
       }
     })
   }
+  updateUserCounts(users: any, userCount: number, clickedTab: string) {
+    const userMappings = {
+      all_user: { dataKey: 'activeUsersData', countKey: 'activeUsersDataCount', innerCountKey: 'activeUsersDataCountInner' },
+      ver_user: { dataKey: 'verifiedUsersData', countKey: 'verifiedUsersDataCount', innerCountKey: 'verifiedUsersDataCountInner' },
+      non_ver_user: { dataKey: 'nonverifiedUsersData', countKey: 'nonverifiedUsersDataCount', innerCountKey: 'nonverifiedUsersDataCountInner' },
+      default: { dataKey: 'notmyuserUsersData', countKey: 'notmyuserUsersDataCount', innerCountKey: 'notmyuserUsersDataCountInner' }
+    }
+
+    // const mapping = userMappings[clickedTab] || userMappings.default;
+    const mapping = userMappings[clickedTab as keyof typeof userMappings] ?? userMappings.default;
+
+    // Assign user data
+    (this as any)[mapping.dataKey] = users?.content ?? users;
+    (this as any)[mapping.countKey] = userCount;
+
+    // Assign count using Math.min() for cleaner logic
+    (this as any)[mapping.innerCountKey] = Math.min(userCount, this.totalUserLimit)
+    this.isMoreThanLimit = userCount >= this.totalUserLimit
+  }
+
   async getVUsers(query: any) {
     let reqBody
     this.loaderService.changeLoad.next(true)
@@ -369,6 +396,7 @@ export class UsersViewComponent implements OnInit, OnDestroy {
       //     this.verifiedUsersDataCount = this.verifiedUsersDataCount ? this.verifiedUsersDataCount - 1 : this.verifiedUsersDataCount
       //   }
       // }
+      const apiUserCount = data?.result?.response?.count
       const allusersData = data && data.result && data.result.response
       const userContent = allusersData.content
       const searchText = this.getSearchText(query).toLowerCase()
@@ -425,20 +453,20 @@ export class UsersViewComponent implements OnInit, OnDestroy {
             if (emailMatch || firstNameMatch || phoneMatch) {
               userData.push(element)
               this.verifiedUsersData = userData
-              this.verifiedUsersDataCount = userData.length
+              this.verifiedUsersDataCount = apiUserCount
+              this.updateUserCounts(userData, apiUserCount, 'ver_user')
             } else {
               this.verifiedUsersData = userData
-              this.verifiedUsersDataCount = userData.length
+              this.verifiedUsersDataCount = apiUserCount
+              this.updateUserCounts(allusersData, apiUserCount, 'ver_user')
             }
           }
         } else {
-          this.verifiedUsersData = allusersData.content
-          this.verifiedUsersDataCount = data.result.response.count
+          this.updateUserCounts(allusersData, apiUserCount, 'ver_user')
         }
 
       } else {
-        this.verifiedUsersData = allusersData.content
-        this.verifiedUsersDataCount = data.result.response.count
+        this.updateUserCounts(allusersData, apiUserCount, 'ver_user')
       }
     })
   }
@@ -488,6 +516,7 @@ export class UsersViewComponent implements OnInit, OnDestroy {
       // this.nonverifiedUsersDataCount = data.result.response.count
       const allusersData = data && data.result && data.result.response
       const userContent = allusersData.content
+      const apiUserCount = data?.result?.response?.count
       const searchText = this.getSearchText(query).toLowerCase()
       if (searchText && searchText.length && searchText.length > 0) {
         const userData: any = []
@@ -542,20 +571,19 @@ export class UsersViewComponent implements OnInit, OnDestroy {
             if (emailMatch || firstNameMatch || phoneMatch) {
               userData.push(element)
               this.nonverifiedUsersData = userData
-              this.nonverifiedUsersDataCount = userData.length
+              this.nonverifiedUsersDataCount = apiUserCount
+              this.updateUserCounts(userData, apiUserCount, 'non_ver_user')
             } else {
               this.nonverifiedUsersData = userData
-              this.nonverifiedUsersDataCount = userData.length
+              this.updateUserCounts(allusersData, apiUserCount, 'non_ver_user')
             }
           }
         } else {
-          this.nonverifiedUsersData = allusersData.content
-          this.nonverifiedUsersDataCount = data.result.response.count
+          this.updateUserCounts(allusersData, apiUserCount, 'non_ver_user')
         }
 
       } else {
-        this.nonverifiedUsersData = allusersData.content
-        this.nonverifiedUsersDataCount = data.result.response.count
+        this.updateUserCounts(allusersData, apiUserCount, 'non_ver_user')
       }
     })
   }
@@ -603,6 +631,7 @@ export class UsersViewComponent implements OnInit, OnDestroy {
       // this.notmyuserUsersData = allusersData.content
       // this.notmyuserUsersDataCount = data.result.response.count
       const allusersData = data && data.result && data.result.response
+      const apiUserCount = data?.result?.response?.count
       const userContent = allusersData.content
       const searchText = this.getSearchText(query).toLowerCase()
       if (searchText && searchText.length && searchText.length > 0) {
@@ -659,20 +688,19 @@ export class UsersViewComponent implements OnInit, OnDestroy {
             if (emailMatch || firstNameMatch || phoneMatch) {
               userData.push(element)
               this.notmyuserUsersData = userData
-              this.notmyuserUsersDataCount = userData.length
+              this.notmyuserUsersDataCount = apiUserCount
+              this.updateUserCounts(userData, apiUserCount, 'not_my_user')
             } else {
               this.notmyuserUsersData = userData
-              this.notmyuserUsersDataCount = userData.length
+              this.updateUserCounts(allusersData, apiUserCount, 'not_my_user')
             }
           }
         } else {
-          this.notmyuserUsersData = allusersData.content
-          this.notmyuserUsersDataCount = data.result.response.count
+          this.updateUserCounts(allusersData, apiUserCount, 'not_my_user')
         }
 
       } else {
-        this.notmyuserUsersData = allusersData.content
-        this.notmyuserUsersDataCount = data.result.response.count
+        this.updateUserCounts(allusersData, apiUserCount, 'not_my_user')
       }
     })
   }

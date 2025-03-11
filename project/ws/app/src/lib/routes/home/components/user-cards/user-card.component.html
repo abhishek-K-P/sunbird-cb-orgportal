@@ -923,9 +923,17 @@
   </div>
 </div>
 
-<div class="flex flex-row justify-center" *ngIf="totalRecords">
-  <mat-paginator [pageSize]="pageSize" [length]="totalRecords" [pageSizeOptions]="[20,30,40]"
-    (page)="onChangePage($event)" showFirstLastButtons="true"></mat-paginator>
+<div class="flex flex-col items-center" *ngIf="totalRecords">
+  <div>
+    <mat-paginator [pageSize]="pageSize" [length]="totalRecords" [pageSizeOptions]="[20,30,40]"
+      (page)="onChangePage($event)" showFirstLastButtons="true">
+    </mat-paginator>
+  </div>
+  <div class="mt-2">
+    <p class="text-decoration text-sm" *ngIf="isUserLimitCrossed">
+      Up to {{userLimitSet}} users will be listed. To find a user beyond this limit, please use the search.
+    </p>
+  </div>
 </div>
 
 <ng-template #rejectDialog>
