@@ -216,9 +216,6 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
     } else {
       this.init()
     }
-    if (this.isUserLimitCrossed === undefined || this.isUserLimitCrossed === null) {
-      this.isUserLimitCrossed = false
-    }
     this.userLimitSet = this.usersSvc.TOTAL_USERS_LIMIT
   }
 
