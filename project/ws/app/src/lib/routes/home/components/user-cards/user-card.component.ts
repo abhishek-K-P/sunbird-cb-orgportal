@@ -48,6 +48,7 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
   @Input() tableData: any
   @Input() usersData: any
   @Input() totalRecords: any
+  @Input() isUserLimitCrossed: any
   @Input() tabChangeIndex: any
   @Input() currentFilter: any
   @Input() isApprovals: any
@@ -136,6 +137,7 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
   currentUserRole = ''
   checked = false
   currentUserStatus = ''
+  userLimitSet: any
   constructor(private usersSvc: UsersService, private roleservice: RolesService,
     private dialog: MatDialog, private approvalSvc: ApprovalsService,
     private route: ActivatedRoute, private snackBar: MatSnackBar,
@@ -214,6 +216,10 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
     } else {
       this.init()
     }
+    if (this.isUserLimitCrossed === undefined || this.isUserLimitCrossed === null) {
+      this.isUserLimitCrossed = false
+    }
+    this.userLimitSet = this.usersSvc.TOTAL_USERS_LIMIT
   }
 
   ngAfterViewInit() {
@@ -686,14 +692,28 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
   }
 
   onChangePage(pe: PageEvent) {
+    const totalLimit = this.usersSvc?.TOTAL_USERS_LIMIT
+    let newStartIndex = pe?.pageIndex * pe?.pageSize
+    let newPageSize = pe?.pageSize
+
+    // Ensure offset (startIndex) does not exceed totalLimit
+    if (newStartIndex >= totalLimit) {
+      newStartIndex = totalLimit - newPageSize // Adjust offset to stay within range
+    }
+
+    // Ensure the total fetched records (offset + limit) do not exceed totalLimit
+    if (newStartIndex + newPageSize > totalLimit) {
+      newPageSize = totalLimit - newStartIndex // Adjust page size to not exceed total limit
+    }
+
     if (this.isApprovals) {
-      this.startIndex = pe.pageIndex
-      this.lastIndex = pe.pageSize
-      this.paginationData.emit({ pageIndex: this.startIndex, pageSize: pe.pageSize })
+      this.startIndex = pe?.pageIndex
+      this.lastIndex = newPageSize
+      this.paginationData.emit({ pageIndex: this.startIndex, pageSize: this.lastIndex })
     } else {
-      this.startIndex = (pe.pageIndex) * pe.pageSize
-      this.lastIndex = pe.pageSize
-      this.paginationData.emit({ pageIndex: this.startIndex, pageSize: pe.pageSize })
+      this.startIndex = newStartIndex
+      this.lastIndex = newPageSize
+      this.paginationData.emit({ pageIndex: this.startIndex, pageSize: this.lastIndex })
     }
   }
   onSearch(event: any) {

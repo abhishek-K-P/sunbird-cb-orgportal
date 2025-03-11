@@ -83,8 +83,9 @@
             [currentFilter]="currentFilter" [filterFacetsData]="filterFacets"></ws-app-searchuser>
         </div>
         <ws-widget-user-card [userId]="currentUser" [currentFilter]="currentFilter" [usersData]="activeUsersData"
-          [totalRecords]="activeUsersDataCount" [tabChangeIndex]="pageIndex" [isApprovals]="false"
-          (paginationData)="onPaginateChange($event)" (updateList)="getAllUsers('')"></ws-widget-user-card>
+          [totalRecords]="activeUsersDataCountInner" [tabChangeIndex]="pageIndex" [isApprovals]="false"
+          (paginationData)="onPaginateChange($event)" (updateList)="getAllUsers('')"
+          [isUserLimitCrossed]="isMoreThanLimit"></ws-widget-user-card>
       </ng-container>
 
       <ng-container *ngIf="currentFilter === 'verified'">
@@ -94,8 +95,9 @@
         </div>
 
         <ws-widget-user-card [userId]="currentUser" [currentFilter]="currentFilter" [usersData]="verifiedUsersData"
-          [totalRecords]="verifiedUsersDataCount" [tabChangeIndex]="pageIndex"
-          (paginationData)="onPaginateChange($event)" (updateList)="getVUsers('')"></ws-widget-user-card>
+          [totalRecords]="verifiedUsersDataCountInner" [tabChangeIndex]="pageIndex"
+          (paginationData)="onPaginateChange($event)" (updateList)="getVUsers('')"
+          [isUserLimitCrossed]="isMoreThanLimit"></ws-widget-user-card>
       </ng-container>
 
       <ng-container *ngIf="currentFilter === 'nonverified'">
@@ -104,9 +106,9 @@
             [currentFilter]="currentFilter" [filterFacetsData]="filterFacets"></ws-app-searchuser>
         </div>
         <ws-widget-user-card [userId]="currentUser" [currentFilter]="currentFilter" [usersData]="nonverifiedUsersData"
-          [totalRecords]="nonverifiedUsersDataCount" [tabChangeIndex]="pageIndex"
+          [totalRecords]="nonverifiedUsersDataCountInner" [tabChangeIndex]="pageIndex"
           (paginationData)="onPaginateChange($event)" (updateList)="getNVUsers('')"
-          [pendingApprovals]="pendingApprovals"></ws-widget-user-card>
+          [pendingApprovals]="pendingApprovals" [isUserLimitCrossed]="isMoreThanLimit"></ws-widget-user-card>
       </ng-container>
 
       <ng-container *ngIf="currentFilter === 'notmyuser'">
@@ -115,8 +117,9 @@
             [currentFilter]="currentFilter" [filterFacetsData]="filterFacets"></ws-app-searchuser>
         </div>
         <ws-widget-user-card [userId]="currentUser" [currentFilter]="currentFilter" [usersData]="notmyuserUsersData"
-          [totalRecords]="notmyuserUsersDataCount" [tabChangeIndex]="pageIndex"
-          (paginationData)="onPaginateChange($event)" (updateList)="getNMUsers('')"></ws-widget-user-card>
+          [totalRecords]="notmyuserUsersDataCountInner" [tabChangeIndex]="pageIndex"
+          (paginationData)="onPaginateChange($event)" (updateList)="getNMUsers('')"
+          [isUserLimitCrossed]="isMoreThanLimit"></ws-widget-user-card>
       </ng-container>
     </mat-card-content>
   </mat-card>
