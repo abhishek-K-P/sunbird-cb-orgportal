@@ -56,7 +56,7 @@
           [ngClass]="imgURL ? 'dashed-border-none' : 'dashed-border'"
           onclick="document.getElementById('upload-assessment-file').click();">
           <input #file type="file" name="upload-assessment-file" id="upload-assessment-file" class="hidden"
-            accept=".png, .jpg, .jpeg" (change)="onFileSelected(file.files);">
+            accept=".jpg, .jpeg" (change)="onFileSelected(file.files);">
           <ng-container *ngIf="!imgURL">
             <div class="flex flex-column items-center gap-2">
               <img src="/assets/icons/upload-upward-arrow.svg" alt="icon">
