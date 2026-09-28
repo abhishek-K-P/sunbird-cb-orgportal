@@ -66,8 +66,7 @@
               <th mat-header-cell *matHeaderCellDef>Plan Title</th>
               <td mat-cell *matCellDef="let plan">
                 <div class="flex flex-column gap-1 plan-title-cell">
-                  <span class="cell-title" [matTooltip]="plan.name" matTooltipClass="new-toolTip"
-                    matTooltipPosition="above">{{plan.name}}</span>
+                  <span class="cell-title">{{plan.name}}</span>
                   <span class="cell-note">
                     <ng-container *ngIf="plan.orgName">{{plan.orgName}}</ng-container>
                     <ng-container *ngIf="plan.hasActiveAssessment">

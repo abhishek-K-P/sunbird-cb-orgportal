@@ -3,13 +3,31 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { HttpErrorResponse } from '@angular/common/http'
-import { of } from 'rxjs'
+import { forkJoin, of } from 'rxjs'
 import { mergeMap } from 'rxjs/operators'
 import * as _ from 'lodash'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { comprehensiveAssessment, noSpecialCharAssessment } from '../../models/comprehensive-assessment.model'
 import { ComprehensiveAssessmentService } from '../../services/comprehensive-assessment.service'
 import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
+
+interface IImageFormat {
+  types: string[]
+  extensions: RegExp
+  message: string
+}
+
+const POSTER_IMAGE_FORMAT: IImageFormat = {
+  types: ['image/jpeg'],
+  extensions: /\.jpe?g$/i,
+  message: 'Only JPEG files are supported',
+}
+
+const LOGO_FORMAT: IImageFormat = {
+  types: ['image/png', 'image/jpeg'],
+  extensions: /\.(png|jpe?g)$/i,
+  message: 'Only PNG and JPEG files are supported',
+}
 
 @Component({
   selector: 'ws-app-comprehensive-assessment-basic-info',
@@ -22,6 +40,8 @@ export class BasicInfoComponent implements OnInit {
   assessmentForm!: FormGroup
   imgURL: string | ArrayBuffer | null = null
   imagePath: any
+  logoURL: string | ArrayBuffer | null = null
+  logoPath: any
   userProfile: any
   userEmail = ''
   orgData: any
@@ -30,6 +50,7 @@ export class BasicInfoComponent implements OnInit {
   /** `create` builds a new collection, `edit` only hands the updated values back. */
   mode = 'create'
   appIcon = ''
+  creatorLogo = ''
   existingName = ''
 
   constructor(
@@ -45,6 +66,7 @@ export class BasicInfoComponent implements OnInit {
     this.userEmail = _.get(data, 'userEmail', '')
     this.mode = _.get(data, 'mode', 'create')
     this.appIcon = _.get(data, 'appIcon', '')
+    this.creatorLogo = _.get(data, 'creatorLogo', '')
     this.existingName = _.get(data, 'assessmentName', '')
   }
 
@@ -53,13 +75,19 @@ export class BasicInfoComponent implements OnInit {
     this.orgData = _.get(this.configSvc, 'orgReadData', {})
     if (this.isEditMode) {
       this.assessmentForm.patchValue({ assessmentName: this.existingName })
-      // the stored appIcon is already an artifact url, it previews without a re-upload
+      // the stored appIcon and creatorLogo are already artifact urls, they preview without a re-upload
       this.imgURL = this.appIcon
+      this.logoURL = this.creatorLogo
     }
   }
 
   get isEditMode(): boolean {
     return this.mode === 'edit'
+  }
+
+  /** The image is mandatory, the logo is not. */
+  get hasImage(): boolean {
+    return !!this.imgURL
   }
 
   createForm() {
@@ -74,30 +102,55 @@ export class BasicInfoComponent implements OnInit {
   }
 
   onFileSelected(files: any) {
-    if (!files || files.length === 0) {
-      return
-    }
-    const mimeType = files[0].type
-    if (!mimeType || !mimeType.startsWith('image/')) {
-      this.openSnackBar('Only JPG and PNG files are supported')
-      return
-    }
-    this.imagePath = files[0]
-    if (this.imagePath.size > comprehensiveAssessment.IMAGE_MAX_SIZE) {
-      this.openSnackBar('Please select an image with a size of less than 500KB.')
-      this.imagePath = ''
-      return
-    }
-    const reader = new FileReader()
-    reader.readAsDataURL(files[0])
-    reader.onload = () => {
-      this.imgURL = reader.result
+    const file = this.readImage(files, POSTER_IMAGE_FORMAT, (url: string | ArrayBuffer | null) => this.imgURL = url)
+    if (file) {
+      this.imagePath = file
     }
   }
 
+  onLogoSelected(files: any) {
+    const file = this.readImage(files, LOGO_FORMAT, (url: string | ArrayBuffer | null) => this.logoURL = url)
+    if (file) {
+      this.logoPath = file
+    }
+  }
+
+  /** Validates the picked image and previews it, returns the file or null when it is refused. */
+  private readImage(files: any, format: IImageFormat, onPreview: (url: string | ArrayBuffer | null) => void): File | null {
+    if (!files || files.length === 0) {
+      return null
+    }
+    const file = files[0]
+    if (!format.types.includes(file.type) || !format.extensions.test(file.name || '')) {
+      this.openSnackBar(format.message)
+      return null
+    }
+    if (file.size > comprehensiveAssessment.IMAGE_MAX_SIZE) {
+      this.openSnackBar('Please select an image with a size of less than 500KB.')
+      return null
+    }
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
+      onPreview(reader.result)
+    }
+    return file
+  }
+
+  /** Uploads whichever of the image and logo was newly picked, '' for the one that was not. */
+  private uploadImages() {
+    return forkJoin({
+      appIcon: this.imagePath ? this.assessmentSvc.uploadImageAsset(this.imagePath, this.userProfile) : of(''),
+      creatorLogo: this.logoPath ? this.assessmentSvc.uploadImageAsset(this.logoPath, this.userProfile) : of(''),
+    })
+  }
+
   onSave() {
-    if (!this.assessmentForm.valid) {
+    if (!this.assessmentForm.valid || !this.hasImage) {
       this.assessmentForm.markAllAsTouched()
+      if (!this.hasImage) {
+        this.openSnackBar('Please upload an image for the assessment')
+      }
       return
     }
     if (this.isEditMode) {
@@ -108,21 +161,26 @@ export class BasicInfoComponent implements OnInit {
   }
 
   /**
-   * Edit mode never touches the content api, it returns the updated name and appIcon so the
-   * caller can patch its form and persist them along with the rest of the basic details.
-   * A newly picked image still has to be uploaded here, appIcon must be an artifact url.
+   * Edit mode never touches the content api, it returns the updated name, appIcon and
+   * creatorLogo so the caller can patch its form and persist them along with the rest of the
+   * basic details. A newly picked image or logo still has to be uploaded here, both must be
+   * artifact urls.
    */
   updateBasicInfo() {
     const assessmentName = _.get(this.assessmentForm, 'controls.assessmentName.value', '').trim()
-    if (!this.imagePath) {
-      this.dialogRef.close({ assessmentName, appIcon: this.appIcon })
+    if (!this.imagePath && !this.logoPath) {
+      this.dialogRef.close({ assessmentName, appIcon: this.appIcon, creatorLogo: this.creatorLogo })
       return
     }
     this.loaderService.changeLoaderState(true)
-    this.assessmentSvc.uploadImageAsset(this.imagePath, this.userProfile).subscribe({
-      next: (appIcon: string) => {
+    this.uploadImages().subscribe({
+      next: ({ appIcon, creatorLogo }) => {
         this.loaderService.changeLoaderState(false)
-        this.dialogRef.close({ assessmentName, appIcon: appIcon || this.appIcon })
+        this.dialogRef.close({
+          assessmentName,
+          appIcon: appIcon || this.appIcon,
+          creatorLogo: creatorLogo || this.creatorLogo,
+        })
       },
       error: (error: HttpErrorResponse) => {
         this.loaderService.changeLoaderState(false)
@@ -132,20 +190,17 @@ export class BasicInfoComponent implements OnInit {
   }
 
   /**
-   * Creates the image asset, uploads the picked file against it and then creates the
-   * assessment collection with the resulting artifact url as appIcon / posterImage.
-   * The thumbnail is optional, so an assessment with no image is created without one
-   * and picks the default up from the content api.
+   * Creates an image asset for each picked file, uploads it and then creates the assessment
+   * collection with the image as appIcon / posterImage and the logo as creatorLogo.
+   * The logo is optional, an assessment with none is created without one.
    */
   createAssessment() {
     this.loaderService.changeLoaderState(true)
-    const appIcon$ = this.imagePath
-      ? this.assessmentSvc.uploadImageAsset(this.imagePath, this.userProfile)
-      : of('')
-    appIcon$.pipe(
-      mergeMap((appIcon: string) => this.assessmentSvc.createAssessmentCollection(
+    this.uploadImages().pipe(
+      mergeMap(({ appIcon, creatorLogo }) => this.assessmentSvc.createAssessmentCollection(
         _.get(this.assessmentForm, 'controls.assessmentName.value', '').trim(),
         appIcon,
+        creatorLogo,
         this.userProfile,
         this.userEmail
       ))
@@ -163,7 +218,7 @@ export class BasicInfoComponent implements OnInit {
       error: (error: HttpErrorResponse) => {
         this.loaderService.changeLoaderState(false)
         const errorMessage = _.get(error, 'error.message',
-                                   'Something went wrong while creating the assessment, please try again')
+          'Something went wrong while creating the assessment, please try again')
         this.openSnackBar(errorMessage)
       },
     })

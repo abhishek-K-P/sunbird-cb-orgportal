@@ -205,6 +205,16 @@ export class StepperComponent implements OnInit, OnChanges, AfterViewInit {
       return
     }
 
+    const unsavedGroups = this.unsavedUserGroupNames(groups)
+    if (unsavedGroups.length) {
+      const quotedNames = unsavedGroups.map((name: string) => `"${name}"`)
+      const lastName = quotedNames.pop()
+      const groupNames = quotedNames.length ? `${quotedNames.join(', ')} and ${lastName}` : lastName
+      this.accessControlRef.callSnackbar(
+        `Please save the user group${unsavedGroups.length > 1 ? 's' : ''} ${groupNames} before continuing.`, 'error')
+      return
+    }
+
     forkJoin(groups.map((group: any) => this.saveOneUserGroup(group)))
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -235,6 +245,18 @@ export class StepperComponent implements OnInit, OnChanges, AfterViewInit {
           this.accessControlRef?.callSnackbar('Could not save the user groups, Please try again.', 'error')
         },
       })
+  }
+
+  private unsavedUserGroupNames(groups: any[]): string[] {
+    const names: string[] = []
+    groups.forEach((group: any, index: number) => {
+      const saved = group?.userGroupId ? this.savedGroupSnapshots.get(group.userGroupId) : undefined
+      const isUnsaved = !group?.userGroupId || (!!saved && saved !== this.snapshotOf(group))
+      if (isUnsaved) {
+        names.push(group?.userGroupName || `User group ${index + 1}`)
+      }
+    })
+    return names
   }
 
   private keepSavedIdsOnForm(responses: any[]) {

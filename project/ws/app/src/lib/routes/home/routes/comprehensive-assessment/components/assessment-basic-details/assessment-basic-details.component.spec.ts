@@ -61,12 +61,16 @@ describe('AssessmentBasicDetailsComponent', () => {
     license: new FormControl(values.license ?? 'CC BY 4.0', [Validators.required]),
     keywords: new FormControl(values.keywords ?? [], [Validators.required]),
     appIcon: new FormControl(values.appIcon ?? ''),
+    creatorLogo: new FormControl(values.creatorLogo ?? ''),
   })
 
   beforeEach(() => {
     afterClosed = new Subject<any>()
     dialog = { open: jest.fn().mockReturnValue({ afterClosed: () => afterClosed.asObservable() }) }
-    component = new AssessmentBasicDetailsComponent(dialog as MatDialog, new DatePipe('en-IN'))
+    component = new AssessmentBasicDetailsComponent(
+      dialog as MatDialog,
+      new DatePipe('en-IN'),
+    )
     component.assessmentDetails = form()
     component.userProfile = userProfile
   })
@@ -197,7 +201,7 @@ describe('AssessmentBasicDetailsComponent', () => {
 
   describe('openBasicInfoDialog', () => {
     beforeEach(() => {
-      component.assessmentDetails = form({ assessmentName: 'APAR assessment', appIcon: 'icon.png' })
+      component.assessmentDetails = form({ assessmentName: 'APAR assessment', appIcon: 'icon.png', creatorLogo: 'logo.png' })
     })
 
     it('should reuse the create dialog in edit mode on the current values', () => {
@@ -210,6 +214,7 @@ describe('AssessmentBasicDetailsComponent', () => {
           mode: 'edit',
           assessmentName: 'APAR assessment',
           appIcon: 'icon.png',
+          creatorLogo: 'logo.png',
         },
       }))
     })
@@ -217,10 +222,11 @@ describe('AssessmentBasicDetailsComponent', () => {
     it('should patch the name and the image the dialog hands back', () => {
       component.openBasicInfoDialog()
 
-      afterClosed.next({ assessmentName: 'Renamed assessment', appIcon: 'new-icon.png' })
+      afterClosed.next({ assessmentName: 'Renamed assessment', appIcon: 'new-icon.png', creatorLogo: 'new-logo.png' })
 
       expect(component.assessmentName).toBe('Renamed assessment')
       expect(component.appIcon).toBe('new-icon.png')
+      expect(component.creatorLogo).toBe('new-logo.png')
     })
 
     it('should keep the current values when the dialog is cancelled', () => {
@@ -230,6 +236,7 @@ describe('AssessmentBasicDetailsComponent', () => {
 
       expect(component.assessmentName).toBe('APAR assessment')
       expect(component.appIcon).toBe('icon.png')
+      expect(component.creatorLogo).toBe('logo.png')
     })
   })
 

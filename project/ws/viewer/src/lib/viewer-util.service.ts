@@ -128,7 +128,7 @@ export class ViewerUtilService {
       tempContentData.children.forEach((childList: NsContent.IContent) => {
         if (childList.primaryCategory === NsContent.EPrimaryCategory.COURSE) {
           // tslint:disable-next-line: max-line-length
-          const courseEnrollmentList = enrollmentList && enrollmentList.filter((v: NsContent.ICourse) => v.contentId === childList.identifier)
+          const courseEnrollmentList = enrollmentList && enrollmentList.filter((v: any) => v.contentId === childList.identifier)
           if (childList.childNodes && childList.childNodes.indexOf(resourceId) !== -1) {
             if (courseEnrollmentList && courseEnrollmentList.length > 0) {
               tempData.batchId = courseEnrollmentList[courseEnrollmentList.length - 1].batch.batchId
@@ -136,7 +136,7 @@ export class ViewerUtilService {
             }
           }
         } else if (tempContentData.primaryCategory === NsContent.EPrimaryCategory.BLENDED_PROGRAM) {
-          const bPEnrollmentList = enrollmentList.filter((v: NsContent.ICourse) => v.contentId === tempContentData.identifier)
+          const bPEnrollmentList = enrollmentList.filter((v: any) => v.contentId === tempContentData.identifier)
           if (tempContentData.childNodes && tempContentData.childNodes.indexOf(resourceId) !== -1) {
             if (bPEnrollmentList.length > 0) {
               tempData.batchId = bPEnrollmentList[bPEnrollmentList.length - 1].batch.batchId

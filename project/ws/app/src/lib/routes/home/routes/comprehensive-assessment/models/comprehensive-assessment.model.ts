@@ -25,7 +25,7 @@ export const DEFAULT_FRAMEWORK = 'igot'
 export const DEFAULT_LICENSE = 'CC BY 4.0'
 
 export const noSpecialCharAssessment = new RegExp(
-  /^[ऀ-ॿঀ-৿ఀ-౿஀-௿ಀ-೿ഀ-ൿ઀-૿଀-୿਀-੿a-zA-Z0-9\(\)\$\[\]\.\-,:!'\" _\/]*$/ // NOSONAR
+  /^[a-zA-Z0-9.\-_$\/:\[\]' !]*$/ // NOSONAR
 )
 
 export namespace comprehensiveAssessment {

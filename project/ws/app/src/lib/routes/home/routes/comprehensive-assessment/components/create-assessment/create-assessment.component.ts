@@ -107,8 +107,9 @@ export class CreateAssessmentComponent implements OnInit {
       difficultyLevel: new FormControl('', [Validators.required]),
       license: new FormControl(DEFAULT_LICENSE, [Validators.required]),
       keywords: new FormControl([], [Validators.required]),
-      // the thumbnail is optional, an assessment can go live without one
-      appIcon: new FormControl(''),
+      // the thumbnail is mandatory, the logo is optional
+      appIcon: new FormControl('', [Validators.required]),
+      creatorLogo: new FormControl(''),
     })
 
     // any edit invalidates the saved copy the preview step renders
@@ -155,6 +156,7 @@ export class CreateAssessmentComponent implements OnInit {
   }
 
   patchAssessmentDetails() {
+    const thumbnail = this.contentDetails?.status?.toLowerCase() === 'live' ? this.contentDetails?.posterImage : this.contentDetails?.appIcon
     this.contentId = _.get(this.contentDetails, 'identifier', '')
     this.assessmentDetailsForm.patchValue({
       linkedPlan: this.assessmentSvc.readPlanMetadata(this.contentDetails),
@@ -164,7 +166,8 @@ export class CreateAssessmentComponent implements OnInit {
       difficultyLevel: _.get(this.contentDetails, 'difficultyLevel', ''),
       license: _.get(this.contentDetails, 'license', '') || DEFAULT_LICENSE,
       keywords: _.get(this.contentDetails, 'keywords', []) || [],
-      appIcon: _.get(this.contentDetails, 'appIcon', ''),
+      appIcon: thumbnail || '',
+      creatorLogo: _.get(this.contentDetails, 'creatorLogo', ''),
     })
     this.assessmentDetailsForm.updateValueAndValidity()
 
@@ -318,6 +321,7 @@ export class CreateAssessmentComponent implements OnInit {
       purpose: _.get(this.contentDetails, 'purpose', ''),
       appIcon: _.get(this.contentDetails, 'appIcon', ''),
       posterImage: _.get(this.contentDetails, 'posterImage', ''),
+      creatorLogo: _.get(this.contentDetails, 'creatorLogo', ''),
       difficultyLevel: _.get(this.contentDetails, 'difficultyLevel', ''),
       license: _.get(this.contentDetails, 'license', ''),
       keywords: _.get(this.contentDetails, 'keywords', []) || [],
@@ -548,6 +552,7 @@ export class CreateAssessmentComponent implements OnInit {
       purpose: formValues.learningOutcome || '',
       appIcon: formValues.appIcon,
       posterImage: formValues.appIcon,
+      creatorLogo: formValues.creatorLogo || '',
       difficultyLevel: formValues.difficultyLevel || '',
       license: formValues.license || DEFAULT_LICENSE,
       keywords: formValues.keywords || [],
@@ -573,7 +578,7 @@ export class CreateAssessmentComponent implements OnInit {
         setTimeout(() => {
           this.loaderService.changeLoaderState(false)
           this.navigateBack()
-        },         1000)
+        }, 1000)
       },
       error: (error: HttpErrorResponse) => {
         this.loaderService.changeLoaderState(false)
@@ -651,7 +656,7 @@ export class CreateAssessmentComponent implements OnInit {
             setTimeout(() => {
               this.loaderService.changeLoaderState(false)
               this.navigateBack()
-            },         comprehensiveAssessmentList.PUBLISH_SETTLE_MS)
+            }, comprehensiveAssessmentList.PUBLISH_SETTLE_MS)
             return
           }
           // the dialog can have linked another plan on the way out, which leaves the form

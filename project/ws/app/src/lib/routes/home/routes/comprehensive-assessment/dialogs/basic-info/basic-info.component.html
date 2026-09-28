@@ -14,13 +14,13 @@
           <mat-form-field appearance="outline" class="w-full">
             <input matInput placeholder="Add your assessment name" formControlName="assessmentName"
               [maxlength]="nameMaxLength">
-            <mat-hint>Only ( a-z/A-Z , 0-9 . - _ $ / : [ ]' ' " " !) characters are supported</mat-hint>
+            <mat-hint>Only ( a-z/A-Z  0-9 . _ - $ / : [ ]' ' !) characters are supported</mat-hint>
             <mat-hint align="end" class="text-sm">{{assessmentNameLength}}/{{nameMaxLength}}</mat-hint>
             <mat-error *ngIf="assessmentName?.hasError('required')">
               Assessment name is mandatory
             </mat-error>
             <mat-error *ngIf="assessmentName?.hasError('pattern')">
-              Only ( a-z/A-Z , 0-9 . _ - $ / : [ ]' ' " " !) characters are supported
+              Only ( a-z/A-Z  0-9 . _ - $ / : [ ]' ' !) characters are supported
             </mat-error>
             <mat-error
               *ngIf="!assessmentName?.hasError('required') && !assessmentName?.hasError('pattern') && assessmentName?.hasError('minlength')">
@@ -42,7 +42,7 @@
         <button mat-stroked-button class="cancel-button" (click)="dialogRef.close();" type="button">
           Cancel
         </button>
-        <button mat-flat-button class="save-button" type="submit" [disabled]="assessmentForm.invalid">
+        <button mat-flat-button class="save-button" type="submit" [disabled]="assessmentForm.invalid || !hasImage">
           {{ isEditMode ? 'Update' : 'Create' }}
         </button>
       </div>
@@ -56,11 +56,11 @@
           [ngClass]="imgURL ? 'dashed-border-none' : 'dashed-border'"
           onclick="document.getElementById('upload-assessment-file').click();">
           <input #file type="file" name="upload-assessment-file" id="upload-assessment-file" class="hidden"
-            accept=".png, .jpg, .jpeg" (change)="onFileSelected(file.files);">
+            accept=".jpg, .jpeg" (change)="onFileSelected(file.files);">
           <ng-container *ngIf="!imgURL">
             <div class="flex flex-column items-center gap-2">
               <img src="/assets/icons/upload-upward-arrow.svg" alt="icon">
-              <span class="text-sm font-bold text-blue">Upload Image</span>
+              <span class="text-sm font-bold text-blue">Upload Image <strong class="text-red-700">*</strong></span>
               <span class="text-xs font-normal">Supported file types: PNG, JPG, JPEG</span>
               <span class="text-xs font-normal">Max Size - 500KB</span>
             </div>
@@ -91,7 +91,18 @@
               </ng-container>
             </div>
             <div class="flex flex-row gap-4 items-center">
-              <img class="favicon" src="/assets/icons/favicon.ico" alt="favicon">
+              <div class="provider-logo flex justify-center items-center cursor-pointer" matTooltip="Upload logo"
+                onclick="document.getElementById('upload-assessment-logo').click();">
+                <input #logoFile type="file" name="upload-assessment-logo" id="upload-assessment-logo" class="hidden"
+                  accept=".png, .jpg, .jpeg" (change)="onLogoSelected(logoFile.files);">
+                <ng-container *ngIf="logoURL; else noLogo">
+                  <!-- a just-picked file previews from its own data url, only the stored logo is an artifact path -->
+                  <img class="logo-img" [src]="logoPath ? logoURL : (logoURL | pipePublicURL)" alt="logo">
+                </ng-container>
+                <ng-template #noLogo>
+                  <img class="logo-placeholder" src="/assets/icons/upload-upward-arrow.svg" alt="upload logo">
+                </ng-template>
+              </div>
               <span class="karmayogi-text">{{orgData?.channel}}</span>
             </div>
           </div>

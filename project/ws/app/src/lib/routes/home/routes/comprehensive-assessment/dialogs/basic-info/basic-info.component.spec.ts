@@ -19,6 +19,7 @@ describe('BasicInfoComponent', () => {
   const userProfile = { rootOrgId: 'org-1', userId: 'user-1' }
   const validName = 'APAR comprehensive assessment'
   const artifactUrl = 'https://content.igot.in/content/assets/do_1/icon.png'
+  const logoUrl = 'https://content.igot.in/content/assets/do_1/logo.png'
 
   /** A picked file, small enough to pass the size check unless told otherwise. */
   const imageFile = (overrides: any = {}) => ({
@@ -67,19 +68,22 @@ describe('BasicInfoComponent', () => {
 
       expect(component.assessmentForm.value).toEqual({ assessmentName: '' })
       expect(component.imgURL).toBeNull()
+      expect(component.logoURL).toBeNull()
       expect(component.orgData).toEqual({ orgName: 'Dept Of Project Management' })
     })
 
-    /** In edit mode the stored icon is already an artifact url, it previews as it is. */
+    /** In edit mode the stored icon and logo are already artifact urls, they preview as they are. */
     it('should open the edit dialog on the values it was handed', () => {
-      component = build({ mode: 'edit', assessmentName: validName, appIcon: artifactUrl })
+      component = build({ mode: 'edit', assessmentName: validName, appIcon: artifactUrl, creatorLogo: logoUrl })
 
       component.ngOnInit()
 
       expect(component.isEditMode).toBe(true)
       expect(component.assessmentForm.value).toEqual({ assessmentName: validName })
       expect(component.imgURL).toBe(artifactUrl)
+      expect(component.logoURL).toBe(logoUrl)
       expect(component.imagePath).toBeUndefined()
+      expect(component.logoPath).toBeUndefined()
     })
 
     it('should carry no org data when the config service holds none', () => {
@@ -135,6 +139,9 @@ describe('BasicInfoComponent', () => {
   })
 
   describe('onFileSelected', () => {
+    /** The poster image only takes a .jpg or .jpeg. */
+    const jpegFile = (overrides: any = {}) => imageFile({ type: 'image/jpeg', name: 'icon.jpg', ...overrides })
+
     beforeEach(() => {
       component.ngOnInit()
     })
@@ -147,33 +154,60 @@ describe('BasicInfoComponent', () => {
       expect(matSnackBar.open).not.toHaveBeenCalled()
     })
 
-    it('should refuse a file that is not an image', () => {
-      component.onFileSelected([imageFile({ type: 'application/pdf' })])
+    it('should refuse a png, which only the logo takes', () => {
+      component.onFileSelected([imageFile()])
 
-      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPG and PNG files are supported')
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
+      expect(component.imagePath).toBeUndefined()
+      expect(component.imgURL).toBeNull()
+    })
+
+    it('should refuse a file that is not an image', () => {
+      component.onFileSelected([imageFile({ type: 'application/pdf', name: 'brief.pdf' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
       expect(component.imagePath).toBeUndefined()
     })
 
     it('should refuse a file the browser reports no type for', () => {
-      component.onFileSelected([imageFile({ type: '' })])
+      component.onFileSelected([jpegFile({ type: '' })])
 
-      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPG and PNG files are supported')
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
+      expect(component.imagePath).toBeUndefined()
+    })
+
+    it('should refuse a file whose name is not a jpg or jpeg', () => {
+      component.onFileSelected([jpegFile({ name: 'icon.webp' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
+      expect(component.imagePath).toBeUndefined()
+    })
+
+    it('should take a .jpeg as well as a .jpg, in any case', () => {
+      const readerSpy = jest.spyOn(window as any, 'FileReader').mockImplementation(() => ({ readAsDataURL: jest.fn() }))
+      const file = jpegFile({ name: 'ICON.JPEG' })
+
+      component.onFileSelected([file])
+
+      expect(component.imagePath).toBe(file)
+      expect(matSnackBar.open).not.toHaveBeenCalled()
+      readerSpy.mockRestore()
     })
 
     it('should refuse an image over the size limit and keep nothing', () => {
-      component.onFileSelected([imageFile({ size: comprehensiveAssessment.IMAGE_MAX_SIZE + 1 })])
+      component.onFileSelected([jpegFile({ size: comprehensiveAssessment.IMAGE_MAX_SIZE + 1 })])
 
       expect(matSnackBar.open).toHaveBeenCalledWith(
         'Please select an image with a size of less than 500KB.'
       )
-      expect(component.imagePath).toBe('')
+      expect(component.imagePath).toBeUndefined()
     })
 
     /** The preview is the reader's own data url, it is never an artifact url yet. */
     it('should keep the picked image and preview it off its own data url', () => {
       const reader: any = { readAsDataURL: jest.fn(), result: 'data:image/png;base64,aaa' }
       const readerSpy = jest.spyOn(window as any, 'FileReader').mockImplementation(() => reader)
-      const file = imageFile()
+      const file = jpegFile()
 
       component.onFileSelected([file])
 
@@ -183,6 +217,82 @@ describe('BasicInfoComponent', () => {
       reader.onload()
 
       expect(component.imgURL).toBe('data:image/png;base64,aaa')
+      expect(component.logoURL).toBeNull()
+      readerSpy.mockRestore()
+    })
+  })
+
+  describe('onLogoSelected', () => {
+    beforeEach(() => {
+      component.ngOnInit()
+    })
+
+    it('should ignore an empty pick', () => {
+      component.onLogoSelected(null)
+      component.onLogoSelected([])
+
+      expect(component.logoPath).toBeUndefined()
+      expect(matSnackBar.open).not.toHaveBeenCalled()
+    })
+
+    it('should refuse a file that is not an image', () => {
+      component.onLogoSelected([imageFile({ type: 'application/pdf', name: 'brief.pdf' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
+      expect(component.logoPath).toBeUndefined()
+    })
+
+    it('should refuse an image in any other format', () => {
+      component.onLogoSelected([imageFile({ type: 'image/webp', name: 'logo.webp' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
+      expect(component.logoPath).toBeUndefined()
+    })
+
+    it('should refuse a file the browser reports no type for', () => {
+      component.onLogoSelected([imageFile({ type: '' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
+      expect(component.logoPath).toBeUndefined()
+    })
+
+    it('should take a png, a jpg and a jpeg', () => {
+      const readerSpy = jest.spyOn(window as any, 'FileReader').mockImplementation(() => ({ readAsDataURL: jest.fn() }))
+      const files = [
+        imageFile({ name: 'logo.png' }),
+        imageFile({ type: 'image/jpeg', name: 'logo.jpg' }),
+        imageFile({ type: 'image/jpeg', name: 'LOGO.JPEG' }),
+      ]
+
+      files.forEach((file: any) => {
+        component.onLogoSelected([file])
+        expect(component.logoPath).toBe(file)
+      })
+      expect(matSnackBar.open).not.toHaveBeenCalled()
+      readerSpy.mockRestore()
+    })
+
+    it('should refuse a logo over the size limit', () => {
+      component.onLogoSelected([imageFile({ size: comprehensiveAssessment.IMAGE_MAX_SIZE + 1 })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith(
+        'Please select an image with a size of less than 500KB.'
+      )
+      expect(component.logoPath).toBeUndefined()
+    })
+
+    it('should keep the picked logo apart from the image and preview it', () => {
+      const reader: any = { readAsDataURL: jest.fn(), result: 'data:image/png;base64,bbb' }
+      const readerSpy = jest.spyOn(window as any, 'FileReader').mockImplementation(() => reader)
+      const file = imageFile({ name: 'logo.png' })
+
+      component.onLogoSelected([file])
+      reader.onload()
+
+      expect(component.logoPath).toBe(file)
+      expect(component.logoURL).toBe('data:image/png;base64,bbb')
+      expect(component.imagePath).toBeUndefined()
+      expect(component.imgURL).toBeNull()
       readerSpy.mockRestore()
     })
   })
@@ -201,17 +311,42 @@ describe('BasicInfoComponent', () => {
       expect(assessmentSvc.uploadImageAsset).not.toHaveBeenCalled()
     })
 
-    /** The thumbnail is optional, an assessment can be created without one. */
-    it('should create the assessment with no image at all', () => {
+    /** The image is mandatory, an assessment cannot be created without one. */
+    it('should refuse to create the assessment with no image', () => {
       component.assessmentName?.setValue(validName)
 
       component.onSave()
 
+      expect(component.hasImage).toBe(false)
+      expect(matSnackBar.open).toHaveBeenCalledWith('Please upload an image for the assessment')
       expect(assessmentSvc.uploadImageAsset).not.toHaveBeenCalled()
+      expect(assessmentSvc.createAssessmentCollection).not.toHaveBeenCalled()
+      expect(dialogRef.close).not.toHaveBeenCalled()
+    })
+
+    /** The logo is optional, an image alone is enough to create the assessment. */
+    it('should create the assessment with an image and no logo', () => {
+      component.assessmentName?.setValue(validName)
+      component.imagePath = imageFile()
+      component.imgURL = 'data:image/png;base64,aaa'
+
+      component.onSave()
+
+      expect(assessmentSvc.uploadImageAsset).toHaveBeenCalledTimes(1)
       expect(assessmentSvc.createAssessmentCollection).toHaveBeenCalledWith(
-        validName, '', userProfile, 'creator@igot.in'
+        validName, artifactUrl, '', userProfile, 'creator@igot.in'
       )
       expect(dialogRef.close).toHaveBeenCalledWith('do_123')
+    })
+
+    it('should refuse to update an assessment that has no image', () => {
+      component = build({ mode: 'edit', assessmentName: validName, creatorLogo: logoUrl })
+      component.ngOnInit()
+
+      component.onSave()
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Please upload an image for the assessment')
+      expect(dialogRef.close).not.toHaveBeenCalled()
     })
 
     it('should create the assessment in create mode', () => {
@@ -231,7 +366,7 @@ describe('BasicInfoComponent', () => {
       component.onSave()
 
       expect(assessmentSvc.createAssessmentCollection).not.toHaveBeenCalled()
-      expect(dialogRef.close).toHaveBeenCalledWith({ assessmentName: validName, appIcon: artifactUrl })
+      expect(dialogRef.close).toHaveBeenCalledWith({ assessmentName: validName, appIcon: artifactUrl, creatorLogo: '' })
     })
   })
 
@@ -241,13 +376,24 @@ describe('BasicInfoComponent', () => {
       component.ngOnInit()
     })
 
-    it('should hand back the trimmed name and the stored icon when the image is untouched', () => {
+    it('should hand back the trimmed name, the stored icon and logo when neither is touched', () => {
       component.assessmentName?.setValue(`  ${validName}  `)
 
       component.updateBasicInfo()
 
       expect(assessmentSvc.uploadImageAsset).not.toHaveBeenCalled()
-      expect(dialogRef.close).toHaveBeenCalledWith({ assessmentName: validName, appIcon: artifactUrl })
+      expect(dialogRef.close).toHaveBeenCalledWith({ assessmentName: validName, appIcon: artifactUrl, creatorLogo: '' })
+    })
+
+    it('should upload a newly picked logo as the creatorLogo and keep the stored icon', () => {
+      assessmentSvc.uploadImageAsset.mockReturnValue(of(logoUrl))
+      component.logoPath = imageFile({ name: 'logo.png' })
+
+      component.updateBasicInfo()
+
+      expect(assessmentSvc.uploadImageAsset).toHaveBeenCalledTimes(1)
+      expect(assessmentSvc.uploadImageAsset).toHaveBeenCalledWith(component.logoPath, userProfile)
+      expect(dialogRef.close).toHaveBeenCalledWith({ assessmentName: validName, appIcon: artifactUrl, creatorLogo: logoUrl })
     })
 
     /** appIcon has to be an artifact url, so a newly picked image is uploaded first. */
@@ -261,6 +407,7 @@ describe('BasicInfoComponent', () => {
       expect(dialogRef.close).toHaveBeenCalledWith({
         assessmentName: validName,
         appIcon: 'https://content.igot.in/content/assets/do_1/new.png',
+        creatorLogo: '',
       })
       expect(loaderService.changeLoaderState).toHaveBeenLastCalledWith(false)
     })
@@ -271,7 +418,7 @@ describe('BasicInfoComponent', () => {
 
       component.updateBasicInfo()
 
-      expect(dialogRef.close).toHaveBeenCalledWith({ assessmentName: validName, appIcon: artifactUrl })
+      expect(dialogRef.close).toHaveBeenCalledWith({ assessmentName: validName, appIcon: artifactUrl, creatorLogo: '' })
     })
 
     it('should keep the dialog open and say why the upload failed', () => {
@@ -309,7 +456,20 @@ describe('BasicInfoComponent', () => {
 
       expect(assessmentSvc.uploadImageAsset).toHaveBeenCalledWith(component.imagePath, userProfile)
       expect(assessmentSvc.createAssessmentCollection).toHaveBeenCalledWith(
-        validName, artifactUrl, userProfile, 'creator@igot.in'
+        validName, artifactUrl, '', userProfile, 'creator@igot.in'
+      )
+    })
+
+    it('should upload the logo apart from the image and create the collection with it as the creatorLogo', () => {
+      const logo = imageFile({ name: 'logo.png' })
+      component.logoPath = logo
+      assessmentSvc.uploadImageAsset.mockImplementation((file: any) => of(file === logo ? logoUrl : artifactUrl))
+
+      component.createAssessment()
+
+      expect(assessmentSvc.uploadImageAsset).toHaveBeenCalledTimes(2)
+      expect(assessmentSvc.createAssessmentCollection).toHaveBeenCalledWith(
+        validName, artifactUrl, logoUrl, userProfile, 'creator@igot.in'
       )
     })
 
@@ -320,7 +480,7 @@ describe('BasicInfoComponent', () => {
 
       expect(assessmentSvc.uploadImageAsset).not.toHaveBeenCalled()
       expect(assessmentSvc.createAssessmentCollection).toHaveBeenCalledWith(
-        validName, '', userProfile, 'creator@igot.in'
+        validName, '', '', userProfile, 'creator@igot.in'
       )
     })
 

@@ -441,6 +441,21 @@ describe('UserGroupsListComponent', () => {
       )
     })
 
+    it('should surface the conflict reason when errMsg is null', () => {
+      const err = 'User group is referenced by one or more CB Plans and cannot be archived'
+      deleteUserGroup = jest.fn(() => throwError(() => ({
+        status: 409,
+        error: { responseCode: 'CONFLICT', params: { status: 'Failed', err, errMsg: null } },
+      })))
+      createComponent()
+      component.deleteUserGroup(component.groups()[0])
+      expect(component.isLoading()).toBe(false)
+      expect(snackBarFromComponent).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ data: { message: err, type: 'error' } }),
+      )
+    })
+
     it('should route the delete row action through the confirmation', () => {
       component.onRowAction({ key: 'delete', label: 'Delete' }, component.groups()[0])
       expect(deleteUserGroup).toHaveBeenCalledWith('fb9ad925-355a-4349-8688-ce1720f6dfd5')

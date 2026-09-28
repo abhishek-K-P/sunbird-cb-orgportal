@@ -50,6 +50,11 @@ export class AssessmentPreviewComponent implements AfterViewInit, OnChanges, OnD
   /** A full content hierarchy response, re-read from the api after the draft is saved. */
   @Input() content: any
 
+  readonly breadcrumbs = [
+    { url: '/app/home/comprehensive-assessment/live', title: 'Home', icon: '' },
+    { url: '', title: 'Comprehensive Assessment', icon: '' },
+  ]
+
   /** Set once View is clicked, which is what swaps the card for the player. */
   playerUrl: SafeResourceUrl | null = null
 

@@ -174,9 +174,10 @@ describe('CreateAssessmentComponent', () => {
       expect(form.get('description')?.hasError('required')).toBe(true)
     })
 
-    /** The thumbnail is optional, step 1 moves on without one. */
-    it('should not demand a thumbnail', () => {
-      expect(component.assessmentDetailsForm.get('appIcon')?.valid).toBe(true)
+    /** The thumbnail is mandatory, the logo is not. */
+    it('should demand a thumbnail but not a logo', () => {
+      expect(component.assessmentDetailsForm.get('appIcon')?.hasError('required')).toBe(true)
+      expect(component.assessmentDetailsForm.get('creatorLogo')?.valid).toBe(true)
     })
 
     /** The learning outcome is held to a floor as well as a cap. */
@@ -298,6 +299,7 @@ describe('CreateAssessmentComponent', () => {
         .toBe('APAR comprehensive assessment')
       expect(component.assessmentDetailsForm.get('learningOutcome')?.value).toBe(LEARNING_OUTCOME_HTML)
       expect(component.assessmentDetailsForm.get('appIcon')?.value).toBe('icon.png')
+      expect(component.assessmentDetailsForm.get('creatorLogo')?.value).toBe('')
       expect(component.assessmentDetailsForm.get('linkedPlan')?.value).toEqual(linkedPlan)
     })
 
@@ -825,6 +827,7 @@ describe('CreateAssessmentComponent', () => {
         purpose: LEARNING_OUTCOME_HTML,
         appIcon: 'icon.png',
         posterImage: 'icon.png',
+        creatorLogo: '',
         [aparPlan.TRAINING_PLAN_KEY]: { identifier: 'plan-1', contentList: [] },
       }))
     })

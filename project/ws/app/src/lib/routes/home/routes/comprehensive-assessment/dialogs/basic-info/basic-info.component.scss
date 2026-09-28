@@ -197,11 +197,24 @@
   border: 2px dashed $ca-border;
 }
 
-.favicon {
+.provider-logo {
   width: 38px;
   height: 38px;
+  flex-shrink: 0;
+  overflow: hidden;
   border-radius: $ca-radius-control;
   border: 1px solid $ca-border;
+
+  .logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .logo-placeholder {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .karmayogi-text {

@@ -6,7 +6,7 @@
          already loaded instead of reading the hierarchy again. -->
     <div [hidden]="isPlayerOpen">
       <ws-app-app-toc-home-v2 [inputContent]="content" [forPreview]="true"
-        [displayViewBtn]="true"></ws-app-app-toc-home-v2>
+        [displayViewBtn]="true" [caBreadcrumbs]="breadcrumbs"></ws-app-app-toc-home-v2>
     </div>
 
     <ng-container *ngIf="isPlayerOpen">

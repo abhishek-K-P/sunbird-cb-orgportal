@@ -517,8 +517,9 @@ export class ComprehensiveAssessmentService {
     )
   }
 
-  /** Creates the assessment collection with the name and thumbnail captured in the dialog. */
-  createAssessmentCollection(name: string, appIcon: string, userProfile: any, userEmail: string): Observable<any> {
+  /** Creates the assessment collection with the name, thumbnail and logo captured in the dialog. */
+  createAssessmentCollection(name: string, appIcon: string, creatorLogo: string, userProfile: any,
+    userEmail: string): Observable<any> {
     const userId = _.get(userProfile, 'userId', '')
     const creator = this.readCreatorName(userProfile)
     const request = {
@@ -528,6 +529,7 @@ export class ComprehensiveAssessmentService {
           creator,
           name,
           posterImage: appIcon,
+          ...(creatorLogo ? { creatorLogo } : {}),
           code: this.generateCode(),
           contentType: 'Collection',
           createdBy: userId,

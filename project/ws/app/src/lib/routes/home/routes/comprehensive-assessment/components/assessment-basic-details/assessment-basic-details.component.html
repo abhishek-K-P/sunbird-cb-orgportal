@@ -84,6 +84,9 @@
     <mat-error class="mat-error-text" *ngIf="showValidationMsg('assessmentName','required')">
       Assessment name is mandatory
     </mat-error>
+    <mat-error class="mat-error-text" *ngIf="showValidationMsg('appIcon','required')">
+      Assessment image is mandatory
+    </mat-error>
   </div>
 
   <div class="flex flex-column gap-2 rich-text-field">
@@ -142,7 +145,7 @@
       </mat-error>
     </div>
 
-  
+
 
     <div class="flex flex-column gap-1">
       <span class="form-lable required">Keywords</span>

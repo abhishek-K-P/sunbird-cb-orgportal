@@ -321,7 +321,7 @@ export class UserGroupsListComponent implements OnInit {
         },
         error: (err: any) => {
           this.isLoading.set(false)
-          this.callSnackbar(err?.error?.params?.errMsg ?? 'Unable to delete the user group', 'error')
+          this.callSnackbar(err?.error?.params?.errMsg || err?.error?.params?.err || 'Unable to delete the user group', 'error')
         },
       })
   }

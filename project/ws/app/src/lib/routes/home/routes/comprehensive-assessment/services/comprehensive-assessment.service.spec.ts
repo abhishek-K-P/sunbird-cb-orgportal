@@ -618,7 +618,7 @@ describe('ComprehensiveAssessmentService', () => {
     })
 
     it('should create the assessment collection with the name and thumbnail captured', () => {
-      service.createAssessmentCollection('A new assessment', 'icon-url', userProfile, 'a@b.com').subscribe()
+      service.createAssessmentCollection('A new assessment', 'icon-url', '', userProfile, 'a@b.com').subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
       const content = req.request.body.request.content
@@ -627,7 +627,17 @@ describe('ComprehensiveAssessmentService', () => {
       expect(content.posterImage).toBe('icon-url')
       expect(content.createdFor).toEqual(['org-1'])
       expect(content.creatorContacts[0].email).toBe('a@b.com')
+      expect(content.creatorLogo).toBeUndefined()
       req.flush({})
+    })
+
+    it('should write the logo as creatorLogo, apart from the thumbnail', () => {
+      service.createAssessmentCollection('A new assessment', 'icon-url', 'logo-url', userProfile, 'a@b.com').subscribe()
+
+      const content = httpMock.expectOne('apis/proxies/v8/action/content/v3/create').request.body.request.content
+      expect(content.creatorLogo).toBe('logo-url')
+      expect(content.appIcon).toBe('icon-url')
+      expect(content.posterImage).toBe('icon-url')
     })
 
     /**
@@ -635,7 +645,7 @@ describe('ComprehensiveAssessmentService', () => {
      * unnoticed - `creatorContacts` in particular is what the platform records the author by.
      */
     it('should send every field the content api records an assessment by', () => {
-      service.createAssessmentCollection('A new assessment', 'icon-url', userProfile, 'a@b.com').subscribe()
+      service.createAssessmentCollection('A new assessment', 'icon-url', '', userProfile, 'a@b.com').subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
 
@@ -649,7 +659,7 @@ describe('ComprehensiveAssessmentService', () => {
     })
 
     it('should name the author in creatorContacts as well as on the content', () => {
-      service.createAssessmentCollection('A new assessment', '', userProfile, 'a@b.com').subscribe()
+      service.createAssessmentCollection('A new assessment', '', '', userProfile, 'a@b.com').subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
       const content = req.request.body.request.content
@@ -663,7 +673,7 @@ describe('ComprehensiveAssessmentService', () => {
 
     /** The dialog reads the email off one profile, the create falls back to the other. */
     it('should fall back to the profile email when the caller has none', () => {
-      service.createAssessmentCollection('A new assessment', '', { ...userProfile, email: 'p@b.com' }, '')
+      service.createAssessmentCollection('A new assessment', '', '', { ...userProfile, email: 'p@b.com' }, '')
         .subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
@@ -676,7 +686,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should name the author from a lowercased firstname', () => {
       const named = { userId: 'user-1', firstname: 'Krisp', rootOrgId: 'org-1' }
 
-      service.createAssessmentCollection('A new assessment', '', named, 'a@b.com').subscribe()
+      service.createAssessmentCollection('A new assessment', '', '', named, 'a@b.com').subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
       const content = req.request.body.request.content
@@ -690,7 +700,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should pick one spelling rather than joining them', () => {
       const named = { userId: 'user-1', firstName: 'Krisp', firstname: 'Krisp', rootOrgId: 'org-1' }
 
-      service.createAssessmentCollection('A new assessment', '', named, 'a@b.com').subscribe()
+      service.createAssessmentCollection('A new assessment', '', '', named, 'a@b.com').subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
 
@@ -702,7 +712,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should not fall back to the userName handle', () => {
       const handleOnly = { userId: 'user-1', userName: 'manjula_k', rootOrgId: 'org-1' }
 
-      service.createAssessmentCollection('A new assessment', '', handleOnly, 'a@b.com').subscribe()
+      service.createAssessmentCollection('A new assessment', '', '', handleOnly, 'a@b.com').subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
 
@@ -712,7 +722,7 @@ describe('ComprehensiveAssessmentService', () => {
 
     /** What the learner reads as the assessment's source is the org that created it. */
     it('should name the org of the admin creating it as the source', () => {
-      service.createAssessmentCollection('A new assessment', '', userProfile, 'a@b.com').subscribe()
+      service.createAssessmentCollection('A new assessment', '', '', userProfile, 'a@b.com').subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
       expect(req.request.body.request.content.source).toBe('Karnataka Postal Circle')
@@ -721,7 +731,7 @@ describe('ComprehensiveAssessmentService', () => {
     })
 
     it('should leave the source empty rather than guess for a profile carrying no org', () => {
-      service.createAssessmentCollection('A new assessment', '', { userId: 'user-1' }, 'a@b.com').subscribe()
+      service.createAssessmentCollection('A new assessment', '', '', { userId: 'user-1' }, 'a@b.com').subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
       expect(req.request.body.request.content.source).toBe('')
@@ -729,7 +739,7 @@ describe('ComprehensiveAssessmentService', () => {
     })
 
     it('should fall back to the profile email when the caller passes none', () => {
-      service.createAssessmentCollection('A new assessment', 'icon-url',
+      service.createAssessmentCollection('A new assessment', 'icon-url', '',
                                          { ...userProfile, email: 'profile@b.com' }, '').subscribe()
 
       const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
