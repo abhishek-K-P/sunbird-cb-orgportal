@@ -33,8 +33,6 @@ export namespace comprehensiveAssessment {
   export interface IAssessmentConfig {
     identifier: string
     primaryCategory: string
-    /** Tells the settings step this is a comprehensive assessment, which fixes several of them. */
-    courseCategory: string
     contextCategory: string
     /** Seeds the settings title, so the name given in step 1 is not typed a second time. */
     name: string
