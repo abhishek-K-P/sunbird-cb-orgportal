@@ -11,6 +11,24 @@ import { comprehensiveAssessment, noSpecialCharAssessment } from '../../models/c
 import { ComprehensiveAssessmentService } from '../../services/comprehensive-assessment.service'
 import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
 
+interface IImageFormat {
+  types: string[]
+  extensions: RegExp
+  message: string
+}
+
+const POSTER_IMAGE_FORMAT: IImageFormat = {
+  types: ['image/jpeg'],
+  extensions: /\.jpe?g$/i,
+  message: 'Only JPEG files are supported',
+}
+
+const LOGO_FORMAT: IImageFormat = {
+  types: ['image/png', 'image/jpeg'],
+  extensions: /\.(png|jpe?g)$/i,
+  message: 'Only PNG and JPEG files are supported',
+}
+
 @Component({
   selector: 'ws-app-comprehensive-assessment-basic-info',
   templateUrl: './basic-info.component.html',
@@ -84,27 +102,27 @@ export class BasicInfoComponent implements OnInit {
   }
 
   onFileSelected(files: any) {
-    const file = this.readImage(files, (url: string | ArrayBuffer | null) => this.imgURL = url)
+    const file = this.readImage(files, POSTER_IMAGE_FORMAT, (url: string | ArrayBuffer | null) => this.imgURL = url)
     if (file) {
       this.imagePath = file
     }
   }
 
   onLogoSelected(files: any) {
-    const file = this.readImage(files, (url: string | ArrayBuffer | null) => this.logoURL = url)
+    const file = this.readImage(files, LOGO_FORMAT, (url: string | ArrayBuffer | null) => this.logoURL = url)
     if (file) {
       this.logoPath = file
     }
   }
 
   /** Validates the picked image and previews it, returns the file or null when it is refused. */
-  private readImage(files: any, onPreview: (url: string | ArrayBuffer | null) => void): File | null {
+  private readImage(files: any, format: IImageFormat, onPreview: (url: string | ArrayBuffer | null) => void): File | null {
     if (!files || files.length === 0) {
       return null
     }
     const file = files[0]
-    if (!file.type || !file.type.startsWith('image/')) {
-      this.openSnackBar('Only JPG and PNG files are supported')
+    if (!format.types.includes(file.type) || !format.extensions.test(file.name || '')) {
+      this.openSnackBar(format.message)
       return null
     }
     if (file.size > comprehensiveAssessment.IMAGE_MAX_SIZE) {
@@ -200,7 +218,7 @@ export class BasicInfoComponent implements OnInit {
       error: (error: HttpErrorResponse) => {
         this.loaderService.changeLoaderState(false)
         const errorMessage = _.get(error, 'error.message',
-                                   'Something went wrong while creating the assessment, please try again')
+          'Something went wrong while creating the assessment, please try again')
         this.openSnackBar(errorMessage)
       },
     })
