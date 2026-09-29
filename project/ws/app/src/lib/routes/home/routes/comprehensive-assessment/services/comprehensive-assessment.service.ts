@@ -18,14 +18,14 @@ const API_END_POINTS = {
   CONTENT_HIERARCHY_EDIT: (contentId: string) => `apis/proxies/v8/action/content/v3/hierarchy/${contentId}?mode=edit`,
   UPDATE_CONTENT: (contentId: string) => `apis/proxies/v8/action/content/v3/update/${contentId}`,
   UPDATE_ASSESSMENT_CONTENT: (contentId: string) => `apis/proxies/v8/action/content/ca/v1/update/${contentId}`,
-  CONTENT_HIERARCHY_UPDATE: 'apis/proxies/v8/action/content/v3/hierarchy/update',
+  CONTENT_HIERARCHY_UPDATE: 'apis/proxies/v8/action/content/ca/v1/hierarchy/update',
   QUESTIONSET_HIERARCHY_EDIT: (questionSetId: string) => `apis/proxies/v8/questionset/v1/hierarchy/${questionSetId}?mode=edit`,
   // no `mode=edit`: the published copy, the only one that can answer whether it is Live
   QUESTIONSET_READ: (questionSetId: string) => `apis/proxies/v8/questionset/v1/read/${questionSetId}`,
   PUBLISH_QUESTIONSET: (questionSetId: string) => `apis/proxies/v8/ca/questionset/v1/publish/${questionSetId}`,
   CONTENT_SEARCH: 'apis/proxies/v8/sunbirdigot/v4/search',
   PUBLISH_ASSESSMENT: (contentId: string) => `apis/proxies/v8/action/ca/v1/publish/${contentId}`,
-  RETIRE_CONTENT: 'apis/proxies/v8/v1/content/retire',
+  RETIRE_CONTENT: 'apis/proxies/v8/v1/content/ca/retire',
   APAR_PLAN_SEARCH: 'apis/proxies/v8/cbplan/v4/search',
   APAR_PLAN_READ: (planId: string) => `apis/proxies/v8/cbplan/v4/read/${planId}`,
 }
