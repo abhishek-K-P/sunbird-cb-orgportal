@@ -937,6 +937,7 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
   }
 
   onChangePage(pe: PageEvent) {
+    this.pageSize = pe.pageSize
     const totalLimit = this.usersSvc?.TOTAL_USERS_LIMIT
     let newStartIndex = pe?.pageIndex * pe?.pageSize
     let newPageSize = pe?.pageSize
@@ -951,15 +952,9 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
       newPageSize = totalLimit - newStartIndex // Adjust page size to not exceed total limit
     }
 
-    if (this.isApprovals) {
-      this.startIndex = pe?.pageIndex
-      this.lastIndex = newPageSize
-      this.paginationData.emit({ pageIndex: this.startIndex, pageSize: this.lastIndex })
-    } else {
-      this.startIndex = newStartIndex
-      this.lastIndex = newPageSize
-      this.paginationData.emit({ pageIndex: this.startIndex, pageSize: this.lastIndex })
-    }
+    this.startIndex = newStartIndex
+    this.lastIndex = newPageSize
+    this.paginationData.emit({ pageIndex: this.startIndex, pageSize: this.lastIndex })
   }
   onSearch(event: any) {
     this.searchByEnterKey.emit(event)
