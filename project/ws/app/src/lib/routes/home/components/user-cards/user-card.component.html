@@ -947,7 +947,7 @@
 
 <div class="flex flex-col items-center" *ngIf="totalRecords">
   <div>
-    <mat-paginator [pageSize]="pageSize" [length]="totalRecords" [pageSizeOptions]="defaultPaginationSize"
+    <mat-paginator [pageIndex]="(tabChangeIndex || 0) / pageSize" [pageSize]="pageSize" [length]="totalRecords" [pageSizeOptions]="defaultPaginationSize"
       (page)="onChangePage($event)" showFirstLastButtons="true">
     </mat-paginator>
   </div>
