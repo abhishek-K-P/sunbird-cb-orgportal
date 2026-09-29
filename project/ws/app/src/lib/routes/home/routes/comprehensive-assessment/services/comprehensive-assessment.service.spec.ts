@@ -469,7 +469,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should create a content', () => {
       service.createContent({ request: {} }).subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
       expect(req.request.method).toBe('POST')
       req.flush({})
     })
@@ -752,7 +752,7 @@ describe('ComprehensiveAssessmentService', () => {
       const file = new File(['x'], 'thumb.png', { type: 'image/png' })
       service.uploadImageAsset(file, userProfile).subscribe((res: string) => appIcon = res)
 
-      httpMock.expectOne('apis/proxies/v8/action/content/v3/create').flush({ result: { identifier: 'asset-1' } })
+      httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create').flush({ result: { identifier: 'asset-1' } })
       httpMock.expectOne('apis/proxies/v8/upload/action/content/v3/upload/asset-1')
         .flush({ result: { artifactUrl: 'https://cdn.example.com/thumb.png' } })
 
@@ -766,7 +766,7 @@ describe('ComprehensiveAssessmentService', () => {
         error: (error: Error) => message = error.message,
       })
 
-      httpMock.expectOne('apis/proxies/v8/action/content/v3/create').flush({ result: {} })
+      httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create').flush({ result: {} })
 
       expect(message).toBe('Something went wrong while creating the image asset')
     })
