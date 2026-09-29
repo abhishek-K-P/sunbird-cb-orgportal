@@ -48,7 +48,7 @@ export class ComprehensiveAssessmentService {
   //#region (content apis)
 
   createContent(req: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.CREATE_CONTENT, req)
+    return this.http.post<any>(API_END_POINTS.CREATE_ASSESSMENT_CONTENT, req)
   }
 
   uploadContent(contentId: string, formData: FormData): Observable<any> {
