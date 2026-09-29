@@ -491,7 +491,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should patch a content under the request envelope', () => {
       service.updateContent('do-1', { name: 'Renamed' }).subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/update/do-1')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/update/do-1')
       expect(req.request.method).toBe('PATCH')
       expect(req.request.body).toEqual({ request: { content: { name: 'Renamed' } } })
       req.flush({})
@@ -587,7 +587,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should retire a content, the delete the api offers', () => {
       service.retireAssessment('do-1').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/v1/content/retire')
+      const req = httpMock.expectOne('apis/proxies/v8/v1/content/ca/retire')
       expect(req.request.method).toBe('DELETE')
       expect(req.request.body).toEqual({ request: { contentIds: ['do-1'] } })
       req.flush({})
@@ -612,7 +612,7 @@ describe('ComprehensiveAssessmentService', () => {
 
       service.linkAssessmentToCollection(collection, 'qs-1').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/hierarchy/update')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/hierarchy/update')
       expect(req.request.body.request.data.hierarchy['do-1'].children).toEqual(['qs-1'])
       req.flush({})
     })
@@ -620,7 +620,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should create the assessment collection with the name and thumbnail captured', () => {
       service.createAssessmentCollection('A new assessment', 'icon-url', '', userProfile, 'a@b.com').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
       const content = req.request.body.request.content
       expect(content.name).toBe('A new assessment')
       expect(content.appIcon).toBe('icon-url')
@@ -634,7 +634,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should write the logo as creatorLogo, apart from the thumbnail', () => {
       service.createAssessmentCollection('A new assessment', 'icon-url', 'logo-url', userProfile, 'a@b.com').subscribe()
 
-      const content = httpMock.expectOne('apis/proxies/v8/action/content/v3/create').request.body.request.content
+      const content = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create').request.body.request.content
       expect(content.creatorLogo).toBe('logo-url')
       expect(content.appIcon).toBe('icon-url')
       expect(content.posterImage).toBe('icon-url')
@@ -647,7 +647,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should send every field the content api records an assessment by', () => {
       service.createAssessmentCollection('A new assessment', 'icon-url', '', userProfile, 'a@b.com').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
 
       expect(Object.keys(req.request.body.request.content).sort()).toEqual([
         'accessSetting', 'appIcon', 'code', 'contentType', 'courseCategory', 'createdBy',
@@ -661,7 +661,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should name the author in creatorContacts as well as on the content', () => {
       service.createAssessmentCollection('A new assessment', '', '', userProfile, 'a@b.com').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
       const content = req.request.body.request.content
 
       expect(content.creatorContacts).toEqual([{ id: 'user-1', name: 'Manjula', email: 'a@b.com' }])
@@ -676,7 +676,7 @@ describe('ComprehensiveAssessmentService', () => {
       service.createAssessmentCollection('A new assessment', '', '', { ...userProfile, email: 'p@b.com' }, '')
         .subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
 
       expect(req.request.body.request.content.creatorContacts[0].email).toBe('p@b.com')
       req.flush({})
@@ -688,7 +688,7 @@ describe('ComprehensiveAssessmentService', () => {
 
       service.createAssessmentCollection('A new assessment', '', '', named, 'a@b.com').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
       const content = req.request.body.request.content
 
       expect(content.creator).toBe('Krisp')
@@ -702,7 +702,7 @@ describe('ComprehensiveAssessmentService', () => {
 
       service.createAssessmentCollection('A new assessment', '', '', named, 'a@b.com').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
 
       expect(req.request.body.request.content.creator).toBe('Krisp')
       req.flush({})
@@ -714,7 +714,7 @@ describe('ComprehensiveAssessmentService', () => {
 
       service.createAssessmentCollection('A new assessment', '', '', handleOnly, 'a@b.com').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
 
       expect(req.request.body.request.content.creator).toBe('')
       req.flush({})
@@ -724,7 +724,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should name the org of the admin creating it as the source', () => {
       service.createAssessmentCollection('A new assessment', '', '', userProfile, 'a@b.com').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
       expect(req.request.body.request.content.source).toBe('Karnataka Postal Circle')
       expect(req.request.body.request.content.organisation).toEqual(['Karnataka Postal Circle'])
       req.flush({})
@@ -733,7 +733,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should leave the source empty rather than guess for a profile carrying no org', () => {
       service.createAssessmentCollection('A new assessment', '', '', { userId: 'user-1' }, 'a@b.com').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
       expect(req.request.body.request.content.source).toBe('')
       req.flush({})
     })
@@ -742,7 +742,7 @@ describe('ComprehensiveAssessmentService', () => {
       service.createAssessmentCollection('A new assessment', 'icon-url', '',
                                          { ...userProfile, email: 'profile@b.com' }, '').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/create')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create')
       expect(req.request.body.request.content.creatorContacts[0].email).toBe('profile@b.com')
       req.flush({})
     })
