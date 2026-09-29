@@ -104,9 +104,9 @@ export class CreateAssessmentComponent implements OnInit {
         ),
       ]),
       // classification: what the platform holds as difficultyLevel, license and keywords
-      difficultyLevel: new FormControl('', [Validators.required]),
+      difficultyLevel: new FormControl('', []),
       license: new FormControl(DEFAULT_LICENSE, [Validators.required]),
-      keywords: new FormControl([], [Validators.required]),
+      keywords: new FormControl([], []),
       // the thumbnail is mandatory, the logo is optional
       appIcon: new FormControl('', [Validators.required]),
       creatorLogo: new FormControl(''),
@@ -163,7 +163,6 @@ export class CreateAssessmentComponent implements OnInit {
       assessmentName: _.get(this.contentDetails, 'name', ''),
       description: _.get(this.contentDetails, 'description', ''),
       learningOutcome: _.get(this.contentDetails, 'purpose', ''),
-      difficultyLevel: _.get(this.contentDetails, 'difficultyLevel', ''),
       license: _.get(this.contentDetails, 'license', '') || DEFAULT_LICENSE,
       keywords: _.get(this.contentDetails, 'keywords', []) || [],
       appIcon: thumbnail || '',
@@ -322,7 +321,6 @@ export class CreateAssessmentComponent implements OnInit {
       appIcon: _.get(this.contentDetails, 'appIcon', ''),
       posterImage: _.get(this.contentDetails, 'posterImage', ''),
       creatorLogo: _.get(this.contentDetails, 'creatorLogo', ''),
-      difficultyLevel: _.get(this.contentDetails, 'difficultyLevel', ''),
       license: _.get(this.contentDetails, 'license', ''),
       keywords: _.get(this.contentDetails, 'keywords', []) || [],
       // the content schema types duration as a String, so the saved copy is read as one
@@ -553,7 +551,6 @@ export class CreateAssessmentComponent implements OnInit {
       appIcon: formValues.appIcon,
       posterImage: formValues.appIcon,
       creatorLogo: formValues.creatorLogo || '',
-      difficultyLevel: formValues.difficultyLevel || '',
       license: formValues.license || DEFAULT_LICENSE,
       keywords: formValues.keywords || [],
       // the content schema types duration as a String, a number fails validation

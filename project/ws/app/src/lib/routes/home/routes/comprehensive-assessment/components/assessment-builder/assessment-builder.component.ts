@@ -42,10 +42,9 @@ export class AssessmentBuilderComponent implements OnChanges {
     return {
       identifier: this.assessmentId || '',
       primaryCategory: QUESTIONSET_PRIMARY_CATEGORY,
-      courseCategory: CONTENT_COURSE_CATEGORY,
       // written onto the question set as it is created, and the only thing that tells a Live
       // comprehensive assessment from any other Course Assessment
-      contextCategory: '',
+      contextCategory: CONTENT_COURSE_CATEGORY,
       name:  '',
       isReadOnly: this.openMode === 'view',
     }

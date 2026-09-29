@@ -139,6 +139,9 @@ describe('BasicInfoComponent', () => {
   })
 
   describe('onFileSelected', () => {
+    /** The poster image only takes a .jpg or .jpeg. */
+    const jpegFile = (overrides: any = {}) => imageFile({ type: 'image/jpeg', name: 'icon.jpg', ...overrides })
+
     beforeEach(() => {
       component.ngOnInit()
     })
@@ -151,21 +154,48 @@ describe('BasicInfoComponent', () => {
       expect(matSnackBar.open).not.toHaveBeenCalled()
     })
 
-    it('should refuse a file that is not an image', () => {
-      component.onFileSelected([imageFile({ type: 'application/pdf' })])
+    it('should refuse a png, which only the logo takes', () => {
+      component.onFileSelected([imageFile()])
 
-      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPG and PNG files are supported')
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
+      expect(component.imagePath).toBeUndefined()
+      expect(component.imgURL).toBeNull()
+    })
+
+    it('should refuse a file that is not an image', () => {
+      component.onFileSelected([imageFile({ type: 'application/pdf', name: 'brief.pdf' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
       expect(component.imagePath).toBeUndefined()
     })
 
     it('should refuse a file the browser reports no type for', () => {
-      component.onFileSelected([imageFile({ type: '' })])
+      component.onFileSelected([jpegFile({ type: '' })])
 
-      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPG and PNG files are supported')
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
+      expect(component.imagePath).toBeUndefined()
+    })
+
+    it('should refuse a file whose name is not a jpg or jpeg', () => {
+      component.onFileSelected([jpegFile({ name: 'icon.webp' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
+      expect(component.imagePath).toBeUndefined()
+    })
+
+    it('should take a .jpeg as well as a .jpg, in any case', () => {
+      const readerSpy = jest.spyOn(window as any, 'FileReader').mockImplementation(() => ({ readAsDataURL: jest.fn() }))
+      const file = jpegFile({ name: 'ICON.JPEG' })
+
+      component.onFileSelected([file])
+
+      expect(component.imagePath).toBe(file)
+      expect(matSnackBar.open).not.toHaveBeenCalled()
+      readerSpy.mockRestore()
     })
 
     it('should refuse an image over the size limit and keep nothing', () => {
-      component.onFileSelected([imageFile({ size: comprehensiveAssessment.IMAGE_MAX_SIZE + 1 })])
+      component.onFileSelected([jpegFile({ size: comprehensiveAssessment.IMAGE_MAX_SIZE + 1 })])
 
       expect(matSnackBar.open).toHaveBeenCalledWith(
         'Please select an image with a size of less than 500KB.'
@@ -177,7 +207,7 @@ describe('BasicInfoComponent', () => {
     it('should keep the picked image and preview it off its own data url', () => {
       const reader: any = { readAsDataURL: jest.fn(), result: 'data:image/png;base64,aaa' }
       const readerSpy = jest.spyOn(window as any, 'FileReader').mockImplementation(() => reader)
-      const file = imageFile()
+      const file = jpegFile()
 
       component.onFileSelected([file])
 
@@ -206,10 +236,40 @@ describe('BasicInfoComponent', () => {
     })
 
     it('should refuse a file that is not an image', () => {
-      component.onLogoSelected([imageFile({ type: 'application/pdf' })])
+      component.onLogoSelected([imageFile({ type: 'application/pdf', name: 'brief.pdf' })])
 
-      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPG and PNG files are supported')
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
       expect(component.logoPath).toBeUndefined()
+    })
+
+    it('should refuse an image in any other format', () => {
+      component.onLogoSelected([imageFile({ type: 'image/webp', name: 'logo.webp' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
+      expect(component.logoPath).toBeUndefined()
+    })
+
+    it('should refuse a file the browser reports no type for', () => {
+      component.onLogoSelected([imageFile({ type: '' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
+      expect(component.logoPath).toBeUndefined()
+    })
+
+    it('should take a png, a jpg and a jpeg', () => {
+      const readerSpy = jest.spyOn(window as any, 'FileReader').mockImplementation(() => ({ readAsDataURL: jest.fn() }))
+      const files = [
+        imageFile({ name: 'logo.png' }),
+        imageFile({ type: 'image/jpeg', name: 'logo.jpg' }),
+        imageFile({ type: 'image/jpeg', name: 'LOGO.JPEG' }),
+      ]
+
+      files.forEach((file: any) => {
+        component.onLogoSelected([file])
+        expect(component.logoPath).toBe(file)
+      })
+      expect(matSnackBar.open).not.toHaveBeenCalled()
+      readerSpy.mockRestore()
     })
 
     it('should refuse a logo over the size limit', () => {
