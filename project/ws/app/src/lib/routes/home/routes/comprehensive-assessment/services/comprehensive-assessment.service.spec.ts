@@ -587,7 +587,7 @@ describe('ComprehensiveAssessmentService', () => {
     it('should retire a content, the delete the api offers', () => {
       service.retireAssessment('do-1').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/v1/content/retire')
+      const req = httpMock.expectOne('apis/proxies/v8/v1/content/ca/retire')
       expect(req.request.method).toBe('DELETE')
       expect(req.request.body).toEqual({ request: { contentIds: ['do-1'] } })
       req.flush({})
@@ -612,7 +612,7 @@ describe('ComprehensiveAssessmentService', () => {
 
       service.linkAssessmentToCollection(collection, 'qs-1').subscribe()
 
-      const req = httpMock.expectOne('apis/proxies/v8/action/content/v3/hierarchy/update')
+      const req = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/hierarchy/update')
       expect(req.request.body.request.data.hierarchy['do-1'].children).toEqual(['qs-1'])
       req.flush({})
     })
