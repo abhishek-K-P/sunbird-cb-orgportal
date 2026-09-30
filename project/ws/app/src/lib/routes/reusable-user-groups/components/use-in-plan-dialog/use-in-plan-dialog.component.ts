@@ -120,6 +120,8 @@ export class UseInPlanDialogComponent implements OnInit {
       filter: {
         status: PLAN_STATUSES,
         orgIdList: [this.configSvc.userProfile?.rootOrgId],
+        // only the plans the logged in user created
+        createdBy: this.configSvc.userProfile?.userId,
       },
       pageNumber: this.pageIndex(),
       pageSize: this.pageSize(),
