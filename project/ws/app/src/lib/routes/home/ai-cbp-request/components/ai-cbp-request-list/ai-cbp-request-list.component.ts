@@ -175,6 +175,7 @@ export class AICBPRequestListComponent implements OnInit {
       state: {
         configData: {
           userData: this.configSvc.unMappedUser,
+          configData: this.configSvc.globalConfig,
           requestRowData: element,
           fromPortal: 'mdo'
         },
