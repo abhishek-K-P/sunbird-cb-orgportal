@@ -216,6 +216,8 @@ export class ComprehensiveAssessmentService {
     const must: any[] = [
       { term: { 'status.keyword': comprehensiveAssessmentList.STATUS_LIVE } },
       { term: { 'isApar': true } },
+      // only the plans still running, ending today or later
+      { range: { endDate: { gt: this.endOfYesterday() } } },
     ]
     if (params.planYear && params.planYear !== aparPlan.ALL_YEARS) {
       must.push({ term: { 'planYear.keyword': params.planYear } })
@@ -240,6 +242,16 @@ export class ComprehensiveAssessmentService {
         count: _.get(res, 'result.result.totalCount', 0),
       }))
     )
+  }
+
+  /**
+   * The last second of yesterday in the user's day, in UTC and without milliseconds, as the
+   * search takes it: in IST today's plans are the ones ending after "yesterdayT18:29:59Z".
+   */
+  private endOfYesterday(): string {
+    const startOfToday = new Date()
+    startOfToday.setHours(0, 0, 0, 0)
+    return new Date(startOfToday.getTime() - 1000).toISOString().replace(/\.\d{3}Z$/, 'Z')
   }
 
   /**

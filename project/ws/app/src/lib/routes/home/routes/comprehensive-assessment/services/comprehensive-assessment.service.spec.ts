@@ -74,6 +74,29 @@ describe('ComprehensiveAssessmentService', () => {
   })
 
   describe('searchAparPlans', () => {
+    /** The last second of yesterday in the local day, the way the search takes it. */
+    const endOfYesterday = () => {
+      const startOfToday = new Date()
+      startOfToday.setHours(0, 0, 0, 0)
+      return new Date(startOfToday.getTime() - 1000).toISOString().replace(/\.\d{3}Z$/, 'Z')
+    }
+
+    it('should ask only for the plans ending today or later', () => {
+      jest.useFakeTimers().setSystemTime(new Date('2026-09-29T10:00:00+05:30'))
+      try {
+        service.searchAparPlans(searchParams).subscribe()
+
+        const req = httpMock.expectOne(PLAN_SEARCH_URL)
+        const range = req.request.body.request.query.bool.must.find((clause: any) => clause.range)
+        expect(range).toEqual({ range: { endDate: { gt: endOfYesterday() } } })
+        // the value keeps the search's own format, no milliseconds
+        expect(range.range.endDate.gt).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/)
+        req.flush(planSearchResponse([]))
+      } finally {
+        jest.useRealTimers()
+      }
+    })
+
     it('should post the query the cbplan v4 search expects', () => {
       service.searchAparPlans(searchParams).subscribe()
 
@@ -86,6 +109,7 @@ describe('ComprehensiveAssessmentService', () => {
               must: [
                 { term: { 'status.keyword': 'Live' } },
                 { term: { 'isApar': true } },
+                { range: { endDate: { gt: endOfYesterday() } } },
                 { term: { 'planYear.keyword': '2026-27' } },
               ],
               must_not: [{ exists: { field: aparPlan.LINKED_ASSESSMENT_FIELD } }],
@@ -129,6 +153,7 @@ describe('ComprehensiveAssessmentService', () => {
       expect(req.request.body.request.query.bool.must).toEqual([
         { term: { 'status.keyword': 'Live' } },
         { term: { 'isApar': true } },
+        { range: { endDate: { gt: endOfYesterday() } } },
       ])
       req.flush(planSearchResponse([]))
     })
