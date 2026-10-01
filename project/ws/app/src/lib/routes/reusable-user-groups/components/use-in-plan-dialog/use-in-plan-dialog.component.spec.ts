@@ -42,7 +42,7 @@ describe('UseInPlanDialogComponent', () => {
         { provide: MAT_DIALOG_DATA, useValue: { groupId: 'g1', groupName: 'DS & above' } },
         { provide: TrainingPlanDashboardService, useValue: { getTrainingPlansV4 } },
         { provide: AparYearService, useValue: { getCurrentAparYear: () => '2026-27' } },
-        { provide: ConfigurationsService, useValue: { userProfile: { rootOrgId: 'org-1' } } },
+        { provide: ConfigurationsService, useValue: { userProfile: { rootOrgId: 'org-1', userId: 'user-1' } } },
       ],
     })
     fixture = TestBed.createComponent(UseInPlanDialogComponent)
@@ -62,7 +62,7 @@ describe('UseInPlanDialogComponent', () => {
 
   it('should search the draft plans of the logged in org on open', () => {
     expect(getTrainingPlansV4).toHaveBeenCalledWith({
-      filter: { status: ['draft'], orgIdList: ['org-1'], planYear: '2026-27' },
+      filter: { status: ['draft'], orgIdList: ['org-1'], createdBy: 'user-1', planYear: '2026-27' },
       pageNumber: 0,
       pageSize: 5,
       searchString: '',
@@ -95,7 +95,7 @@ describe('UseInPlanDialogComponent', () => {
     expect(component.pageIndex()).toBe(0)
     expect(getTrainingPlansV4).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        filter: { status: ['draft'], orgIdList: ['org-1'], planYear: '2025-26' },
+        filter: { status: ['draft'], orgIdList: ['org-1'], createdBy: 'user-1', planYear: '2025-26' },
       }),
     )
   })
