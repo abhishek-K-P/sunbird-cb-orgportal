@@ -20,9 +20,21 @@ $field-height: 44px;
   }
 }
 
+/* The picker never outgrows the viewport. At a high browser zoom (150% and up) the viewport is
+   short enough that the full picker ran past its bottom edge, and with the dialog surface clipping
+   its overflow and the page behind it locked, the rows, the paginator and the actions were out of
+   reach with nothing to scroll. The header, the filters and the actions keep their height and the
+   plan list gives up the rest, scrolling within whatever is left. */
 .plan-picker {
   width: 100%;
+  max-height: 90vh;
   background-color: #FFFFFF;
+
+  .picker-header,
+  .picker-filters,
+  .picker-actions {
+    flex: 0 0 auto;
+  }
 
   .picker-title {
     /* stylelint-disable */
@@ -100,10 +112,27 @@ $field-height: 44px;
 /* The list grows every cycle, so the rows scroll. The frame sits on the scroll area
    rather than on the table, which is what kept the scrollbar outside the border and
    scrolled the table's own top edge out of sight. */
+.picker-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  mat-paginator {
+    flex: 0 0 auto;
+  }
+}
+
 .plans-scroll {
   display: block;
+  flex: 0 1 auto;
+  min-height: $header-height + $row-height;
   max-height: $header-height + ($row-height * $visible-rows);
   overflow-y: auto;
+  /* The rows only ever scroll up and down, the table is sized to the dialog's width */
+  overflow-x: hidden;
   border: 1px solid $ca-border;
   border-radius: $ca-radius-control;
 
@@ -133,6 +162,10 @@ $field-height: 44px;
 }
 
 .plans-table {
+  /* Fixed layout sizes the columns off the widths below and the dialog, not off the text in them.
+     With the automatic layout one long plan title stretched its column past the dialog, which is
+     what brought up a horizontal scroller and kept the title's ellipsis from ever applying. */
+  table-layout: fixed;
   /* Material 20 renames every table part to `mat-mdc-*`, the `mat-header-cell` /
      `mat-cell` / `mat-row` selectors these rules used to carry matched nothing, so the
      header type, the cell padding and the row hover were all silently doing nothing. */
@@ -176,6 +209,7 @@ $field-height: 44px;
 
   .plan-title-cell {
     min-width: 0;
+    overflow: hidden;
   }
 
   .cell-value {
