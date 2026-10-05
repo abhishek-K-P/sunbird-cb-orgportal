@@ -97,6 +97,7 @@ describe('UserGroupsListComponent', () => {
   let userRoles: Set<string>
   let userId: string
   let userOrgId: string
+  let isCCA: boolean
 
   const createComponent = () => {
     TestBed.resetTestingModule()
@@ -110,7 +111,7 @@ describe('UserGroupsListComponent', () => {
         },
         {
           provide: ConfigurationsService,
-          useValue: { userRoles, userProfile: { userId, rootOrgId: userOrgId } },
+          useValue: { userRoles, userProfile: { userId, rootOrgId: userOrgId }, orgReadData: { isCCA } },
         },
         {
           provide: ReusableUserGroupsService,
@@ -139,6 +140,7 @@ describe('UserGroupsListComponent', () => {
     userRoles = new Set(['mdo_leader'])
     userId = 'leader-1'
     userOrgId = '01384674984551219213'
+    isCCA = false
     createComponent()
   })
 
@@ -599,6 +601,52 @@ describe('UserGroupsListComponent', () => {
 
       it('should leave the flag out for an unrecognised value', () => {
         expect(deputationFilter(['yes'])).not.toHaveProperty('profileDetails.cadreDetails.isOnCentralDeputation')
+      })
+    })
+
+    it('should keep a non CCA empty rootOrgId criteria inside the own organisation', () => {
+      component.onCheckReach(withCriteria([{ criteriaKey: 'rootOrgId', criteriaValue: [] }]))
+      expect(fetchUserCount).toHaveBeenCalledWith({ rootOrgId: [userOrgId], status: 1 })
+    })
+
+    describe('every organisation selected by a CCA', () => {
+      beforeEach(() => {
+        isCCA = true
+        createComponent()
+      })
+
+      it('should count across every organisation for an empty rootOrgId criteria', () => {
+        component.onCheckReach(withCriteria([{ criteriaKey: 'rootOrgId', criteriaValue: [] }]))
+        expect(fetchUserCount).toHaveBeenCalledWith({ status: 1 })
+      })
+
+      it('should count across every organisation for a rootOrgId criteria without a value', () => {
+        component.onCheckReach(withCriteria([{ criteriaKey: 'rootOrgId', criteriaValue: null }]))
+        expect(fetchUserCount).toHaveBeenCalledWith({ status: 1 })
+      })
+
+      it('should read an empty rootOrgId criteria in the search shape', () => {
+        component.onCheckReach(withCriteria([{ rootOrgId: [] }]))
+        expect(fetchUserCount).toHaveBeenCalledWith({ status: 1 })
+      })
+
+      it('should not add the own organisation for a group without a rootOrgId criteria', () => {
+        component.onCheckReach(withCriteria([{ criteriaKey: 'designation', criteriaValue: ['Director'] }]))
+        expect(fetchUserCount).toHaveBeenCalledWith({
+          'profileDetails.professionalDetails.designation': ['Director'],
+          status: 1,
+        })
+      })
+
+      it('should keep the other conditions without narrowing to the own organisation', () => {
+        component.onCheckReach(withCriteria([
+          { criteriaKey: 'rootOrgId', criteriaValue: [] },
+          { criteriaKey: 'group', criteriaValue: ['Group A'] },
+        ]))
+        expect(fetchUserCount).toHaveBeenCalledWith({
+          'profileDetails.professionalDetails.group': ['Group A'],
+          status: 1,
+        })
       })
     })
 
