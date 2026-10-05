@@ -120,11 +120,14 @@ export class UseInPlanDialogComponent implements OnInit {
       filter: {
         status: PLAN_STATUSES,
         orgIdList: [this.configSvc.userProfile?.rootOrgId],
-        // only the plans the logged in user created
-        createdBy: this.configSvc.userProfile?.userId,
       },
       pageNumber: this.pageIndex(),
       pageSize: this.pageSize(),
+    }
+
+    // MDO admins see only the plans they created
+    if (this.configSvc.userRoles?.has('MDO_ADMIN')) {
+      payload.filter.createdBy = this.configSvc.userProfile?.userId
     }
 
     if (this.reportingYear()) {
