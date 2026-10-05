@@ -17,13 +17,8 @@ interface IImageFormat {
   message: string
 }
 
-const POSTER_IMAGE_FORMAT: IImageFormat = {
-  types: ['image/jpeg'],
-  extensions: /\.jpe?g$/i,
-  message: 'Only JPEG files are supported',
-}
-
-const LOGO_FORMAT: IImageFormat = {
+/** Both the assessment image and the logo take PNG, JPG and JPEG. */
+const IMAGE_FORMAT: IImageFormat = {
   types: ['image/png', 'image/jpeg'],
   extensions: /\.(png|jpe?g)$/i,
   message: 'Only PNG and JPEG files are supported',
@@ -75,10 +70,10 @@ export class BasicInfoComponent implements OnInit {
     this.orgData = _.get(this.configSvc, 'orgReadData', {})
     if (this.isEditMode) {
       this.assessmentForm.patchValue({ assessmentName: this.existingName })
-      // the stored appIcon and creatorLogo are already artifact urls, they preview without a re-upload
       this.imgURL = this.appIcon
-      this.logoURL = this.creatorLogo
     }
+    this.creatorLogo = this.creatorLogo || _.get(this.orgData, 'logo', '')
+    this.logoURL = this.creatorLogo
   }
 
   get isEditMode(): boolean {
@@ -102,14 +97,14 @@ export class BasicInfoComponent implements OnInit {
   }
 
   onFileSelected(files: any) {
-    const file = this.readImage(files, POSTER_IMAGE_FORMAT, (url: string | ArrayBuffer | null) => this.imgURL = url)
+    const file = this.readImage(files, IMAGE_FORMAT, (url: string | ArrayBuffer | null) => this.imgURL = url)
     if (file) {
       this.imagePath = file
     }
   }
 
   onLogoSelected(files: any) {
-    const file = this.readImage(files, LOGO_FORMAT, (url: string | ArrayBuffer | null) => this.logoURL = url)
+    const file = this.readImage(files, IMAGE_FORMAT, (url: string | ArrayBuffer | null) => this.logoURL = url)
     if (file) {
       this.logoPath = file
     }
@@ -200,7 +195,7 @@ export class BasicInfoComponent implements OnInit {
       mergeMap(({ appIcon, creatorLogo }) => this.assessmentSvc.createAssessmentCollection(
         _.get(this.assessmentForm, 'controls.assessmentName.value', '').trim(),
         appIcon,
-        creatorLogo,
+        creatorLogo || this.creatorLogo,
         this.userProfile,
         this.userEmail
       ))

@@ -107,6 +107,10 @@ $field-height: 44px;
   border: 1px solid $ca-border;
   border-radius: $ca-radius-control;
 
+  @media (max-width: 1200px) {
+    max-height: $header-height + ($row-height * 3);
+  }
+
   &::-webkit-scrollbar {
     width: 8px;
   }

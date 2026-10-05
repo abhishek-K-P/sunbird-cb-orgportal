@@ -1,5 +1,5 @@
 <div class="plan-picker flex flex-column">
-  <div class="picker-header flex justify-between items-start gap-4 px-6 pt-5">
+  <div class="picker-header flex justify-between items-start gap-4 px-4 pt-4">
     <div class="flex flex-column gap-1">
       <span class="picker-title">Select the APAR plan this assessment belongs to</span>
       <span class="picker-subtitle">
@@ -11,7 +11,7 @@
     </button>
   </div>
 
-  <div class="picker-filters flex items-center gap-4 px-6 pt-4">
+  <div class="picker-filters flex items-center gap-4 px-4 pt-4">
     <mat-form-field appearance="outline" class="search-field">
       <mat-icon matPrefix class="filter-icon">search</mat-icon>
       <input matInput placeholder="Search by plan title" (input)="onSearch($any($event.target).value)">
@@ -27,7 +27,7 @@
     </mat-form-field>
   </div>
 
-  <div class="picker-body px-6 py-4">
+  <div class="picker-body px-4 pt-4">
     <ng-container *ngIf="showLoader">
       <div class="picker-state flex justify-center items-center">
         <mat-spinner diameter="32"></mat-spinner>
@@ -101,7 +101,7 @@
     </ng-container>
   </div>
 
-  <div class="picker-actions flex justify-end items-center gap-4 px-6 py-4">
+  <div class="picker-actions flex justify-end items-center gap-4 px-4 py-4">
     <button mat-stroked-button class="cancel-button" type="button" (click)="dialogRef.close()">
       <span class="font-bold text-sm">Cancel</span>
     </button>

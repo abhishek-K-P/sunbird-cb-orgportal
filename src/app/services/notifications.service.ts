@@ -194,7 +194,13 @@ export class NotificationsService {
           localStorage.setItem('isStandaloneResource', 'false')
         }
         if (res.status === 'Live') {
-          window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+          if (notification.sub_category === 'CONTENT_PUBLISHED' && res?.courseCategory === 'Comprehensive Assessment') {
+            this.router.navigate([`/app/home/comprehensive-assessment/edit/${notification.message.data.id}`], {
+              queryParams: { mode: 'view', preview: true, editMode: true, pathUrl: 'live', step: 'preview' },
+            })
+          } else {
+            window.open(`${environment.portalsForNotifications.cbp}/author/content-detail/${notification.message.data.id}/overview-v2?isStandaloneResource=${isStandaloneResource}`, '_blank')
+          }
         } else if (res.status === 'Draft') {
           if (roles.includes('CONTENT_CREATOR')) {
             window.open(`${environment.portalsForNotifications.cbp}/author/editor/${notification.message.data.id}/collectionV2?isStandaloneResource=${isStandaloneResource}`, '_blank')
