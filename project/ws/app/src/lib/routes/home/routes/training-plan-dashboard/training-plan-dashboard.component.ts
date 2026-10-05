@@ -369,7 +369,7 @@ export class TrainingPlanDashboardComponent implements OnInit, AfterViewInit {
       next: () => {
         this.snackBar.open('CBP plan deleted successfully.')
         this.loaderService.changeLoaderState(false)
-        this.filter(this.currentFilter)
+        this.tabNavigate('RETIRE', selectedRow.userType)
       },
       error: () => {
         this.loaderService.changeLoaderState(false)

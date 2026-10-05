@@ -2,12 +2,9 @@ import {
   AfterViewInit, Component, DestroyRef, EventEmitter, Input, OnChanges, OnInit, Output, ViewChild,
 } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
-import { Observable, forkJoin, of } from 'rxjs'
 import { TrainingPlanContent } from '../../models/training-plan.model'
 import { ActivatedRoute } from '@angular/router'
 import { TrainingPlanDataSharingService } from '../../services/training-plan-data-share.service'
-// eslint-disable-next-line max-len
-import { ReusableUserGroupsService } from '../../../reusable-user-groups/services/reusable-user-groups.service'
 import { AccessControlComponent, NsAccessControlConfig } from '@sunbird-cb/access-settings'
 @Component({
   selector: 'ws-app-stepper',
@@ -42,7 +39,6 @@ export class StepperComponent implements OnInit, OnChanges, AfterViewInit {
   constructor(
     private route: ActivatedRoute,
     private tpdsSvc: TrainingPlanDataSharingService,
-    private userGroupsSvc: ReusableUserGroupsService,
     private destroyRef: DestroyRef,
   ) { }
 
@@ -215,36 +211,15 @@ export class StepperComponent implements OnInit, OnChanges, AfterViewInit {
       return
     }
 
-    forkJoin(groups.map((group: any) => this.saveOneUserGroup(group)))
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (responses: any[]) => {
-          this.keepSavedIdsOnForm(responses)
-
-          const savedIds = responses.map((response: any) => response?.result?.usergroupid)
-          if (savedIds.some((userGroupId: any) => !userGroupId)) {
-            this.accessControlRef?.callSnackbar('Could not save every user group, Please try again.', 'error')
-            return
-          }
-
-          const userGroups = groups.map((group: any, index: number) => ({
-            ...group,
-            userGroupId: savedIds[index],
-          }))
-          this.tempSavedAccessControl = {
-            userGroups,
-            version: this.tempSavedAccessControl?.version || 1,
-          }
-          this.rememberSavedGroups(userGroups)
-          this.tpdsSvc.trainingPlanStepperData.accessControl = this.tempSavedAccessControl
-          this.checkForaddAccessSettings(false)
-          this.addAccessSettingDisable = false
-          this.tabChangeToTimeline(false)
-        },
-        error: () => {
-          this.accessControlRef?.callSnackbar('Could not save the user groups, Please try again.', 'error')
-        },
-      })
+    // Every group was already saved from its own button, so move on without calling the API again
+    this.tempSavedAccessControl = {
+      userGroups: groups,
+      version: this.tempSavedAccessControl?.version || 1,
+    }
+    this.tpdsSvc.trainingPlanStepperData.accessControl = this.tempSavedAccessControl
+    this.checkForaddAccessSettings(false)
+    this.addAccessSettingDisable = false
+    this.tabChangeToTimeline(false)
   }
 
   private unsavedUserGroupNames(groups: any[]): string[] {
@@ -257,36 +232,6 @@ export class StepperComponent implements OnInit, OnChanges, AfterViewInit {
       }
     })
     return names
-  }
-
-  private keepSavedIdsOnForm(responses: any[]) {
-    responses.forEach((response: any, index: number) => {
-      const userGroupId = response?.result?.usergroupid
-      if (userGroupId) {
-        this.accessControlRef?.userGroup?.at(index)?.get('savedUserGroupId')
-          ?.setValue(userGroupId, { emitEvent: false })
-      }
-    })
-  }
-
-  /** Creates an unknown group, rewrites a changed one, and leaves an untouched one alone. */
-  private saveOneUserGroup(group: any): Observable<any> {
-    const request = {
-      criteria: group.userGroupCriteriaList,
-      userGroupName: group.userGroupName,
-    }
-    if (!group.userGroupId) {
-      return this.userGroupsSvc.createUserGroup(request)
-    }
-    if (!this.hasUserGroupChanged(group)) {
-      return of({ result: { usergroupid: group.userGroupId } })
-    }
-    return this.userGroupsSvc.updateUserGroup({ ...request, userGroupId: group.userGroupId })
-  }
-
-  private hasUserGroupChanged(group: any): boolean {
-    const saved = this.savedGroupSnapshots.get(group.userGroupId)
-    return !saved || saved !== this.snapshotOf(group)
   }
 
   private rememberSavedGroups(userGroups: any[] = []) {

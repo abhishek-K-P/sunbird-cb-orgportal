@@ -5,7 +5,7 @@ import { LoaderService } from '../../../../../../../../../src/app/services/loade
 import { TrainingPlanService } from '../../../training-plan/services/traininig-plan.service'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { Subject, of } from 'rxjs'
+import { Subject, of, throwError } from 'rxjs'
 import { TrainingPlanDashboardComponent } from './training-plan-dashboard.component'
 import { AparYearService } from '../../../../common/apar-year-select/apar-year.service'
 
@@ -37,7 +37,9 @@ describe('TrainingPlanDashboardComponent', () => {
             getTrainingPlansV4: jest.fn().mockReturnValue(of({ params: { status: 'failed' } })),
         }
         loaderService = { changeLoaderState: jest.fn() }
-        trainingPlanService = {}
+        trainingPlanService = {
+            archivePlanV4: jest.fn().mockReturnValue(of({ params: { status: 'success' } })),
+        }
         snackBar = { open: jest.fn() }
         aparYearSvc = {
             getCurrentAparYear: jest.fn().mockReturnValue('2026-27'),
@@ -186,6 +188,50 @@ describe('TrainingPlanDashboardComponent', () => {
             component.changeAparYear('2026-27')
 
             expect(fetchSpy).not.toHaveBeenCalled()
+        })
+    })
+
+    describe('deleteContentData', () => {
+        const selectedRow = { id: 'plan-1', userType: 'Designation' }
+
+        it('should archive the plan by its id', () => {
+            component.deleteContentData(selectedRow)
+
+            expect(trainingPlanService.archivePlanV4).toHaveBeenCalledWith({
+                request: { id: 'plan-1', comment: 'Content deleted' },
+            })
+        })
+
+        /** A deleted plan is retired, so the user lands on the tab that lists it. */
+        it('should move to the Retire tab once the plan is deleted', () => {
+            component.currentFilter = 'Live'
+
+            component.deleteContentData(selectedRow)
+
+            expect(snackBar.open).toHaveBeenCalledWith('CBP plan deleted successfully.')
+            expect(router.navigate).toHaveBeenCalledWith(
+                ['app', 'home', 'training-plan-dashboard'],
+                { queryParams: { type: 'RETIRE', tabSelected: 'Designation' } }
+            )
+            expect(loaderService.changeLoaderState).toHaveBeenLastCalledWith(false)
+        })
+
+        it('should not reload the current tab in place of moving to Retire', () => {
+            const filterSpy = jest.spyOn(component, 'filter')
+
+            component.deleteContentData(selectedRow)
+
+            expect(filterSpy).not.toHaveBeenCalled()
+        })
+
+        it('should stay on the current tab when the delete fails', () => {
+            trainingPlanService.archivePlanV4.mockReturnValue(throwError(() => ({})))
+
+            component.deleteContentData(selectedRow)
+
+            expect(router.navigate).not.toHaveBeenCalled()
+            expect(snackBar.open).not.toHaveBeenCalled()
+            expect(loaderService.changeLoaderState).toHaveBeenLastCalledWith(false)
         })
     })
 

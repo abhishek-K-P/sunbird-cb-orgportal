@@ -20,6 +20,7 @@ describe('BasicInfoComponent', () => {
   const validName = 'APAR comprehensive assessment'
   const artifactUrl = 'https://content.igot.in/content/assets/do_1/icon.png'
   const logoUrl = 'https://content.igot.in/content/assets/do_1/logo.png'
+  const orgLogoUrl = 'https://portal.uat.karmayogibharat.net/content-store/customselfregistration-logo/org-logo.jpg'
 
   /** A picked file, small enough to pass the size check unless told otherwise. */
   const imageFile = (overrides: any = {}) => ({
@@ -68,8 +69,40 @@ describe('BasicInfoComponent', () => {
 
       expect(component.assessmentForm.value).toEqual({ assessmentName: '' })
       expect(component.imgURL).toBeNull()
-      expect(component.logoURL).toBeNull()
+      expect(component.logoURL).toBe('')
+      expect(component.creatorLogo).toBe('')
       expect(component.orgData).toEqual({ orgName: 'Dept Of Project Management' })
+    })
+
+    it('should preview the org logo as the creatorLogo when creating', () => {
+      configSvc = { orgReadData: { orgName: 'Dept Of Project Management', logo: orgLogoUrl } }
+      component = build()
+
+      component.ngOnInit()
+
+      expect(component.creatorLogo).toBe(orgLogoUrl)
+      expect(component.logoURL).toBe(orgLogoUrl)
+      expect(component.logoPath).toBeUndefined()
+    })
+
+    it('should fall back to the org logo when the assessment being edited has none', () => {
+      configSvc = { orgReadData: { logo: orgLogoUrl } }
+      component = build({ mode: 'edit', assessmentName: validName, appIcon: artifactUrl })
+
+      component.ngOnInit()
+
+      expect(component.creatorLogo).toBe(orgLogoUrl)
+      expect(component.logoURL).toBe(orgLogoUrl)
+    })
+
+    it('should keep the stored creatorLogo over the org logo when editing', () => {
+      configSvc = { orgReadData: { logo: orgLogoUrl } }
+      component = build({ mode: 'edit', assessmentName: validName, appIcon: artifactUrl, creatorLogo: logoUrl })
+
+      component.ngOnInit()
+
+      expect(component.creatorLogo).toBe(logoUrl)
+      expect(component.logoURL).toBe(logoUrl)
     })
 
     /** In edit mode the stored icon and logo are already artifact urls, they preview as they are. */
@@ -139,7 +172,7 @@ describe('BasicInfoComponent', () => {
   })
 
   describe('onFileSelected', () => {
-    /** The poster image only takes a .jpg or .jpeg. */
+    /** The image takes a .png, .jpg or .jpeg, the same as the logo. */
     const jpegFile = (overrides: any = {}) => imageFile({ type: 'image/jpeg', name: 'icon.jpg', ...overrides })
 
     beforeEach(() => {
@@ -154,44 +187,50 @@ describe('BasicInfoComponent', () => {
       expect(matSnackBar.open).not.toHaveBeenCalled()
     })
 
-    it('should refuse a png, which only the logo takes', () => {
-      component.onFileSelected([imageFile()])
+    it('should take a png, a jpg and a jpeg, in any case', () => {
+      const readerSpy = jest.spyOn(window as any, 'FileReader').mockImplementation(() => ({ readAsDataURL: jest.fn() }))
+      const files = [
+        imageFile({ name: 'icon.png' }),
+        imageFile({ name: 'ICON.PNG' }),
+        jpegFile(),
+        jpegFile({ name: 'ICON.JPEG' }),
+      ]
 
-      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
-      expect(component.imagePath).toBeUndefined()
-      expect(component.imgURL).toBeNull()
+      files.forEach((file: any) => {
+        component.onFileSelected([file])
+        expect(component.imagePath).toBe(file)
+      })
+      expect(matSnackBar.open).not.toHaveBeenCalled()
+      readerSpy.mockRestore()
     })
 
     it('should refuse a file that is not an image', () => {
       component.onFileSelected([imageFile({ type: 'application/pdf', name: 'brief.pdf' })])
 
-      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
+      expect(component.imagePath).toBeUndefined()
+      expect(component.imgURL).toBeNull()
+    })
+
+    it('should refuse an image in any other format', () => {
+      component.onFileSelected([imageFile({ type: 'image/webp', name: 'icon.webp' })])
+
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
       expect(component.imagePath).toBeUndefined()
     })
 
     it('should refuse a file the browser reports no type for', () => {
       component.onFileSelected([jpegFile({ type: '' })])
 
-      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
       expect(component.imagePath).toBeUndefined()
     })
 
-    it('should refuse a file whose name is not a jpg or jpeg', () => {
+    it('should refuse a file whose name is not a png, jpg or jpeg', () => {
       component.onFileSelected([jpegFile({ name: 'icon.webp' })])
 
-      expect(matSnackBar.open).toHaveBeenCalledWith('Only JPEG files are supported')
+      expect(matSnackBar.open).toHaveBeenCalledWith('Only PNG and JPEG files are supported')
       expect(component.imagePath).toBeUndefined()
-    })
-
-    it('should take a .jpeg as well as a .jpg, in any case', () => {
-      const readerSpy = jest.spyOn(window as any, 'FileReader').mockImplementation(() => ({ readAsDataURL: jest.fn() }))
-      const file = jpegFile({ name: 'ICON.JPEG' })
-
-      component.onFileSelected([file])
-
-      expect(component.imagePath).toBe(file)
-      expect(matSnackBar.open).not.toHaveBeenCalled()
-      readerSpy.mockRestore()
     })
 
     it('should refuse an image over the size limit and keep nothing', () => {
@@ -217,7 +256,7 @@ describe('BasicInfoComponent', () => {
       reader.onload()
 
       expect(component.imgURL).toBe('data:image/png;base64,aaa')
-      expect(component.logoURL).toBeNull()
+      expect(component.logoURL).toBe('')
       readerSpy.mockRestore()
     })
   })
@@ -442,6 +481,43 @@ describe('BasicInfoComponent', () => {
 
       expect(matSnackBar.open).toHaveBeenCalledWith('Something went wrong please try again')
     })
+
+    describe('with an org logo', () => {
+      beforeEach(() => {
+        configSvc = { orgReadData: { logo: orgLogoUrl } }
+        component = build({ mode: 'edit', assessmentName: validName, appIcon: artifactUrl })
+        component.ngOnInit()
+      })
+
+      it('should hand back the org logo as the creatorLogo when no logo is picked', () => {
+        component.updateBasicInfo()
+
+        expect(assessmentSvc.uploadImageAsset).not.toHaveBeenCalled()
+        expect(dialogRef.close).toHaveBeenCalledWith({ assessmentName: validName, appIcon: artifactUrl, creatorLogo: orgLogoUrl })
+      })
+
+      it('should keep the org logo when only a new image is uploaded', () => {
+        assessmentSvc.uploadImageAsset.mockReturnValue(of('https://content.igot.in/content/assets/do_1/new.png'))
+        component.imagePath = imageFile()
+
+        component.updateBasicInfo()
+
+        expect(dialogRef.close).toHaveBeenCalledWith({
+          assessmentName: validName,
+          appIcon: 'https://content.igot.in/content/assets/do_1/new.png',
+          creatorLogo: orgLogoUrl,
+        })
+      })
+
+      it('should hand back a newly picked logo in place of the org logo', () => {
+        assessmentSvc.uploadImageAsset.mockReturnValue(of(logoUrl))
+        component.logoPath = imageFile({ name: 'logo.png' })
+
+        component.updateBasicInfo()
+
+        expect(dialogRef.close).toHaveBeenCalledWith({ assessmentName: validName, appIcon: artifactUrl, creatorLogo: logoUrl })
+      })
+    })
   })
 
   describe('createAssessment', () => {
@@ -482,6 +558,37 @@ describe('BasicInfoComponent', () => {
       expect(assessmentSvc.createAssessmentCollection).toHaveBeenCalledWith(
         validName, '', '', userProfile, 'creator@igot.in'
       )
+    })
+
+    describe('with an org logo', () => {
+      beforeEach(() => {
+        configSvc = { orgReadData: { logo: orgLogoUrl } }
+        component = build()
+        component.ngOnInit()
+        component.assessmentName?.setValue(validName)
+        component.imagePath = imageFile()
+      })
+
+      it('should create the collection with the org logo when no logo is picked', () => {
+        component.createAssessment()
+
+        expect(assessmentSvc.uploadImageAsset).toHaveBeenCalledTimes(1)
+        expect(assessmentSvc.createAssessmentCollection).toHaveBeenCalledWith(
+          validName, artifactUrl, orgLogoUrl, userProfile, 'creator@igot.in'
+        )
+      })
+
+      it('should create the collection with a newly picked logo in place of the org logo', () => {
+        const logo = imageFile({ name: 'logo.png' })
+        component.logoPath = logo
+        assessmentSvc.uploadImageAsset.mockImplementation((file: any) => of(file === logo ? logoUrl : artifactUrl))
+
+        component.createAssessment()
+
+        expect(assessmentSvc.createAssessmentCollection).toHaveBeenCalledWith(
+          validName, artifactUrl, logoUrl, userProfile, 'creator@igot.in'
+        )
+      })
     })
 
     it('should hand the new assessment back so the builder can open on it', () => {
