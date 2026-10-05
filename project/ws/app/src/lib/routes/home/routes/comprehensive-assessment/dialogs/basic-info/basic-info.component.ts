@@ -21,7 +21,7 @@ interface IImageFormat {
 const IMAGE_FORMAT: IImageFormat = {
   types: ['image/png', 'image/jpeg'],
   extensions: /\.(png|jpe?g)$/i,
-  message: 'Only PNG and JPEG files are supported',
+  message: 'Only PNG, JPG and JPEG files are supported',
 }
 
 @Component({
