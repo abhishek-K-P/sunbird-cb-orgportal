@@ -225,11 +225,18 @@ export class UserGroupsListComponent implements OnInit {
   private toUserSearchFilters(group: IUserGroup): Record<string, any> {
     const filters: Record<string, any> = {}
     const criteria = group?.criteria ?? []
+    const isCCA = !!this.configSvc.orgReadData?.isCCA
+    let selectsAllOrganisations = false
 
     criteria.forEach(entry => {
       this.toConditionPairs(entry).forEach(([criteriaKey, values]) => {
         const filterKey = CRITERIA_FILTER_KEYS[criteriaKey]
         if (!filterKey) {
+          return
+        }
+        // A CCA "Select all" organisations is saved as an empty rootOrgId list, counted across every organisation
+        if (isCCA && criteriaKey === 'rootOrgId' && (!Array.isArray(values) || !values.length)) {
+          selectsAllOrganisations = true
           return
         }
         // Central deputation is a single flag, saved as a value or a list, a boolean or a string
@@ -247,14 +254,14 @@ export class UserGroupsListComponent implements OnInit {
       })
     })
 
-    // The count stays inside the logged in organisation unless the group names its own,
-    // or the whole ministry / state it sits under
+    // A non CCA count stays inside the logged in organisation unless the group names its own,
+    // or the whole ministry / state it sits under, a CCA counts across every organisation
     const namesOrganisationScope = filters['rootOrgId']?.length || filters['profileDetails.ministryOrStateId']?.length
-    if (!namesOrganisationScope && this.configSvc.userProfile?.rootOrgId) {
+    if (!isCCA && !namesOrganisationScope && this.configSvc.userProfile?.rootOrgId) {
       filters['rootOrgId'] = [this.configSvc.userProfile.rootOrgId]
     }
 
-    if (Object.keys(filters).length) {
+    if (Object.keys(filters).length || selectsAllOrganisations) {
       filters['status'] = 1
     }
 
