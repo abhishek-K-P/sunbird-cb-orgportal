@@ -126,8 +126,8 @@ export class UseInPlanDialogComponent implements OnInit {
     }
 
 
-    // MDO admins see only the plans they created
-    if (this.configSvc.userRoles?.has('MDO_ADMIN')) {
+    // MDO admins see only the plans they created (userRoles are stored lowercased)
+    if (this.configSvc.userRoles?.has('mdo_admin')) {
       payload.filter.createdBy = this.configSvc.userProfile?.userId
     }
 
