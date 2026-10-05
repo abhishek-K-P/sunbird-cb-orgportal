@@ -33,6 +33,7 @@ interface ISectionCount {
 const STEP_BASIC_DETAILS = 'Basic Details'
 const STEP_ASSESSMENT = 'Assessment'
 const STEP_PREVIEW = 'Preview'
+const PREVIEW_STEP_INDEX = 2
 
 @Component({
   selector: 'ws-app-create-assessment',
@@ -132,9 +133,21 @@ export class CreateAssessmentComponent implements OnInit {
     if (_.get(resolved, 'data')) {
       this.contentDetails = _.get(resolved, 'data')
       this.patchAssessmentDetails()
+      this.openRequestedStep()
     } else if (_.get(resolved, 'error')) {
       this.openSnackBar('Unable to load the assessment, please try again')
     }
+  }
+
+  /** `step=preview` on the url opens the assessment straight on its preview step. */
+  openRequestedStep() {
+    if (_.get(this.activatedRoute, 'snapshot.queryParams.step') !== 'preview' || !this.contentId) {
+      return
+    }
+    // set before the stepper has its steps, so no selectionChange runs and the save is called here
+    this.currentStepperIndex = PREVIEW_STEP_INDEX
+    this.selectedStepperLable = STEP_PREVIEW
+    this.saveBeforePreview()
   }
 
   /**

@@ -89,6 +89,7 @@ describe('UserGroupsListComponent', () => {
   let fetchUserGroup: jest.Mock
   let createUserGroup: jest.Mock
   let deleteUserGroup: jest.Mock
+  let fetchUserCount: jest.Mock
   let snackBarOpen: jest.Mock
   let snackBarFromComponent: jest.Mock
   let dialogOpen: jest.Mock
@@ -111,7 +112,10 @@ describe('UserGroupsListComponent', () => {
           provide: ConfigurationsService,
           useValue: { userRoles, userProfile: { userId, rootOrgId: userOrgId } },
         },
-        { provide: ReusableUserGroupsService, useValue: { searchUserGroups, fetchUserGroup, createUserGroup, deleteUserGroup } },
+        {
+          provide: ReusableUserGroupsService,
+          useValue: { searchUserGroups, fetchUserGroup, createUserGroup, deleteUserGroup, fetchUserCount },
+        },
         { provide: MatSnackBar, useValue: { open: snackBarOpen, openFromComponent: snackBarFromComponent } },
         { provide: MatDialog, useValue: { open: dialogOpen } },
         { provide: Router, useValue: { navigate } },
@@ -127,6 +131,7 @@ describe('UserGroupsListComponent', () => {
     fetchUserGroup = jest.fn(() => of(readResponse))
     createUserGroup = jest.fn(() => of(createResponse))
     deleteUserGroup = jest.fn(() => of({ responseCode: 'OK' }))
+    fetchUserCount = jest.fn(() => of({ result: { response: { count: 42 } } }))
     snackBarOpen = jest.fn()
     snackBarFromComponent = jest.fn()
     dialogOpen = jest.fn(() => ({ afterClosed: () => of(true) }))
@@ -498,6 +503,110 @@ describe('UserGroupsListComponent', () => {
     it('should route the use row action through the dialog', () => {
       component.onRowAction({ key: 'use', label: 'Use' }, component.groups()[0])
       expect(dialogOpen).toHaveBeenCalled()
+    })
+  })
+
+  describe('check reach', () => {
+    const ministryOrStateId = '01384948907599462455'
+    const withCriteria = (criteria: any[]) => ({ ...component.groups()[0], criteria })
+
+    it('should count the whole ministry / state for a ministryOrStateId criteria', () => {
+      component.onCheckReach(withCriteria([{ criteriaKey: 'ministryOrStateId', criteriaValue: [ministryOrStateId] }]))
+      expect(fetchUserCount).toHaveBeenCalledWith({
+        'profileDetails.ministryOrStateId': [ministryOrStateId],
+        status: 1,
+      })
+    })
+
+    it('should not narrow a ministryOrStateId criteria to the own organisation', () => {
+      component.onCheckReach(withCriteria([
+        { criteriaKey: 'ministryOrStateId', criteriaValue: [ministryOrStateId] },
+        { criteriaKey: 'group', criteriaValue: ['Group A'] },
+      ]))
+      const [filters] = fetchUserCount.mock.calls[0]
+      expect(filters).not.toHaveProperty('rootOrgId')
+      expect(filters['profileDetails.professionalDetails.group']).toEqual(['Group A'])
+    })
+
+    it('should read a ministryOrStateId criteria sent in the search shape', () => {
+      component.onCheckReach(withCriteria([{ ministryOrStateId: [ministryOrStateId] }]))
+      expect(fetchUserCount).toHaveBeenCalledWith({
+        'profileDetails.ministryOrStateId': [ministryOrStateId],
+        status: 1,
+      })
+    })
+
+    it('should count the organisations a group names', () => {
+      component.onCheckReach(withCriteria([{ criteriaKey: 'rootOrgId', criteriaValue: ['org-a', 'org-b'] }]))
+      expect(fetchUserCount).toHaveBeenCalledWith({ rootOrgId: ['org-a', 'org-b'], status: 1 })
+    })
+
+    it('should keep the count inside the own organisation when the group names none', () => {
+      component.onCheckReach(withCriteria([{ criteriaKey: 'group', criteriaValue: ['Group A'] }]))
+      expect(fetchUserCount).toHaveBeenCalledWith({
+        'profileDetails.professionalDetails.group': ['Group A'],
+        rootOrgId: ['01384674984551219213'],
+        status: 1,
+      })
+    })
+
+    it('should fall back to the own organisation for an empty ministryOrStateId criteria', () => {
+      component.onCheckReach(withCriteria([{ criteriaKey: 'ministryOrStateId', criteriaValue: [] }]))
+      const [filters] = fetchUserCount.mock.calls[0]
+      expect(filters).not.toHaveProperty('profileDetails.ministryOrStateId')
+      expect(filters.rootOrgId).toEqual(['01384674984551219213'])
+    })
+
+    describe('central deputation', () => {
+      const deputationFilter = (criteriaValue: any) => {
+        component.onCheckReach(withCriteria([
+          { criteriaKey: 'ministryOrStateId', criteriaValue: [ministryOrStateId] },
+          { criteriaKey: 'service', criteriaValue: ['indian administrative service (ias)'] },
+          { criteriaKey: 'isOnCentralDeputation', criteriaValue },
+        ]))
+        return fetchUserCount.mock.calls[0][0]
+      }
+
+      it('should send the flag saved as a single boolean beside the ministry / state', () => {
+        expect(deputationFilter(true)).toEqual({
+          'profileDetails.ministryOrStateId': [ministryOrStateId],
+          'profileDetails.cadreDetails.civilServiceName': ['indian administrative service (ias)'],
+          'profileDetails.cadreDetails.isOnCentralDeputation': true,
+          status: 1,
+        })
+      })
+
+      it('should send the flag saved as a list', () => {
+        expect(deputationFilter([true])['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(true)
+      })
+
+      it('should convert a "true" string to a boolean', () => {
+        expect(deputationFilter('true')['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(true)
+      })
+
+      it('should convert a "false" string in a list to a boolean', () => {
+        expect(deputationFilter(['false'])['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(false)
+      })
+
+      it('should send false saved as a single boolean', () => {
+        expect(deputationFilter(false)['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(false)
+      })
+
+      it('should read the flag in the search shape', () => {
+        component.onCheckReach(withCriteria([{ isOnCentralDeputation: true }]))
+        expect(fetchUserCount.mock.calls[0][0]['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(true)
+      })
+
+      it('should leave the flag out for an unrecognised value', () => {
+        expect(deputationFilter(['yes'])).not.toHaveProperty('profileDetails.cadreDetails.isOnCentralDeputation')
+      })
+    })
+
+    it('should store the count against the group', () => {
+      const group = withCriteria([{ criteriaKey: 'ministryOrStateId', criteriaValue: [ministryOrStateId] }])
+      component.onCheckReach(group)
+      expect(component.reachMap()[group.id].count).toBe(42)
+      expect(component.reachLoading()[group.id]).toBe(false)
     })
   })
 

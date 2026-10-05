@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { ActivatedRoute, Router } from '@angular/router'
 import { StepperSelectionEvent } from '@angular/cdk/stepper'
-import { Subject, of, throwError } from 'rxjs'
+import { BehaviorSubject, Subject, of, throwError } from 'rxjs'
 import { LoaderService } from '../../../../../../../../../../../src/app/services/loader.service'
 import {
   aparPlan,
@@ -26,7 +26,7 @@ describe('CreateAssessmentComponent', () => {
   let cdr: any
   let dialog: any
   let locationService: any
-  let queryParams: Subject<any>
+  let queryParams: BehaviorSubject<any>
   let afterClosed: Subject<any>
 
   const userProfile = { rootOrgId: 'org-1', userId: 'user-1' }
@@ -106,10 +106,11 @@ describe('CreateAssessmentComponent', () => {
    * be built inside an injection context.
    */
   const build = (routeData: any = {}, params: any = { mode: 'edit', preview: 'true', editMode: 'true' }) => {
-    queryParams = new Subject<any>()
+    // the router replays the current params on subscribe, before the resolved data is read
+    queryParams = new BehaviorSubject<any>(params)
     activatedRoute = {
       queryParams: queryParams.asObservable(),
-      snapshot: { data: { configService: { userProfile }, ...routeData } },
+      snapshot: { data: { configService: { userProfile }, ...routeData }, queryParams: params },
     }
     const instance = TestBed.runInInjectionContext(() => new CreateAssessmentComponent(
       assessmentSvc as ComprehensiveAssessmentService,
@@ -122,7 +123,6 @@ describe('CreateAssessmentComponent', () => {
       dialog as MatDialog
     ))
     instance.ngOnInit()
-    queryParams.next(params)
     return instance
   }
 
@@ -227,9 +227,11 @@ describe('CreateAssessmentComponent', () => {
       expect(component.assessmentDetailsForm.get('learningOutcome')?.hasError('required')).toBe(true)
     })
 
-    it('should refuse an assessment with no classification', () => {
-      expect(component.assessmentDetailsForm.get('difficultyLevel')?.hasError('required')).toBe(true)
-      expect(component.assessmentDetailsForm.get('keywords')?.hasError('required')).toBe(true)
+    /** The difficulty level and the keywords are optional, only the license is demanded. */
+    it('should take an assessment with no difficulty level or keywords', () => {
+      expect(component.assessmentDetailsForm.get('difficultyLevel')?.valid).toBe(true)
+      expect(component.assessmentDetailsForm.get('keywords')?.valid).toBe(true)
+      expect(component.assessmentDetailsForm.get('license')?.hasError('required')).toBe(false)
       // the license is seeded, an assessment is never authored without one
       expect(component.assessmentDetailsForm.get('license')?.value).toBe('CC BY 4.0')
     })
@@ -336,6 +338,53 @@ describe('CreateAssessmentComponent', () => {
 
       expect(matSnackBar.open).toHaveBeenCalledWith('Unable to load the assessment, please try again')
       expect(component.contentId).toBe('')
+    })
+  })
+
+  describe('opening on a requested step', () => {
+    const previewParams = { mode: 'view', preview: 'true', editMode: 'true', step: 'preview' }
+
+    it('should open straight on the preview step when the url asks for it', () => {
+      component = build({ assessmentDetails: { data: content() } }, previewParams)
+
+      expect(component.currentStepperIndex).toBe(2)
+      expect(component.selectedStepperLable).toBe('Preview')
+    })
+
+    /** The stepper has no steps yet, so no selectionChange loads the preview for it. */
+    it('should load the content the preview renders', () => {
+      component = build({ assessmentDetails: { data: content() } }, previewParams)
+
+      expect(assessmentSvc.getContentHierarchy).toHaveBeenCalledWith('do_123')
+      expect(component.previewReady).toBe(true)
+      expect(component.previewContent).toEqual(content())
+    })
+
+    it('should not save a view only assessment to reach its preview', () => {
+      component = build({ assessmentDetails: { data: content() } }, previewParams)
+
+      expect(assessmentSvc.updateContent).not.toHaveBeenCalled()
+    })
+
+    it('should open on the first step when the url asks for no step', () => {
+      component = build({ assessmentDetails: { data: content() } })
+
+      expect(component.currentStepperIndex).toBe(0)
+      expect(component.selectedStepperLable).toBe('Basic Details')
+      expect(assessmentSvc.getContentHierarchy).not.toHaveBeenCalled()
+    })
+
+    it('should ignore a step it does not know', () => {
+      component = build({ assessmentDetails: { data: content() } }, { ...previewParams, step: 'assessment' })
+
+      expect(component.currentStepperIndex).toBe(0)
+    })
+
+    it('should stay on the first step while no assessment was resolved', () => {
+      component = build({ assessmentDetails: { data: null, error: 'not found' } }, previewParams)
+
+      expect(component.currentStepperIndex).toBe(0)
+      expect(assessmentSvc.getContentHierarchy).not.toHaveBeenCalled()
     })
   })
 
