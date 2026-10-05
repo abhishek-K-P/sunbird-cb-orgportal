@@ -557,6 +557,51 @@ describe('UserGroupsListComponent', () => {
       expect(filters.rootOrgId).toEqual(['01384674984551219213'])
     })
 
+    describe('central deputation', () => {
+      const deputationFilter = (criteriaValue: any) => {
+        component.onCheckReach(withCriteria([
+          { criteriaKey: 'ministryOrStateId', criteriaValue: [ministryOrStateId] },
+          { criteriaKey: 'service', criteriaValue: ['indian administrative service (ias)'] },
+          { criteriaKey: 'isOnCentralDeputation', criteriaValue },
+        ]))
+        return fetchUserCount.mock.calls[0][0]
+      }
+
+      it('should send the flag saved as a single boolean beside the ministry / state', () => {
+        expect(deputationFilter(true)).toEqual({
+          'profileDetails.ministryOrStateId': [ministryOrStateId],
+          'profileDetails.cadreDetails.civilServiceName': ['indian administrative service (ias)'],
+          'profileDetails.cadreDetails.isOnCentralDeputation': true,
+          status: 1,
+        })
+      })
+
+      it('should send the flag saved as a list', () => {
+        expect(deputationFilter([true])['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(true)
+      })
+
+      it('should convert a "true" string to a boolean', () => {
+        expect(deputationFilter('true')['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(true)
+      })
+
+      it('should convert a "false" string in a list to a boolean', () => {
+        expect(deputationFilter(['false'])['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(false)
+      })
+
+      it('should send false saved as a single boolean', () => {
+        expect(deputationFilter(false)['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(false)
+      })
+
+      it('should read the flag in the search shape', () => {
+        component.onCheckReach(withCriteria([{ isOnCentralDeputation: true }]))
+        expect(fetchUserCount.mock.calls[0][0]['profileDetails.cadreDetails.isOnCentralDeputation']).toBe(true)
+      })
+
+      it('should leave the flag out for an unrecognised value', () => {
+        expect(deputationFilter(['yes'])).not.toHaveProperty('profileDetails.cadreDetails.isOnCentralDeputation')
+      })
+    })
+
     it('should store the count against the group', () => {
       const group = withCriteria([{ criteriaKey: 'ministryOrStateId', criteriaValue: [ministryOrStateId] }])
       component.onCheckReach(group)

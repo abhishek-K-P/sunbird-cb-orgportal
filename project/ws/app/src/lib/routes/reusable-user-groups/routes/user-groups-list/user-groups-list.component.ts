@@ -211,6 +211,17 @@ export class UserGroupsListComponent implements OnInit {
     return Object.keys(entry).map(key => [key, entry[key]] as [string, any])
   }
 
+  private toCentralDeputationFlag(values: any): boolean | undefined {
+    const value = Array.isArray(values) ? values[0] : values
+    if (typeof value === 'boolean') {
+      return value
+    }
+    if (value === 'true' || value === 'false') {
+      return value === 'true'
+    }
+    return undefined
+  }
+
   private toUserSearchFilters(group: IUserGroup): Record<string, any> {
     const filters: Record<string, any> = {}
     const criteria = group?.criteria ?? []
@@ -218,11 +229,21 @@ export class UserGroupsListComponent implements OnInit {
     criteria.forEach(entry => {
       this.toConditionPairs(entry).forEach(([criteriaKey, values]) => {
         const filterKey = CRITERIA_FILTER_KEYS[criteriaKey]
-        if (!filterKey || !Array.isArray(values) || !values.length) {
+        if (!filterKey) {
           return
         }
-        // Central deputation is a single flag, every other condition is a list of selections
-        filters[filterKey] = criteriaKey === 'isOnCentralDeputation' ? values[0] : values
+        // Central deputation is a single flag, saved as a value or a list, a boolean or a string
+        if (criteriaKey === 'isOnCentralDeputation') {
+          const centralDeputation = this.toCentralDeputationFlag(values)
+          if (centralDeputation !== undefined) {
+            filters[filterKey] = centralDeputation
+          }
+          return
+        }
+        if (!Array.isArray(values) || !values.length) {
+          return
+        }
+        filters[filterKey] = values
       })
     })
 
