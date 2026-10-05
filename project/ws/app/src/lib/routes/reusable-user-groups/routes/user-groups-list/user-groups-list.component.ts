@@ -31,6 +31,8 @@ const DEFAULT_SORT_ORDER: SortDirection = 'desc'
 
 const CRITERIA_FILTER_KEYS: Record<string, string> = {
   rootOrgId: 'rootOrgId',
+  // A L0 MDO selecting every organisation of its hierarchy is saved as its ministry / state
+  ministryOrStateId: 'profileDetails.ministryOrStateId',
   user: 'identifier',
   group: 'profileDetails.professionalDetails.group',
   designation: 'profileDetails.professionalDetails.designation',
@@ -224,8 +226,10 @@ export class UserGroupsListComponent implements OnInit {
       })
     })
 
-    // The count stays inside the logged in organisation unless the group names its own
-    if (!filters['rootOrgId']?.length && this.configSvc.userProfile?.rootOrgId) {
+    // The count stays inside the logged in organisation unless the group names its own,
+    // or the whole ministry / state it sits under
+    const namesOrganisationScope = filters['rootOrgId']?.length || filters['profileDetails.ministryOrStateId']?.length
+    if (!namesOrganisationScope && this.configSvc.userProfile?.rootOrgId) {
       filters['rootOrgId'] = [this.configSvc.userProfile.rootOrgId]
     }
 

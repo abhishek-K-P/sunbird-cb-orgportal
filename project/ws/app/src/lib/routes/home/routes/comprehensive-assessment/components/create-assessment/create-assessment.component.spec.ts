@@ -227,9 +227,11 @@ describe('CreateAssessmentComponent', () => {
       expect(component.assessmentDetailsForm.get('learningOutcome')?.hasError('required')).toBe(true)
     })
 
-    it('should refuse an assessment with no classification', () => {
-      expect(component.assessmentDetailsForm.get('difficultyLevel')?.hasError('required')).toBe(true)
-      expect(component.assessmentDetailsForm.get('keywords')?.hasError('required')).toBe(true)
+    /** The difficulty level and the keywords are optional, only the license is demanded. */
+    it('should take an assessment with no difficulty level or keywords', () => {
+      expect(component.assessmentDetailsForm.get('difficultyLevel')?.valid).toBe(true)
+      expect(component.assessmentDetailsForm.get('keywords')?.valid).toBe(true)
+      expect(component.assessmentDetailsForm.get('license')?.hasError('required')).toBe(false)
       // the license is seeded, an assessment is never authored without one
       expect(component.assessmentDetailsForm.get('license')?.value).toBe('CC BY 4.0')
     })
