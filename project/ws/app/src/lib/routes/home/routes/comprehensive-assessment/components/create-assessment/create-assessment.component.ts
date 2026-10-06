@@ -563,7 +563,7 @@ export class CreateAssessmentComponent implements OnInit {
       purpose: formValues.learningOutcome || '',
       appIcon: formValues.appIcon,
       posterImage: formValues.appIcon,
-      creatorLogo: formValues.creatorLogo || '',
+      creatorLogo: this.assessmentSvc.toValidUrl(formValues.creatorLogo),
       license: formValues.license || DEFAULT_LICENSE,
       keywords: formValues.keywords || [],
       // the content schema types duration as a String, a number fails validation

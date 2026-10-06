@@ -665,6 +665,15 @@ describe('ComprehensiveAssessmentService', () => {
       expect(content.posterImage).toBe('icon-url')
     })
 
+    it('should encode the spaces of an org logo the content api rejects as not a valid url', () => {
+      const logo = 'https://portal.igotkarmayogi.gov.in/content-store/customselfregistration-logo/17581944186782798182476505634513images (6).png'
+      service.createAssessmentCollection('A new assessment', 'icon-url', logo, userProfile, 'a@b.com').subscribe()
+
+      const content = httpMock.expectOne('apis/proxies/v8/action/content/ca/v1/create').request.body.request.content
+      expect(content.creatorLogo)
+        .toBe('https://portal.igotkarmayogi.gov.in/content-store/customselfregistration-logo/17581944186782798182476505634513images%20(6).png')
+    })
+
     /**
      * The whole field set the content api is given, pinned so a field cannot go missing
      * unnoticed - `creatorContacts` in particular is what the platform records the author by.
