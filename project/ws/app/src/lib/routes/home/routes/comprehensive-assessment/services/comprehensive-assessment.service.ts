@@ -543,7 +543,7 @@ export class ComprehensiveAssessmentService {
           creator,
           name,
           posterImage: appIcon,
-          ...(creatorLogo ? { creatorLogo } : {}),
+          ...(creatorLogo ? { creatorLogo: this.toValidUrl(creatorLogo) } : {}),
           code: this.generateCode(),
           contentType: 'Collection',
           createdBy: userId,
@@ -633,6 +633,10 @@ export class ComprehensiveAssessmentService {
       return `${domain}/assets/public/${urlSplice.slice(1).join('/')}`
     }
     return createdUrl
+  }
+
+  toValidUrl(url: string): string {
+    return (url || '').trim().replace(/\s/g, '%20')
   }
 
   //#endregion

@@ -134,6 +134,7 @@ describe('CreateAssessmentComponent', () => {
     afterClosed = new Subject<any>()
     assessmentSvc = {
       readPlanMetadata: jest.fn().mockReturnValue(linkedPlan),
+      toValidUrl: jest.fn((url: string) => (url || '').trim().replace(/\s/g, '%20')),
       buildPlanMetadata: jest.fn().mockReturnValue({
         [aparPlan.TRAINING_PLAN_KEY]: { identifier: 'plan-1', contentList: [] },
       }),
@@ -886,6 +887,13 @@ describe('CreateAssessmentComponent', () => {
       component.duration = 2400
 
       expect(component.getContentUpdateBody().duration).toBe('2400')
+    })
+
+    it('should encode the spaces of the creatorLogo through the service', () => {
+      component.assessmentDetailsForm.patchValue({ creatorLogo: 'https://host/logo/images (6).png' })
+
+      expect(component.getContentUpdateBody().creatorLogo).toBe('https://host/logo/images%20(6).png')
+      expect(assessmentSvc.toValidUrl).toHaveBeenCalledWith('https://host/logo/images (6).png')
     })
 
     it('should send a zero duration rather than leaving it out', () => {
