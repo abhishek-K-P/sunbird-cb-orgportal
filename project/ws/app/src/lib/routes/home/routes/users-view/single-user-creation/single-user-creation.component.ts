@@ -717,7 +717,6 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
     if (this.isNgo) {
       postData.isNgo = true
     }
-    debugger
     this.usersService.createUser(postData)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {

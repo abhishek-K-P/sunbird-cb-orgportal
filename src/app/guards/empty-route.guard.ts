@@ -33,7 +33,6 @@ export class EmptyRouteGuard {
       }
       //   // logger.log('Redirecting to application home page');
       // const userRole = this.configSvc.userProfile.roles
-      // debugger
       // if () {
       //   return this.router.parseUrl('/app/home/community')
       // } else {
