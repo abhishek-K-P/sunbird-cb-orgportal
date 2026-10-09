@@ -14,7 +14,7 @@ import { debounceTime, distinctUntilChanged, map, startWith, switchMap, takeUnti
 import * as _ from 'lodash'
 /* tslint:enable */
 import { UsersService } from '../../../../users/services/users.service'
-import { RolesService } from '../../../../users/services/roles.service'
+import { BP_TRAINER_ROLE, RolesService, toBpCoTrainerCode } from '../../../../users/services/roles.service'
 import { ActivatedRoute } from '@angular/router'
 
 export const MY_FORMATS = {
@@ -80,6 +80,9 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
   designationSearchText = ''
 
   filteredRoles: string[] = []
+  readonly bpTrainerRole = BP_TRAINER_ROLE
+  bpCoTrainerRoles: { roleId: number, roleName: string, roleCode: string }[] = []
+  isLoadingBpCoTrainerRoles = false
   // emailRegix = `^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`
   userCreationForm = this.formBuilder.group({
     email: new UntypedFormControl('', [Validators.required, Validators.pattern(EMAIL_PATTERN)]),
@@ -95,6 +98,8 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
     category: new UntypedFormControl(''),
     tags: new UntypedFormControl([]),
     roles: new UntypedFormControl([], [Validators.required]),
+    // required only while BP_PROGRAM_TRAINER is selected, see updateBpCoTrainerRoleState()
+    bpCoTrainerRole: new UntypedFormControl(''),
     searchDesignation: new UntypedFormControl('', [])
   })
   today = new Date()
@@ -237,8 +242,12 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
         case 'gender':
           this.userCreationForm.get(ele)?.patchValue(this.editUserData?.profileDetails?.personalDetails?.[ele] || '')
           break
+        case 'bpCoTrainerRole':
+          this.userCreationForm.get(ele)?.patchValue(toBpCoTrainerCode(this.editUserData?.profileDetails?.bpCoTrainer))
+          break
       }
     })
+    this.updateBpCoTrainerRoleState()
   }
   designationSearch(evt: any) {
     const searchText = evt?.target?.value
@@ -517,7 +526,7 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
             } else if (this.isMdoLeader) {
               this.filteredRoles = this.masterData?.mdoRoles  // show all roles
             } else if (this.isMoAdmin) {
-              this.filteredRoles = this.masterData?.mdoRoles.filter((role: any) => role !== 'MDO_LEADER'&& role !=='MDO_ADMIN')  // show only PUBLIC
+              this.filteredRoles = this.masterData?.mdoRoles.filter((role: any) => role !== 'MDO_LEADER' && role !== 'MDO_ADMIN')  // show only PUBLIC
             } else {
               this.filteredRoles = this.masterData?.mdoRoles.filter((role: any) => role === 'PUBLIC')  // show only PUBLIC
             }
@@ -545,6 +554,43 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
     } else {
       this.userCreationForm.get('roles')!.patchValue([...this.defaultRole, ...this.rolesArr])
     }
+    this.updateBpCoTrainerRoleState()
+  }
+
+  get isBpTrainerSelected(): boolean {
+    return (this.userCreationForm.get('roles')?.value || []).includes(this.bpTrainerRole)
+  }
+
+  updateBpCoTrainerRoleState(): void {
+    const control = this.userCreationForm.get('bpCoTrainerRole')
+    if (!control) {
+      return
+    }
+    if (this.isBpTrainerSelected) {
+      control.setValidators([Validators.required])
+      if (!this.bpCoTrainerRoles.length && !this.isLoadingBpCoTrainerRoles) {
+        this.getBpCoTrainerRoles()
+      }
+    } else {
+      control.clearValidators()
+      control.setValue('')
+    }
+    control.updateValueAndValidity()
+  }
+
+  getBpCoTrainerRoles(): void {
+    this.isLoadingBpCoTrainerRoles = true
+    this.rolesService.getProgramCoordinatorRoles()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        this.bpCoTrainerRoles = _.get(res, 'result.roles', [])
+          .map((role: any) => ({ ...role, roleCode: toBpCoTrainerCode(role.roleName) }))
+        this.isLoadingBpCoTrainerRoles = false
+        // tslint:disable-next-line
+      }, (_err: HttpErrorResponse) => {
+        this.isLoadingBpCoTrainerRoles = false
+        this.matSnackBar.open('Unable to fetch BP co-trainer roles, please try again later!')
+      })
   }
 
   handleAddTags(event: MatChipInputEvent): void {
@@ -598,6 +644,7 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
     // this.initForm()
     this.rolesArr = []
     this.setDefaultValue()
+    this.updateBpCoTrainerRoleState()
   }
 
   handleUserCreation(): void {
@@ -634,6 +681,7 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
         roles: dataToSubmit.roles,
       },
       profileDetails: {
+        ...(this.isBpTrainerSelected ? { bpCoTrainer: dataToSubmit.bpCoTrainerRole } : null),
         personalDetails: {
           dob: dataToSubmit.dob,
           domicileMedium: dataToSubmit.domicileMedium,
@@ -669,6 +717,7 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
     if (this.isNgo) {
       postData.isNgo = true
     }
+    debugger
     this.usersService.createUser(postData)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {
@@ -719,10 +768,13 @@ export class SingleUserCreationComponent implements OnInit, AfterViewInit, OnDes
       return
     }
 
+    // cleared when the BP trainer role is taken away from a user who had a co-trainer role
+    const bpCoTrainer = this.isBpTrainerSelected ? dataToSubmit.bpCoTrainerRole : ''
     const requestBody = {
       request: {
         userId: this.editUserData.userId,
         profileDetails: {
+          ...(bpCoTrainer || this.editUserData?.profileDetails?.bpCoTrainer ? { bpCoTrainer } : null),
           personalDetails: {
             dob: dataToSubmit.dob,
             domicileMedium: dataToSubmit.domicileMedium,

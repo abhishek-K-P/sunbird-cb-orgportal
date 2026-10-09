@@ -16,7 +16,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { COMMA, ENTER } from '@angular/cdk/keycodes'
 // tslint:disable-next-line
 import * as _ from 'lodash'
-import { RolesService } from '../../../users/services/roles.service'
+import { BP_TRAINER_ROLE, RolesService, toBpCoTrainerCode } from '../../../users/services/roles.service'
 import { ActivatedRoute } from '@angular/router'
 import { Observable, Subscription } from 'rxjs'
 import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators'
@@ -86,6 +86,8 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
   uniqueRoles: any = []
   public userRoles: Set<string> = new Set()
   orguserRoles: any = []
+  bpCoTrainerRoles: { roleId: number, roleName: string, roleCode: string }[] = []
+  isLoadingBpCoTrainerRoles = false
   isMdoAdmin = false
   isMdoLeader = false
   isBoth = false
@@ -168,6 +170,8 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
       mobile: new UntypedFormControl('', [Validators.required, Validators.pattern(this.phoneNumberPattern)]),
       tags: new UntypedFormControl('', [Validators.pattern(this.namePatern)]),
       roles: new UntypedFormControl('', [Validators.required]),
+      // required only while BP_PROGRAM_TRAINER is selected, see updateBpCoTrainerRoleState()
+      bpCoTrainerRole: new UntypedFormControl('', []),
       domicileMedium: new UntypedFormControl('', []),
       gender: new UntypedFormControl('', []),
       category: new UntypedFormControl('', []),
@@ -732,6 +736,7 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
           this.userRoles.add(role)
         })
       }
+      this.updateBpCoTrainerRoleState()
     } else {
       this.loadRoles()
       this.mapRoles(user)
@@ -836,6 +841,8 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
         }
       }
 
+      this.updateUserDataForm.controls['bpCoTrainerRole'].setValue(toBpCoTrainerCode(user.profileDetails.bpCoTrainer))
+
       // Ensure designation is preserved in the dropdown after roles are mapped
       this.mapRoles(user)
 
@@ -894,6 +901,39 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
     } else {
       this.userRoles.add(role)
     }
+    this.updateBpCoTrainerRoleState()
+  }
+
+  get isBpTrainerSelected(): boolean {
+    return this.userRoles.has(BP_TRAINER_ROLE)
+  }
+
+  updateBpCoTrainerRoleState(): void {
+    const control = this.updateUserDataForm.controls['bpCoTrainerRole']
+    if (this.isBpTrainerSelected) {
+      control.setValidators([Validators.required])
+      if (!this.bpCoTrainerRoles.length && !this.isLoadingBpCoTrainerRoles) {
+        this.getBpCoTrainerRoles()
+      }
+    } else {
+      control.clearValidators()
+      control.setValue('')
+    }
+    control.updateValueAndValidity()
+  }
+
+  getBpCoTrainerRoles(): void {
+    this.isLoadingBpCoTrainerRoles = true
+    this.roleservice.getProgramCoordinatorRoles().subscribe((res: any) => {
+      this.bpCoTrainerRoles = _.get(res, 'result.roles', [])
+        .map((role: any) => ({ ...role, roleCode: toBpCoTrainerCode(role.roleName) }))
+      this.isLoadingBpCoTrainerRoles = false
+    },
+      // tslint:disable-next-line: align
+      (_err: any) => {
+        this.isLoadingBpCoTrainerRoles = false
+        this.openSnackbar('Unable to fetch BP co-trainer roles, please try again later!')
+      })
   }
 
   updateTags(profileData: any) {
@@ -963,10 +1003,13 @@ export class UserCardComponent implements OnInit, OnChanges, AfterViewChecked, A
   onSubmit(form: any, user: any, panel: any) {
     if (form.valid) {
       const dobn = this.datePipe.transform(this.updateUserDataForm.controls['dob'].value, 'dd-MM-yyyy')
+      // cleared when the BP trainer role is taken away from a user who had a co-trainer role
+      const bpCoTrainer = this.isBpTrainerSelected ? this.updateUserDataForm.controls['bpCoTrainerRole'].value : ''
       this.reqbody = {
         request: {
           userId: user.userId,
           profileDetails: {
+            ...(bpCoTrainer || _.get(user, 'profileDetails.bpCoTrainer') ? { bpCoTrainer } : null),
             personalDetails: {
               dob: dobn ? dobn : '',
               domicileMedium: this.updateUserDataForm.controls['domicileMedium'].value ?

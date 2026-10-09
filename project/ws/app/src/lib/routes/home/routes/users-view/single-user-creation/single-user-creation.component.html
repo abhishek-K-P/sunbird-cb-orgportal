@@ -241,6 +241,21 @@
       <!-- <div class="input-container"></div> -->
     </div>
 
+    <div class="flex flex-row gap-6" *ngIf="isBpTrainerSelected">
+      <div class="input-container">
+        <div class="label required mb-2">BP Co-Trainer Role</div>
+        <mat-radio-group formControlName="bpCoTrainerRole" class="custom-roles">
+          <div class="rolehead" *ngFor="let coTrainerRole of bpCoTrainerRoles">
+            <mat-radio-button [value]="coTrainerRole.roleCode">{{ coTrainerRole.roleName }}</mat-radio-button>
+          </div>
+        </mat-radio-group>
+        <div *ngIf="isLoadingBpCoTrainerRoles" class="text-xs">Loading roles...</div>
+        <mat-error class="text-xs" *ngIf="!isLoadingBpCoTrainerRoles && !bpCoTrainerRoles.length">
+          No BP co-trainer roles available
+        </mat-error>
+      </div>
+    </div>
+
     <div class="flex flex-row gap-4">
       <ng-container *ngIf="!editUserData">
         <button class="action-button" [ngClass]="{'disable-button': (userCreationForm?.invalid || displayLoader)}"
